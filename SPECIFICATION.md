@@ -4,95 +4,184 @@ The goal of this project is to create a phone app to play the [chibre][0] card g
 
 ## Requirements
 
-* 2 human players, each with their own phone, will be playing against a team controlled by the computer.
+* 2 human players, each with their own phone, play as partners against a team of 2 computer players.
+  * Seating (counter-clockwise play order): Human A (host), Bot 1, Human B (joiner), Bot 2. Humans sit opposite each other.
 * the app shall not collect any personal data, nor have any form of account.
-* most of the computation should happen on the phones, ideally I prefer not to have any backend.
-  * backend infra will be hosted on AWS. the design should minimize data transfer volume and QPS to minimize costs.
-* the whole system (app and backend) must be runnable locally on my machine for demo purposes and quick feedback.
-  * later on we will see how to create the needed google app dev and aws accounts.
+  * A random installation id (generated locally, never tied to a person) may be used to recognise a reconnecting player.
+* All computation happens on the phones. **There is no backend in the first version**: games are played over the local network (same Wi-Fi).
+  * The networking code must be abstracted behind an interface (see [Architecture](#architecture)) so that an AWS-backed implementation can be added later without touching the game engine, the AI or the UI.
+  * When the AWS backend is added, its design should minimize data transfer volume and QPS to minimize costs.
+* the whole system must be runnable locally on my machine for demo purposes and quick feedback (see [Local development](#local-development)).
+  * later on we will see how to create the needed google app dev (and aws) accounts.
 * the computer players should be expert level to challenge the humans.
+* Platform: **Android only**. The app must run smoothly on ~5 year old devices (minSdk 26 / Android 8, ~2 GB RAM, mid-range CPU).
+* UI language: **French** only.
 
 ## Out of scope
 
-* Only 2 player mode is supported.
+* Only 2 human player mode is supported.
+* iOS.
+* Internet play (first version; LAN only).
 * The app will never be monetized, this is just to have fun with my friends.
 * Users of the app can be trusted not to cheat.
 
 ## Tech stack
 
 * The application should use the flutter framework.
-* Only use dependencies from trusted sources (ex dart.dev), prefer re-implementation to depending on a module from a random dude on the internet.
-* If a backend is needed use aws lambda running golang code and dynamoDb for persistent state.
-  * client/backend traffic will be done using binary over HTTP to encode protocoll buffer messages.
-  * lambda must use few dependencies to optimize cold starts, bloated frameworks like Django are forbidden.
+* Only use dependencies from trusted sources (ex dart.dev, flutter.dev, google publishers on pub.dev), prefer re-implementation to depending on a module from a random dude on the internet.
+  * Expected dependencies: `protobuf` (dart.dev), `multicast_dns` (flutter.dev) for LAN discovery, `shared_preferences` / `path_provider` (flutter.dev) for local storage, `flutter_svg` only if vector rendering via `CustomPainter` is impractical (it is published by flutter.dev).
+* Client/client (and later client/backend) messages are protocol buffers encoded in binary.
+  * LAN: length-prefixed protobuf frames over a TCP socket.
+  * The `.proto` files live in a top-level `proto/` directory and are the single source of truth for the wire format.
+* Future backend (not part of the first version): AWS lambda running golang code and dynamoDb for persistent state, protobuf binary over HTTP.
+  * lambda must use few dependencies to optimize cold starts, bloated frameworks are forbidden.
+
+## Architecture
+
+Layers, from bottom to top. Lower layers must not depend on upper layers.
+
+1. **Game engine** (pure Dart, no Flutter imports): cards, deck, dealing, trump modes, legal move computation, trick resolution, melds detection/validation/comparison, scoring, game state machine. Deterministic given a seed. Fully unit-tested.
+2. **AI** (pure Dart): expert bot and blunder analysis (see [Computer players](#computer-players)). Depends only on the engine.
+3. **Transport** (abstract interface `GameTransport` + discovery interface `GameDiscovery`):
+   * Responsibilities: advertise a hosted game, list open/paused games, connect/reconnect, send/receive protobuf messages, report connection state changes.
+   * First implementation: `LanTransport` / `LanDiscovery` (mDNS service advertisement + TCP).
+   * Later: `AwsTransport` / `AwsDiscovery`. No other code may know which implementation is in use (injected at startup).
+4. **Session**: the host phone is authoritative. It runs the engine and both bots, validates every action from the joiner, and sends each player only the information they are allowed to see (own hand, played cards, announced melds, scores). The joiner is a thin client that renders state and sends actions.
+5. **UI** (Flutter screens below).
+
+### Code organisation
+
+* Prefer small, clean abstractions so the code is human readable and easily modifiable in later iterations.
+* Each abstraction lives in its own dedicated file, e.g. `blunder_calculator.dart`, `computer_player.dart`, `meld_validator.dart`, `lan_transport.dart`.
+* Each reusable widget lives in its own dedicated file, e.g. `card_widget.dart`, `open_game_list.dart`, `score_board.dart`, `trump_choice_panel.dart`.
+* Screens are composed from these widgets rather than being large monolithic build methods.
+
+## Local development
+
+* The app must also build and run as a **Linux desktop** app so two instances can be launched on the developer machine and play against each other over localhost.
+* Two Android emulators on the same machine must also work. Because mDNS is unreliable across emulators, debug builds offer a manual "host:port" entry on the join screen.
+* A command-line bot-vs-bot simulator (pure Dart, `dart run`) is provided to test the engine and measure AI strength.
+* `README.md` documents how to run all of the above.
+
+## Game rules
+
+Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
+
+* 36 Swiss-French cards (♦ ♥ ♠ ♣, 6 to Ace), 9 cards per player, play is counter-clockwise.
+* **Trump modes**: chosen by the host (see [Host game screen](#host-game-screen)):
+  * "4 couleurs" (default): only the four suits can be trump.
+  * "4 couleurs + Obenabe + Undenufe".
+* **Choosing trump**: in the first round, the holder of 7♦ chooses trump. In each subsequent round, the role moves to the next player counter-clockwise. The chooser may **chibrer**: pass the choice to their partner, who must then choose.
+* **Card points**: standard (157 per round including 5 for the last trick; 257 for a match, i.e. one team takes all 9 tricks).
+* **Multipliers**: host option, default off. When on: ♦ ♥ ×1, ♠ ♣ ×2, Obenabe / Undenufe ×3. Applied to trick points and melds.
+* **Melds (annonces)**:
+  * Sequences of the same suit: 3 cards 20, 4 cards 50, 5 cards 100, 6 cards 150, 7 cards 200, 8 cards 250, 9 cards 300.
+  * Four of a kind: Jacks 200, Nines 150, Aces/Kings/Queens/Tens 100.
+  * Melds are announced by each player during the first trick, before playing their first card. Only the team holding the single best meld scores melds (all of that team's melds count). Comparison follows the standard rules (higher value, then longer sequence, then higher card, then trump, then earlier announcer).
+  * Stöck (King + Queen of trump, 20 points): always counted regardless of the meld comparison. The player announces it when playing the second of the two cards (an "Stöck" button appears at that moment).
+  * Not announcing a meld or Stöck means it does not count (and is a potential blunder in the insights).
+* **End of game**: the first team to reach the target score (default 1000) wins. Points are counted in the order Stöck, melds, tricks, so the game may end mid-round.
+
+## Computer players
+
+* Expert level. Suggested approach: determinized Monte-Carlo tree search (ISMCTS / perfect-information sampling) over the engine, plus heuristics for trump choice, chibrer and meld decisions. Bots must reason only from information their seat can see (no peeking at other hands).
+* Bots run on the host phone, in a background isolate so the UI never freezes.
+* **Adaptive compute budget**: on first launch (and when the app version changes) the app runs a short benchmark to measure the phone's simulation speed and stores the result locally. The search budget (number of iterations / time per decision) is derived from it to get the strongest play while keeping the game snappy: target ≤ ~1.5 s per bot decision, including a minimum delay of ~0.5 s so humans can follow what happened.
+* Bots announce melds and Stöck correctly.
 
 ## Start screen
 
 It consists of 3 buttons
 
-* Join game
-* Host game
-* Player details
+* Rejoindre une partie (Join game)
+* Créer une partie (Host game)
+* Profil (Player details)
 
 Until the player details are input, the join and host buttons must be greyed out.
 
 ## Player details screen
 
 Just a text input field for their nickname.
-The players details will be stored locally on the phone never on the backend.
+The players details will be stored locally on the phone, never sent to any server.
 It is however allowed to communicate those details to the other player when joining a game.
 
 ## Join game screen
 
-Displays a list of open games.
-Tapping on a game will open the play game screen
+Displays the list of games found on the local network, refreshed live.
+
+* New games show the game name and the host nickname.
+* Paused games (waiting for a player to reconnect) are visually distinct (e.g. a "En pause" badge and different style) and are only joinable by the player who left them (matched by installation id). They show the current score.
+* Tapping on a game opens the play game screen.
+* Debug builds only: manual "host:port" entry.
 
 ## Host game screen
 
 Allows to configure different options:
 
-* game name (prefiled with "<nickname>'s game"
+* game name (prefilled with "<nickname>'s game", in French "Partie de <nickname>")
 * number of points (default 1000)
+* trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
+* multipliers: off (default) / on
 
-A button "start game" will open the waiting for player screen.
+A button "Lancer la partie" (start game) will open the waiting for player screen and start advertising the game on the network.
 
 ## Waiting for player screen
 
-Mentions that it is waiting for players, has a cancel button to go back to start screen.
+Mentions that it is waiting for a player, has a cancel button to go back to start screen (and stop advertising).
+As soon as a player joins, both phones open the play game screen. The host picks the animal card set at random and shares it with the joiner.
 
 ## Play game screen
 
-The players cards are shown at the bottom.
-In case the player wants to call a meld, they must select the relevant cards and tap the "call meld".
-The app must verify there is no error when calling the meld.
-Then the game starts.
+* The player's cards are shown at the bottom, sorted by suit and rank (trump first once chosen).
+* The partner is at the top, bots on the left and right, each with their nickname ("Ordi 1", "Ordi 2" for bots). The current trick is in the center.
+* Always visible: both team scores, target score, current trump mode, whose turn it is.
+* **Trump choice**: when it is the player's turn to choose, a panel shows the allowed trump modes plus "Chibrer" (if allowed).
+* **Playing a card**: a single tap on a card plays it. Illegal cards are greyed out and cannot be tapped. Cards cannot be played when it's not the player's turn.
+* **Melds**: during the first trick, before playing their first card, the player can tap "Annoncer". This switches to a selection mode where taps select/deselect cards; "Valider" announces the meld, "Annuler" goes back. The app verifies the selected cards form a valid meld and shows an error otherwise. Several melds may be announced. Then the player plays a card normally.
+* **Stöck**: when playing the second card of King+Queen of trump, a "Stöck" button is offered.
+* Announced melds are displayed to all players; at the end of the first trick, the winning team's melds are revealed and scored.
+* At the end of each round, a short summary (points per team for the round) is shown before the next deal.
+* **Disconnection**: if a player loses the connection or backgrounds the app, the game pauses for everyone with a "En attente de <nickname>…" overlay. The host keeps the game advertised as paused; the player can rejoin from the join screen and the game resumes where it stopped. The host can abandon the paused game at any time (back to start screen). The host persists the game state locally so a crash/restart of the host app can also resume.
 
 ## End game screen
 
-* Shows both teams scores.
+* Shows both teams scores and the winner.
 * A button to go to the insights screen
 * A button to rematch
-* A buttong to go to the start screen
+* A button to go to the start screen
+
+Rematch keeps the same seats and options; the joiner must accept.
 
 ## Insights screen
 
-During the course of the game all the moves and starting cards are recorded.
-The computer expert plows through the data and surfaces the 3 biggest blunders it saw for each human player.
+During the course of the game all the moves, trump choices, melds and starting hands are recorded.
+After the game, the expert AI analyses each human decision (trump choice / chibrer, melds and Stöck announced or missed, card plays) by comparing the expected points of the chosen action against the best alternative, given the information available to that player at the time.
+It surfaces the 3 biggest blunders (largest expected point loss) for each human player, showing the situation (hand, trick, trump), what was played, what was better and the estimated cost in points.
 For example failing to call a meld.
+
+The analysis runs on the host in a background isolate (a progress indicator is shown) and the result is sent to the joiner.
 
 At the end of the screen:
 
 * A button to rematch
-* A button to rematch with the exact same card distributions as before
-* A buttong to go to the start screen
+* A button to rematch with the exact same card distributions as before (same deals in the same order, same first trump chooser)
+* A button to go to the start screen
 
 ## Graphic design
 
 * Overall sober, no tacky decorations on buttons.
 * Use a color palette derived from billiard green.
-* Use Swiss-French cards (diamonds, hearts, ...)
+* Use Swiss-French cards (diamonds, hearts, spades, clubs)
 * For the cards design we will be original and design our own:
   * Use rubber hose cartoon style
-  * Instead of humans use monkeys, cows and zebras (do not mix them but generate different card sets per animal and select one set at random at the start of each game).
+  * Instead of humans use monkeys, cows and zebras for face cards (do not mix them but generate different card sets per animal and select one set at random at the start of each game).
+  * The art is drawn by the implementing agents as vector graphics in code (SVG or Flutter `CustomPainter`), no external image assets. Share as much as possible between sets (card frame, suit symbols, pip layouts); only the face cards (Jack, Queen, King, and optionally Ace) differ per animal.
+  * Cards must remain readable on small screens (rank and suit index in the corners).
+
+## Testing
+
+* Engine: unit tests for legal moves, trick winner, every meld type and comparison rule, scoring, multipliers, match bonus, end-of-game mid-round.
+* AI: bot-vs-bot simulations; the expert bot must beat a random-legal-move bot and a simple heuristic bot by a wide margin over many games.
+* Transport: tests with an in-memory `GameTransport` implementation, including disconnect/reconnect.
 
 [0]: https://www.swisslos.ch/fr/jass/informations/les-regles-du-jass/bases-du-jass.html
