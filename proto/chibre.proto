@@ -1,0 +1,240 @@
+// Wire format between the phones (and later the backend).
+// Card sets are 36-bit masks: bit i is the card with index i, where
+// index = suit * 9 + rank, suits being diamonds, hearts, spades, clubs and
+// ranks 6, 7, 8, 9, 10, J, Q, K, A.
+syntax = "proto3";
+
+package chibre;
+
+// Bump when a change breaks compatibility; mismatching phones refuse to play.
+enum ProtocolVersion {
+  PROTOCOL_VERSION_UNSPECIFIED = 0;
+  PROTOCOL_VERSION_CURRENT = 1;
+}
+
+enum TrumpMode {
+  TRUMP_MODE_NONE = 0;
+  TRUMP_MODE_DIAMONDS = 1;
+  TRUMP_MODE_HEARTS = 2;
+  TRUMP_MODE_SPADES = 3;
+  TRUMP_MODE_CLUBS = 4;
+  TRUMP_MODE_OBENABE = 5;
+  TRUMP_MODE_UNDENUFE = 6;
+}
+
+enum CardStyle {
+  CARD_STYLE_MONKEY = 0;
+  CARD_STYLE_COW = 1;
+  CARD_STYLE_ZEBRA = 2;
+}
+
+message GameOptions {
+  uint32 target_score = 1;
+  bool oben_unde_allowed = 2;
+  bool multipliers_enabled = 3;
+}
+
+// ---------------------------------------------------------------- Discovery
+
+// Broadcast by the host so other phones can list the game.
+message GameAdvert {
+  uint32 protocol_version = 1;
+  string game_id = 2;
+  string name = 3;
+  string host_nickname = 4;
+  uint32 port = 5;
+  // Set when the game is paused: only this installation may (re)join.
+  string reserved_for = 6;
+  repeated int32 scores = 7;
+}
+
+// ---------------------------------------------------------------- Actions
+
+message ChooseTrump {
+  TrumpMode mode = 1;
+}
+
+message Chibrer {}
+
+message PlayCard {
+  uint32 card = 1;
+  repeated uint64 melds = 2;
+  bool stoeck = 3;
+}
+
+message Action {
+  uint32 seat = 1;
+  oneof kind {
+    ChooseTrump choose_trump = 2;
+    Chibrer chibrer = 3;
+    PlayCard play_card = 4;
+  }
+}
+
+// ---------------------------------------------------------------- Joiner -> host
+
+message Hello {
+  uint32 protocol_version = 1;
+  string installation_id = 2;
+  string nickname = 3;
+}
+
+message ProposeRematch {
+  bool same_cards = 1;
+}
+
+message AnswerRematch {
+  bool accept = 1;
+}
+
+// The player put the app in the background (away) or came back.
+message Presence {
+  bool away = 1;
+}
+
+message Leave {}
+
+message ClientMessage {
+  oneof body {
+    Hello hello = 1;
+    Action action = 2;
+    ProposeRematch propose_rematch = 3;
+    AnswerRematch answer_rematch = 4;
+    Presence presence = 5;
+    Leave leave = 6;
+  }
+}
+
+// ---------------------------------------------------------------- Host -> joiner
+
+message Welcome {
+  uint32 seat = 1;
+  string game_id = 2;
+}
+
+message Rejected {
+  enum Reason {
+    REASON_UNSPECIFIED = 0;
+    REASON_VERSION_MISMATCH = 1;
+    REASON_GAME_FULL = 2;
+  }
+  Reason reason = 1;
+}
+
+message Trick {
+  uint32 leader = 1;
+  repeated uint32 cards = 2;
+}
+
+message SeatMelds {
+  // Values of all the melds announced by the seat.
+  repeated uint32 announced_values = 1;
+  // Cards of the melds the viewer is allowed to see.
+  repeated uint64 revealed = 2;
+}
+
+message RematchProposal {
+  uint32 proposed_by = 1;
+  bool same_cards = 2;
+}
+
+message Blunder {
+  enum Kind {
+    KIND_TRUMP_CHOICE = 0;
+    KIND_CARD_PLAY = 1;
+    KIND_MISSED_MELD = 2;
+    KIND_MISSED_STOECK = 3;
+  }
+  Kind kind = 1;
+  uint32 seat = 2;
+  uint32 round_index = 3;
+  int32 trick_index = 4; // -1 for a trump choice
+  uint64 hand = 5;
+  repeated uint32 trick = 6;
+  TrumpMode mode = 7;
+  double points_lost = 8;
+  int32 played_card = 9; // -1 when not applicable
+  int32 best_card = 10;
+  // TRUMP_MODE_NONE means chibrer.
+  TrumpMode chosen_trump = 11;
+  TrumpMode best_trump = 12;
+  repeated uint64 missed_melds = 13;
+}
+
+message Insights {
+  repeated Blunder blunders = 1;
+}
+
+// Everything a seat may see. Sent after every change: it is small, and a
+// reconnecting phone needs nothing else.
+message TableSnapshot {
+  enum Phase {
+    PHASE_WAITING_FOR_PLAYER = 0;
+    PHASE_CHOOSING_TRUMP = 1;
+    PHASE_PLAYING = 2;
+    PHASE_ROUND_OVER = 3;
+    PHASE_GAME_OVER = 4;
+  }
+  uint32 viewer = 1;
+  repeated string nicknames = 2;
+  GameOptions options = 3;
+  CardStyle card_style = 4;
+  Phase phase = 5;
+  uint32 round_index = 6;
+  uint64 hand = 7;
+  TrumpMode mode = 8;
+  uint32 trump_chooser = 9;
+  bool chibred = 10;
+  int32 seat_to_act = 11; // -1 when nobody must act
+  repeated Trick completed_tricks = 12;
+  Trick current_trick = 13;
+  repeated SeatMelds melds = 14;
+  int32 stoeck_seat = 15; // -1 when not announced
+  repeated int32 scores = 16;
+  repeated int32 round_points = 17;
+  int32 winning_team = 18; // -1 while playing
+  // Nickname of the player the game waits for; empty when not paused.
+  string paused_for = 19;
+  RematchProposal rematch = 20;
+  Insights insights = 21;
+}
+
+message ActionRejected {
+  string reason = 1;
+}
+
+// The host ended the game.
+message Closed {}
+
+message HostMessage {
+  oneof body {
+    Welcome welcome = 1;
+    Rejected rejected = 2;
+    TableSnapshot table = 3;
+    ActionRejected action_rejected = 4;
+    Closed closed = 5;
+  }
+}
+
+// ---------------------------------------------------------------- Persistence
+
+message Round {
+  repeated uint64 deal = 1;
+  uint32 trump_chooser = 2;
+  repeated Action actions = 3;
+}
+
+message GameRecord {
+  GameOptions options = 1;
+  repeated Round rounds = 2;
+}
+
+// Saved by the host after every action so a crashed app can resume.
+message SavedGame {
+  string game_id = 1;
+  string game_name = 2;
+  repeated string nicknames = 3;
+  string joiner_installation_id = 4;
+  CardStyle card_style = 5;
+  GameRecord record = 6;
+}

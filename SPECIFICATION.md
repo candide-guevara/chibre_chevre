@@ -29,9 +29,10 @@ The goal of this project is to create a phone app to play the [chibre][0] card g
 
 * The application should use the flutter framework.
 * Only use dependencies from trusted sources (ex dart.dev, flutter.dev, google publishers on pub.dev), prefer re-implementation to depending on a module from a random dude on the internet.
-  * Expected dependencies: `protobuf` (dart.dev), `multicast_dns` (flutter.dev) for LAN discovery, `shared_preferences` / `path_provider` (flutter.dev) for local storage, `flutter_svg` only if vector rendering via `CustomPainter` is impractical (it is published by flutter.dev).
+  * Expected dependencies: `protobuf` and `fixnum` (dart.dev), `shared_preferences` / `path_provider` (flutter.dev) for local storage, `flutter_svg` only if vector rendering via `CustomPainter` is impractical (it is published by flutter.dev).
 * Client/client (and later client/backend) messages are protocol buffers encoded in binary.
   * LAN: length-prefixed protobuf frames over a TCP socket.
+  * LAN discovery: the host broadcasts a `GameAdvert` protobuf as a UDP datagram every second (to `255.255.255.255` and to localhost, port 47820). This is re-implemented with `dart:io` instead of mDNS because the first-party `multicast_dns` package can only query, not advertise. On Android, the app may need a `WifiManager.MulticastLock` to receive broadcasts.
   * The `.proto` files live in a top-level `proto/` directory and are the single source of truth for the wire format.
 * Future backend (not part of the first version): AWS lambda running golang code and dynamoDb for persistent state, protobuf binary over HTTP.
   * lambda must use few dependencies to optimize cold starts, bloated frameworks are forbidden.
@@ -44,10 +45,16 @@ Layers, from bottom to top. Lower layers must not depend on upper layers.
 2. **AI** (pure Dart): expert bot and blunder analysis (see [Computer players](#computer-players)). Depends only on the engine.
 3. **Transport** (abstract interface `GameTransport` + discovery interface `GameDiscovery`):
    * Responsibilities: advertise a hosted game, list open/paused games, connect/reconnect, send/receive protobuf messages, report connection state changes.
-   * First implementation: `LanTransport` / `LanDiscovery` (mDNS service advertisement + TCP).
+   * First implementation: `LanTransport` (UDP broadcast discovery + TCP). An `InMemoryTransport` is used by the tests.
    * Later: `AwsTransport` / `AwsDiscovery`. No other code may know which implementation is in use (injected at startup).
 4. **Session**: the host phone is authoritative. It runs the engine and both bots, validates every action from the joiner, and sends each player only the information they are allowed to see (own hand, played cards, announced melds, scores). The joiner is a thin client that renders state and sends actions.
 5. **UI** (Flutter screens below).
+
+Packages:
+
+* `packages/chibre_core` (pure Dart): engine, AI, insights, bot-vs-bot simulator.
+* `packages/chibre_net` (pure Dart): protobuf wire format, transports, host and client sessions.
+* `app/` (Flutter): screens and widgets only.
 
 ### Code organisation
 
@@ -59,7 +66,7 @@ Layers, from bottom to top. Lower layers must not depend on upper layers.
 ## Local development
 
 * The app must also build and run as a **Linux desktop** app so two instances can be launched on the developer machine and play against each other over localhost.
-* Two Android emulators on the same machine must also work. Because mDNS is unreliable across emulators, debug builds offer a manual "host:port" entry on the join screen.
+* Two Android emulators on the same machine must also work. Because broadcasts don't cross the emulators' virtual networks, debug builds offer a manual "host:port" entry on the join screen.
 * A command-line bot-vs-bot simulator (pure Dart, `dart run`) is provided to test the engine and measure AI strength.
 * `README.md` documents how to run all of the above.
 
