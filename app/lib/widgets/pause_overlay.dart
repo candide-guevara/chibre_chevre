@@ -1,0 +1,35 @@
+import 'package:flutter/material.dart';
+
+import '../theme/chibre_theme.dart';
+
+/// Covers the table while the game waits for a player to come back.
+class PauseOverlay extends StatelessWidget {
+  const PauseOverlay({
+    super.key,
+    required this.nickname,
+    required this.onAbandon,
+  });
+
+  final String nickname;
+  final VoidCallback onAbandon;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: const Color(0xCC07482A),
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(color: ChibreColors.ivory),
+          const SizedBox(height: 16),
+          Text(
+            'En attente de $nickname…',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 24),
+          OutlinedButton(onPressed: onAbandon, child: const Text('Abandonner')),
+        ],
+      ),
+    ),
+  );
+}

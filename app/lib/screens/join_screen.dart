@@ -1,0 +1,115 @@
+import 'package:chibre_net/chibre_net.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import '../game/client_game_controller.dart';
+import '../services/app_services.dart';
+import '../widgets/open_game_list.dart';
+import 'play_screen.dart';
+
+/// Lists the games found on the network; debug builds can also type in an
+/// address, as broadcasts don't reach Android emulators.
+class JoinScreen extends StatefulWidget {
+  const JoinScreen({super.key});
+
+  @override
+  State<JoinScreen> createState() => _JoinScreenState();
+}
+
+class _JoinScreenState extends State<JoinScreen> {
+  late final _games = Services.of(context).transport.discover();
+  final _address = TextEditingController();
+  var _joining = false;
+
+  @override
+  void dispose() {
+    _address.dispose();
+    super.dispose();
+  }
+
+  Future<void> _join(OpenGame game) async {
+    setState(() => _joining = true);
+    final session = Services.of(context).newClientSession();
+    try {
+      await session.join(game);
+      if (!mounted) return;
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => PlayScreen(controller: ClientGameController(session)),
+        ),
+      );
+    } on JoinRejectedException catch (error) {
+      _fail(switch (error.reason) {
+        JoinRejection.versionMismatch =>
+          'Les deux téléphones n\'ont pas la même version de l\'app.',
+        JoinRejection.gameFull => 'La partie est complète.',
+        JoinRejection.unknown => 'Impossible de rejoindre la partie.',
+      });
+    } catch (_) {
+      _fail('Impossible de rejoindre la partie.');
+    }
+  }
+
+  void _fail(String message) {
+    if (!mounted) return;
+    setState(() => _joining = false);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _joinAddress() {
+    final address = _address.text.trim();
+    if (address.isEmpty) return;
+    _join(
+      OpenGame(
+        listing: const GameListing(gameId: '', name: '', hostNickname: ''),
+        address: address,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final installationId = Services.of(context).profile.installationId;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Rejoindre une partie')),
+      body: _joining
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: StreamBuilder<List<OpenGame>>(
+                    stream: _games,
+                    builder: (context, snapshot) => OpenGameList(
+                      games: snapshot.data ?? const [],
+                      installationId: installationId,
+                      onJoin: _join,
+                    ),
+                  ),
+                ),
+                if (kDebugMode)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _address,
+                            decoration: const InputDecoration(
+                              labelText: 'Adresse (hôte:port)',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: _joinAddress,
+                          icon: const Icon(Icons.login),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+    );
+  }
+}

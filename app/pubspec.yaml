@@ -1,0 +1,25 @@
+name: chibre
+description: "Chibre card game: two friends against expert computer players."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  chibre_core:
+    path: ../packages/chibre_core
+  chibre_net:
+    path: ../packages/chibre_net
+  shared_preferences: ^2.5.6
+  path_provider: ^2.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
