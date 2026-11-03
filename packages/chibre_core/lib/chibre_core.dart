@@ -1,0 +1,37 @@
+/// Chibre game engine, computer players and game analysis.
+library;
+
+export 'src/ai/benchmark.dart';
+export 'src/ai/compute_budget.dart';
+export 'src/ai/computer_player.dart';
+export 'src/ai/expert_player.dart';
+export 'src/ai/heuristic_player.dart';
+export 'src/ai/random_player.dart';
+export 'src/ai/trump_option.dart';
+export 'src/engine/card.dart';
+export 'src/engine/card_set.dart';
+export 'src/engine/card_values.dart';
+export 'src/engine/deal.dart';
+export 'src/engine/deal_source.dart';
+export 'src/engine/game_action.dart';
+export 'src/engine/game_options.dart';
+export 'src/engine/game_record.dart';
+export 'src/engine/game_state.dart';
+export 'src/engine/illegal_action_exception.dart';
+export 'src/engine/legal_moves.dart';
+export 'src/engine/meld.dart';
+export 'src/engine/meld_comparison.dart';
+export 'src/engine/meld_finder.dart';
+export 'src/engine/meld_validator.dart';
+export 'src/engine/player_view.dart';
+export 'src/engine/random_deal_source.dart';
+export 'src/engine/replay_deal_source.dart';
+export 'src/engine/round_state.dart';
+export 'src/engine/score_entry.dart';
+export 'src/engine/seat.dart';
+export 'src/engine/stoeck.dart';
+export 'src/engine/trick.dart';
+export 'src/engine/trump_mode.dart';
+export 'src/insights/blunder.dart';
+export 'src/insights/blunder_calculator.dart';
+export 'src/simulation/match_runner.dart';
