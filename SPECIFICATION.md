@@ -67,7 +67,7 @@ Packages:
 
 * The app must also build and run as a **Linux desktop** app so two instances can be launched on the developer machine and play against each other over localhost. The desktop window opens with a phone form factor (412×906 logical pixels, like a OnePlus 13R).
 * Two Android emulators on the same machine must also work. Because broadcasts don't cross the emulators' virtual networks, debug builds offer a manual "host:port" entry on the join screen.
-* For testing the screens, the desktop app accepts `--test-fix-deal=<hand>` (`sequence`, `stock` or `good-hand`): in every round of a hosted game the host is dealt a preset set of cards (a four-card sequence, King + Queen of spades, or 7 9 J A of diamonds, each with 7♦ so the host chooses trump first), the rest of the deal being random.
+* For testing the screens, the desktop app accepts `--test-fix-deal=<hand>` (`sequence`, `stock` or `good-hand`): in every round of a hosted game the host is dealt a preset set of cards (a four-card sequence, King + Queen of spades, or 7 9 J A of diamonds, each with 7♦ so the host chooses trump first), the rest of the deal being random. With `sequence` the whole deal is fixed instead: every player has a sequence and the host's is the highest, with no other meld possible.
 * A command-line bot-vs-bot simulator (pure Dart, `dart run`) is provided to test the engine and measure AI strength.
 * `README.md` documents how to run all of the above.
 

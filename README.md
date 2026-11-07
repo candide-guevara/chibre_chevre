@@ -42,7 +42,7 @@ of the deal is random), including 7♦ so it chooses trump first.
 
 | `<hand>` | Host's cards |
 |---|---|
-| `sequence` | ♥ 7 8 9 10: a 50 sequence to announce |
+| `sequence` | ♥ 7 8 9 10: a 50 sequence. The whole deal is fixed: every other player has a 20 sequence, so the host's wins |
 | `stock` | ♠ K Q: Stöck when ♠ is trump |
 | `good-hand` | ♦ 7 9 J A |
 

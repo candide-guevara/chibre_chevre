@@ -4,12 +4,14 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('the preset seat always holds its cards, deals stay valid', () {
-    final preset = CardSet.parse('D7 D9 DJ DA');
-    final source = PresetHandDealSource(0, preset, Random(3));
+  test('preset seats always hold their cards, deals stay valid', () {
+    final host = CardSet.parse('D7 D9 DJ DA');
+    final partner = CardSet.parse('S6 S7 S8');
+    final source = PresetHandDealSource({0: host, 2: partner}, Random(3));
     for (var round = 0; round < 5; round++) {
       final deal = source.nextDeal();
-      expect(deal[0] & preset, preset);
+      expect(deal[0] & host, host);
+      expect(deal[2] & partner, partner);
       for (final hand in deal) {
         expect(hand.length, handSize);
       }

@@ -138,7 +138,7 @@ void main() {
       transport: InMemoryTransport(network),
       bots: InlineBotRunner(budget: budget, random: Random(1)),
       timing: SessionTiming.instant,
-      newDeals: (random) => PresetHandDealSource(0, preset, random),
+      newDeals: (random) => PresetHandDealSource({0: preset}, random),
     );
     await host.create(const HostConfig(gameName: 'g', nickname: 'Ana'));
     await newClient(network).join(await findGame(network));

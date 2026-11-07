@@ -56,11 +56,7 @@ class AppServices {
     store: savedGames,
     newDeals: testDeal == null
         ? null
-        : (random) => PresetHandDealSource(
-            HostSession.hostSeat,
-            testDeal!.cards,
-            random,
-          ),
+        : (random) => PresetHandDealSource(testDeal!.presets, random),
   );
 
   ClientSession newClientSession() => ClientSession(
