@@ -55,26 +55,45 @@ class _StartScreenState extends State<StartScreen> {
             children: [
               Text('Chibre', style: Theme.of(context).textTheme.displayMedium),
               const SizedBox(height: 48),
-              if (_savedGame != null) ...[
-                FilledButton(
-                  onPressed: hasProfile ? _resume : null,
-                  child: Text('Reprendre « $_savedGame »'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                // All buttons as wide as the widest one.
+                child: IntrinsicWidth(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (_savedGame != null) ...[
+                        FilledButton(
+                          onPressed: hasProfile ? _resume : null,
+                          child: Text(
+                            'Reprendre « $_savedGame »',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      FilledButton(
+                        onPressed: hasProfile
+                            ? () => _open(const JoinScreen())
+                            : null,
+                        child: const Text('Rejoindre une partie'),
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        onPressed: hasProfile
+                            ? () => _open(const HostScreen())
+                            : null,
+                        child: const Text('Créer une partie'),
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        onPressed: () => _open(const ProfileScreen()),
+                        child: const Text('Profil'),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-              ],
-              FilledButton(
-                onPressed: hasProfile ? () => _open(const JoinScreen()) : null,
-                child: const Text('Rejoindre une partie'),
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: hasProfile ? () => _open(const HostScreen()) : null,
-                child: const Text('Créer une partie'),
-              ),
-              const SizedBox(height: 16),
-              OutlinedButton(
-                onPressed: () => _open(const ProfileScreen()),
-                child: const Text('Profil'),
               ),
             ],
           ),
