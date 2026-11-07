@@ -299,7 +299,7 @@ class _PlayScreenState extends State<PlayScreen> {
       builder: (context, box) {
         final cardWidth = (box.maxHeight / 5.2).clamp(36.0, 72.0);
         final sideNamesBottom =
-            box.maxHeight / 2 + cardWidth * cardAspectRatio / 2 + 4;
+            box.maxHeight / 2 + cardWidth * cardAspectRatio / 2 + 16;
         return Stack(
           children: [
             Align(alignment: Alignment.topCenter, child: seat(top)),
