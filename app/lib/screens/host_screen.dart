@@ -21,7 +21,7 @@ class HostScreen extends StatefulWidget {
 }
 
 class _HostScreenState extends State<HostScreen> {
-  late final _name = TextEditingController(text: _defaultName);
+  final _name = TextEditingController();
   final _target = TextEditingController();
   var _obenUnde = false;
   var _multipliers = false;
@@ -34,6 +34,7 @@ class _HostScreenState extends State<HostScreen> {
     super.didChangeDependencies();
     if (_loaded) return;
     _loaded = true;
+    _name.text = _defaultName;
     _apply(Services.of(context).profile.gameDefaults);
   }
 

@@ -24,6 +24,13 @@ class AppServices {
     this.testDeal,
   });
 
+  /// Services without network or files, for widget tests.
+  @visibleForTesting
+  AppServices.forTesting({required this.profile, required this.savedGames})
+    : transport = InMemoryTransport(InMemoryNetwork()),
+      budget = Future.value(ComputeBudget.standard),
+      testDeal = null;
+
   static Future<AppServices> start({TestDeal? testDeal}) async {
     final profile = await ProfileStore.open(profile: _profileName);
     final directory = await getApplicationSupportDirectory();
