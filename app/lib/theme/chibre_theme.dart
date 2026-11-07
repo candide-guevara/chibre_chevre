@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/back_arrow.dart';
+
 /// A sober palette derived from billiard table green.
 abstract final class ChibreColors {
   static const felt = Color(0xFF0B6B3A);
@@ -24,6 +26,9 @@ ThemeData chibreTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: ChibreColors.felt,
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (context) => const BackArrow(),
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: ChibreColors.feltDark,
       foregroundColor: ChibreColors.ivory,
