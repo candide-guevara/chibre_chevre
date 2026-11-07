@@ -805,46 +805,46 @@ class Leave extends $pb.GeneratedMessage {
   static Leave? _defaultInstance;
 }
 
-/// The player closed the meld recap shown after the first trick.
-class DismissMelds extends $pb.GeneratedMessage {
-  factory DismissMelds() => DismissMelds._();
+/// The player closed the recap of the announcements (melds, Stöck).
+class DismissRecap extends $pb.GeneratedMessage {
+  factory DismissRecap() => DismissRecap._();
 
-  DismissMelds._();
+  DismissRecap._();
 
-  factory DismissMelds.fromBuffer($core.List<$core.int> data,
+  factory DismissRecap.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      DismissMelds()..mergeFromBuffer(data, registry);
-  factory DismissMelds.fromJson($core.String json,
+      DismissRecap()..mergeFromBuffer(data, registry);
+  factory DismissRecap.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      DismissMelds()..mergeFromJson(json, registry);
+      DismissRecap()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'DismissMelds',
+      _omitMessageNames ? '' : 'DismissRecap',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
-      createEmptyInstance: DismissMelds.$_createMessage)
+      createEmptyInstance: DismissRecap.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DismissMelds clone() => deepCopy();
+  DismissRecap clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DismissMelds copyWith(void Function(DismissMelds) updates) =>
-      super.copyWith((message) => updates(message as DismissMelds))
-          as DismissMelds;
+  DismissRecap copyWith(void Function(DismissRecap) updates) =>
+      super.copyWith((message) => updates(message as DismissRecap))
+          as DismissRecap;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  @$core.Deprecated('Use DismissMelds() / DismissMelds.new instead')
-  static DismissMelds create() => DismissMelds._();
-  static $pb.GeneratedMessage $_createMessage() => DismissMelds._();
+  @$core.Deprecated('Use DismissRecap() / DismissRecap.new instead')
+  static DismissRecap create() => DismissRecap._();
+  static $pb.GeneratedMessage $_createMessage() => DismissRecap._();
   @$core.override
-  DismissMelds createEmptyInstance() => DismissMelds._();
+  DismissRecap createEmptyInstance() => DismissRecap._();
   @$core.pragma('dart2js:noInline')
-  static DismissMelds getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DismissMelds>(
-          DismissMelds.$_createMessage);
-  static DismissMelds? _defaultInstance;
+  static DismissRecap getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DismissRecap>(
+          DismissRecap.$_createMessage);
+  static DismissRecap? _defaultInstance;
 }
 
 /// The player chose their melds (sent with their first card) or not to
@@ -897,7 +897,7 @@ enum ClientMessage_Body {
   answerRematch,
   presence,
   leave,
-  dismissMelds,
+  dismissRecap,
   meldsChosen,
   notSet
 }
@@ -910,7 +910,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     AnswerRematch? answerRematch,
     Presence? presence,
     Leave? leave,
-    DismissMelds? dismissMelds,
+    DismissRecap? dismissRecap,
     MeldsChosen? meldsChosen,
   }) {
     final result = ClientMessage._();
@@ -920,7 +920,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     if (answerRematch != null) result.answerRematch = answerRematch;
     if (presence != null) result.presence = presence;
     if (leave != null) result.leave = leave;
-    if (dismissMelds != null) result.dismissMelds = dismissMelds;
+    if (dismissRecap != null) result.dismissRecap = dismissRecap;
     if (meldsChosen != null) result.meldsChosen = meldsChosen;
     return result;
   }
@@ -942,7 +942,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     4: ClientMessage_Body.answerRematch,
     5: ClientMessage_Body.presence,
     6: ClientMessage_Body.leave,
-    7: ClientMessage_Body.dismissMelds,
+    7: ClientMessage_Body.dismissRecap,
     8: ClientMessage_Body.meldsChosen,
     0: ClientMessage_Body.notSet
   };
@@ -963,8 +963,8 @@ class ClientMessage extends $pb.GeneratedMessage {
         subBuilder: Presence.$_createMessage)
     ..aOM<Leave>(6, _omitFieldNames ? '' : 'leave',
         subBuilder: Leave.$_createMessage)
-    ..aOM<DismissMelds>(7, _omitFieldNames ? '' : 'dismissMelds',
-        subBuilder: DismissMelds.$_createMessage)
+    ..aOM<DismissRecap>(7, _omitFieldNames ? '' : 'dismissRecap',
+        subBuilder: DismissRecap.$_createMessage)
     ..aOM<MeldsChosen>(8, _omitFieldNames ? '' : 'meldsChosen',
         subBuilder: MeldsChosen.$_createMessage)
     ..hasRequiredFields = false;
@@ -1077,15 +1077,15 @@ class ClientMessage extends $pb.GeneratedMessage {
   Leave ensureLeave() => $_ensure(5);
 
   @$pb.TagNumber(7)
-  DismissMelds get dismissMelds => $_getN(6);
+  DismissRecap get dismissRecap => $_getN(6);
   @$pb.TagNumber(7)
-  set dismissMelds(DismissMelds value) => $_setField(7, value);
+  set dismissRecap(DismissRecap value) => $_setField(7, value);
   @$pb.TagNumber(7)
-  $core.bool hasDismissMelds() => $_has(6);
+  $core.bool hasDismissRecap() => $_has(6);
   @$pb.TagNumber(7)
-  void clearDismissMelds() => $_clearField(7);
+  void clearDismissRecap() => $_clearField(7);
   @$pb.TagNumber(7)
-  DismissMelds ensureDismissMelds() => $_ensure(6);
+  DismissRecap ensureDismissRecap() => $_ensure(6);
 
   @$pb.TagNumber(8)
   MeldsChosen get meldsChosen => $_getN(7);
@@ -1681,7 +1681,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     RematchProposal? rematch,
     Insights? insights,
     $core.int? trickHoldMs,
-    $core.Iterable<$core.int>? meldRecapFor,
+    $core.Iterable<$core.int>? recapFor,
     $core.Iterable<$core.int>? meldChoiceFor,
   }) {
     final result = TableSnapshot._();
@@ -1707,7 +1707,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (rematch != null) result.rematch = rematch;
     if (insights != null) result.insights = insights;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
-    if (meldRecapFor != null) result.meldRecapFor.addAll(meldRecapFor);
+    if (recapFor != null) result.recapFor.addAll(recapFor);
     if (meldChoiceFor != null) result.meldChoiceFor.addAll(meldChoiceFor);
     return result;
   }
@@ -1759,8 +1759,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
         subBuilder: Insights.$_createMessage)
     ..aI(22, _omitFieldNames ? '' : 'trickHoldMs',
         fieldType: $pb.PbFieldType.OU3)
-    ..p<$core.int>(
-        23, _omitFieldNames ? '' : 'meldRecapFor', $pb.PbFieldType.KU3)
+    ..p<$core.int>(23, _omitFieldNames ? '' : 'recapFor', $pb.PbFieldType.KU3)
     ..p<$core.int>(
         24, _omitFieldNames ? '' : 'meldChoiceFor', $pb.PbFieldType.KU3)
     ..hasRequiredFields = false;
@@ -1965,9 +1964,10 @@ class TableSnapshot extends $pb.GeneratedMessage {
   @$pb.TagNumber(22)
   void clearTrickHoldMs() => $_clearField(22);
 
-  /// Seats still reading the meld recap; nobody plays until it is empty.
+  /// Seats still reading the recap of the announcements; nobody plays until
+  /// it is empty.
   @$pb.TagNumber(23)
-  $pb.PbList<$core.int> get meldRecapFor => $_getList(22);
+  $pb.PbList<$core.int> get recapFor => $_getList(22);
 
   /// Humans still choosing their melds; the bots wait for them.
   @$pb.TagNumber(24)

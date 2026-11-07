@@ -189,7 +189,7 @@ void main() {
             botDelay: Duration.zero,
             trickSlide: Duration.zero,
             roundSummary: Duration.zero,
-            meldRecap: recap),
+            recap: recap),
         newDeals: (random) =>
             PresetHandDealSource({0: CardSet.parse('D7 H7 H8 H9 H10')}, random),
       );
@@ -199,14 +199,14 @@ void main() {
       await client.join(await findGame(network));
       final clientPlay =
           autoplay(client.tables, client.act, client.meldsChosen);
-      final shown = host.tables.firstWhere((t) => t.meldRecapFor.isNotEmpty);
+      final shown = host.tables.firstWhere((t) => t.recapFor.isNotEmpty);
       await pumpEventQueue();
       host.act(const ChooseTrump(0, TrumpMode.hearts));
       final sequence = Meld.fromCards(CardSet.parse('H7 H8 H9 H10'))!;
       host.act(PlayCard(0, Card.parse('D7'), melds: [sequence]));
       final table = await shown;
-      expect(table.meldRecapFor, [0, 2]);
-      expect(table.showsMeldRecap, isTrue);
+      expect(table.recapFor, [0, 2]);
+      expect(table.showsRecap, isTrue);
       expect(table.isMyTurn, isFalse);
       return (host, client, clientPlay);
     }
@@ -214,13 +214,13 @@ void main() {
     test('ends once both humans closed it', () async {
       final (host, client, clientPlay) =
           await playFirstTrick(const Duration(minutes: 1));
-      client.dismissMelds();
-      await host.tables.firstWhere((t) => t.meldRecapFor.length == 1);
-      expect(host.table!.showsMeldRecap, isTrue);
+      client.dismissRecap();
+      await host.tables.firstWhere((t) => t.recapFor.length == 1);
+      expect(host.table!.showsRecap, isTrue);
       expect(() => host.act(PlayCard(0, host.table!.player!.hand.cards.first)),
           throwsA(isA<IllegalActionException>()));
-      host.dismissMelds();
-      expect(host.table!.meldRecapFor, isEmpty);
+      host.dismissRecap();
+      expect(host.table!.recapFor, isEmpty);
       await clientPlay.cancel();
       await host.close();
     });
@@ -228,10 +228,65 @@ void main() {
     test('ends by itself after its duration', () async {
       final (host, _, clientPlay) =
           await playFirstTrick(const Duration(milliseconds: 50));
-      await host.tables.firstWhere((t) => t.meldRecapFor.isEmpty);
+      await host.tables.firstWhere((t) => t.recapFor.isEmpty);
       await clientPlay.cancel();
       await host.close();
     });
+  });
+
+  test('Stöck is recapped after the trick in which it was announced', () async {
+    final network = InMemoryNetwork();
+    final host = HostSession(
+      transport: InMemoryTransport(network),
+      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      timing: const SessionTiming(
+          botDelay: Duration.zero,
+          trickSlide: Duration.zero,
+          roundSummary: Duration.zero,
+          recap: Duration(minutes: 1)),
+      newDeals: (random) => PresetHandDealSource(
+          {0: CardSet.parse('D7 S6 S7 S8 S9 S10 SJ SQ SK')}, random),
+    );
+    await host.create(const HostConfig(
+        gameName: 'g', nickname: 'Ana', trickHold: Duration.zero));
+    final client = newClient(network);
+    await client.join(await findGame(network));
+    final clientPlay = autoplay(client.tables, client.act, client.meldsChosen);
+    final king = Card.parse('SK'), queen = Card.parse('SQ');
+    // The host plays the king first, then the queen with Stöck.
+    final hostPlay = host.tables.listen((_) {
+      final table = host.table!; // Events may be stale.
+      if (table.showsRecap && table.player!.stoeckSeat == null) {
+        // The bots' melds after the first trick.
+        host.dismissRecap();
+        client.dismissRecap();
+      }
+      if (!table.isMyTurn || table.phase != TablePhase.playing) return;
+      final player = table.player!;
+      final legal = player.legalCards;
+      if (legal.contains(king)) {
+        host.act(PlayCard(0, king));
+      } else if (legal.contains(queen)) {
+        host.act(PlayCard(0, queen, stoeck: true));
+      } else {
+        host.act(PlayCard(0, legal.cards.first));
+      }
+    });
+    final recap = host.tables
+        .firstWhere((t) => t.recapFor.isNotEmpty && t.player!.stoeckSeat == 0);
+    await pumpEventQueue();
+    host.act(const ChooseTrump(0, TrumpMode.spades));
+    host.meldsChosen();
+    final table = await recap;
+    final tricks = table.player!.completedTricks;
+    expect(stoeckTrickIndex(tricks, 0, TrumpMode.spades), tricks.length - 1);
+    expect(table.recapFor, [0, 2]);
+    client.dismissRecap();
+    host.dismissRecap();
+    await host.tables.firstWhere((t) => t.recapFor.isEmpty);
+    await hostPlay.cancel();
+    await clientPlay.cancel();
+    await host.close();
   });
 
   test('illegal actions of the joiner are rejected', () async {

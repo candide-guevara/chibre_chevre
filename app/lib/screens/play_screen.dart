@@ -11,7 +11,7 @@ import '../labels.dart';
 import '../theme/chibre_theme.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
-import '../widgets/meld_summary.dart';
+import '../widgets/announcement_summary.dart';
 import '../widgets/pause_overlay.dart';
 import '../widgets/playing_card.dart';
 import '../widgets/round_summary.dart';
@@ -293,7 +293,6 @@ class _PlayScreenState extends State<PlayScreen> {
       nickname: table.nicknames[seat],
       isTurn: table.seatToAct == seat,
       isTrumpChooser: player.trumpChooser == seat && player.mode != null,
-      announcement: _announcement(player, seat),
     );
 
     final shownTrick = switch (player.currentTrick) {
@@ -334,13 +333,13 @@ class _PlayScreenState extends State<PlayScreen> {
                       : null,
                 ),
               ),
-            if (table.showsMeldRecap)
+            if (table.showsRecap)
               Center(
-                child: MeldSummary(
+                child: AnnouncementSummary(
                   player: player,
                   nicknames: table.nicknames,
                   multiplier: table.options.multiplierFor(player.mode!),
-                  onDismiss: _controller.dismissMelds,
+                  onDismiss: _controller.dismissRecap,
                 ),
               ),
             if (table.phase == TablePhase.roundOver)
@@ -355,11 +354,6 @@ class _PlayScreenState extends State<PlayScreen> {
       },
     );
   }
-
-  /// Melds are not recalled under the names: players must remember them,
-  /// as at a real table.
-  String? _announcement(PlayerView player, int seat) =>
-      player.stoeckSeat == seat ? 'Stöck' : null;
 
   Widget _actionArea(TableView table) {
     final player = table.player!;
@@ -445,7 +439,7 @@ class _PlayScreenState extends State<PlayScreen> {
   /// What the game waits for when it is not this player's turn.
   String? _waitingFor(TableView table) {
     String name(int seat) => table.nicknames[seat];
-    final reading = table.meldRecapFor.where((seat) => seat != table.seat);
+    final reading = table.recapFor.where((seat) => seat != table.seat);
     if (reading.isNotEmpty) return '${name(reading.first)} lit les annonces…';
     final choosing = table.meldChoiceFor.where((seat) => seat != table.seat);
     if (choosing.isNotEmpty) {

@@ -29,7 +29,7 @@ class ClientGameController implements GameController {
   void meldsChosen() => session.meldsChosen();
 
   @override
-  void dismissMelds() => session.dismissMelds();
+  void dismissRecap() => session.dismissRecap();
 
   @override
   void setAway(bool away) => session.setAway(away);

@@ -162,6 +162,10 @@ void main() {
       expect(entries.single.reason, ScoreReason.stoeck);
       expect(entries.single.points, 20);
       expect(round.stoeckSeat, 0);
+      expect(stoeckTrickIndex(round.completedTricks, 0, TrumpMode.spades),
+          isNull); // The trick is not over yet.
+      playFirstLegalCards(round);
+      expect(stoeckTrickIndex(round.completedTricks, 0, TrumpMode.spades), 1);
     });
 
     test('does not exist without trump', () {

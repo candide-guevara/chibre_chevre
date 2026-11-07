@@ -16,7 +16,7 @@ import 'bot_runner.dart';
 import 'card_style.dart';
 import 'host_config.dart';
 import 'meld_choice.dart';
-import 'meld_recap.dart';
+import 'announcement_recap.dart';
 import 'saved_game_store.dart';
 import 'session_timing.dart';
 import 'table_view.dart';
@@ -69,7 +69,7 @@ class HostSession {
   var _analysing = false;
   var _version = 0;
   Timer? _timer;
-  final _meldRecap = MeldRecap();
+  final _recap = AnnouncementRecap();
   final _meldChoice = MeldChoice();
   var _closed = false;
 
@@ -130,8 +130,8 @@ class HostSession {
   /// The host chose its melds, or not to announce any.
   void meldsChosen() => _chooseMelds(hostSeat);
 
-  /// The host closed the meld recap.
-  void dismissMelds() => _dismissMelds(hostSeat);
+  /// The host closed the recap of the announcements.
+  void dismissRecap() => _dismissRecap(hostSeat);
 
   /// The host app went to the background (or came back): pause the game.
   void setAway(bool away) {
@@ -217,7 +217,7 @@ class HostSession {
     };
     final acting =
         (phase == TablePhase.choosingTrump || phase == TablePhase.playing) &&
-            !_waitsForMeldRecap(game.round);
+            !_waitsForRecap(game.round);
     return TableView(
       seat: seat,
       nicknames: List.unmodifiable(_nicknames),
@@ -235,7 +235,7 @@ class HostSession {
       rematch: _rematch,
       insights: _insights,
       leftBy: _leftBy,
-      meldRecapFor: _meldRecap.waitingFor,
+      recapFor: _recap.waitingFor,
       meldChoiceFor: _meldChoice.pending(game.round, _humans),
     );
   }
@@ -312,7 +312,7 @@ class HostSession {
         });
       case GamePhase.choosingTrump || GamePhase.playing:
         if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
-        if (_scheduleMeldRecap(game.round)) return;
+        if (_scheduleRecap(game.round)) return;
         final seat = game.seatToAct;
         if (seat == hostSeat || seat == joinerSeat) return;
         if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
@@ -321,20 +321,20 @@ class HostSession {
     }
   }
 
-  /// Opens the meld recap once the first trick has been collected, and
-  /// closes it when it times out. Returns whether play must wait for it.
-  bool _scheduleMeldRecap(RoundState round) {
-    if (round.completedTricks.isEmpty) _meldRecap.reset();
-    if (_meldRecap.isActive) {
-      _timer = Timer(_meldRecap.remaining, () {
-        _meldRecap.end();
+  /// Opens the recap of the announcements once a trick that had some has
+  /// been collected, and closes it when it times out. Returns whether play must wait for it.
+  bool _scheduleRecap(RoundState round) {
+    if (round.completedTricks.isEmpty) _recap.reset();
+    if (_recap.isActive) {
+      _timer = Timer(_recap.remaining, () {
+        _recap.end();
         _changed();
       });
       return true;
     }
-    if (_meldRecap.isDue(round)) {
+    if (_recap.isDue(round)) {
       _timer = Timer(_trickHold + timing.trickSlide, () {
-        _meldRecap.start([hostSeat, joinerSeat], timing.meldRecap);
+        _recap.start(round, [hostSeat, joinerSeat], timing.recap);
         _changed();
       });
       return true;
@@ -342,9 +342,9 @@ class HostSession {
     return false;
   }
 
-  /// From the end of the first trick until the meld recap is closed.
-  bool _waitsForMeldRecap(RoundState round) =>
-      _meldRecap.isActive || _meldRecap.isDue(round);
+  /// From the end of a trick with announcements until their recap is closed.
+  bool _waitsForRecap(RoundState round) =>
+      _recap.isActive || _recap.isDue(round);
 
   static const _humans = [hostSeat, joinerSeat];
 
@@ -353,18 +353,19 @@ class HostSession {
     _changed();
   }
 
-  void _dismissMelds(int seat) {
-    if (!_meldRecap.isActive) return;
-    _meldRecap.dismiss(seat);
+  void _dismissRecap(int seat) {
+    if (!_recap.isActive) return;
+    _recap.dismiss(seat);
     _changed();
   }
 
   /// After a trick, the humans watch it stay on the table and slide to its
-  /// winner, unless the meld recap already gave them that time.
+  /// winner, unless the recap of the announcements already gave them that
+  /// time.
   Duration _pauseBeforeBot(RoundState round) {
     final trickJustEnded =
         round.currentTrick?.isEmpty == true && round.completedTricks.isNotEmpty;
-    final afterRecap = round.completedTricks.length == 1 && _meldRecap.wasShown;
+    final afterRecap = _recap.wasShownAfterLastTrick(round);
     return trickJustEnded && !afterRecap
         ? _trickHold + timing.trickSlide
         : Duration.zero;
@@ -397,8 +398,8 @@ class HostSession {
     if (_pausedFor != null) {
       throw const IllegalActionException('The game is paused');
     }
-    if (_waitsForMeldRecap(game.round)) {
-      throw const IllegalActionException('The melds are being shown');
+    if (_waitsForRecap(game.round)) {
+      throw const IllegalActionException('The announcements are being shown');
     }
     game.apply(action);
     _changed();
@@ -494,8 +495,8 @@ class HostSession {
         _changed();
       case pb.ClientMessage_Body.meldsChosen:
         _chooseMelds(joinerSeat);
-      case pb.ClientMessage_Body.dismissMelds:
-        _dismissMelds(joinerSeat);
+      case pb.ClientMessage_Body.dismissRecap:
+        _dismissRecap(joinerSeat);
       case pb.ClientMessage_Body.leave:
         _leftBy = _nicknames[joinerSeat];
         _timer?.cancel();

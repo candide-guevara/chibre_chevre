@@ -19,7 +19,7 @@ abstract interface class GameController {
   void meldsChosen();
 
   /// The player closed the meld recap.
-  void dismissMelds();
+  void dismissRecap();
 
   /// The app went to the background (or came back).
   void setAway(bool away);

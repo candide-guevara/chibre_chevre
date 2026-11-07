@@ -67,9 +67,9 @@ class ClientSession {
   /// The player chose their melds, or not to announce any.
   void meldsChosen() => _send(pb.ClientMessage(meldsChosen: pb.MeldsChosen()));
 
-  /// The player closed the meld recap.
-  void dismissMelds() =>
-      _send(pb.ClientMessage(dismissMelds: pb.DismissMelds()));
+  /// The player closed the recap of the announcements.
+  void dismissRecap() =>
+      _send(pb.ClientMessage(dismissRecap: pb.DismissRecap()));
 
   /// Leaves the game for good.
   Future<void> leave() async {

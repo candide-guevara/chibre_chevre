@@ -257,14 +257,14 @@ const Leave$json = {
 final $typed_data.Uint8List leaveDescriptor =
     $convert.base64Decode('CgVMZWF2ZQ==');
 
-@$core.Deprecated('Use dismissMeldsDescriptor instead')
-const DismissMelds$json = {
-  '1': 'DismissMelds',
+@$core.Deprecated('Use dismissRecapDescriptor instead')
+const DismissRecap$json = {
+  '1': 'DismissRecap',
 };
 
-/// Descriptor for `DismissMelds`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List dismissMeldsDescriptor =
-    $convert.base64Decode('CgxEaXNtaXNzTWVsZHM=');
+/// Descriptor for `DismissRecap`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dismissRecapDescriptor =
+    $convert.base64Decode('CgxEaXNtaXNzUmVjYXA=');
 
 @$core.Deprecated('Use meldsChosenDescriptor instead')
 const MeldsChosen$json = {
@@ -334,13 +334,13 @@ const ClientMessage$json = {
       '10': 'leave'
     },
     {
-      '1': 'dismiss_melds',
+      '1': 'dismiss_recap',
       '3': 7,
       '4': 1,
       '5': 11,
-      '6': '.chibre.DismissMelds',
+      '6': '.chibre.DismissRecap',
       '9': 0,
-      '10': 'dismissMelds'
+      '10': 'dismissRecap'
     },
     {
       '1': 'melds_chosen',
@@ -364,8 +364,8 @@ final $typed_data.Uint8List clientMessageDescriptor = $convert.base64Decode(
     'YXRjaBgDIAEoCzIWLmNoaWJyZS5Qcm9wb3NlUmVtYXRjaEgAUg5wcm9wb3NlUmVtYXRjaBI+Cg'
     '5hbnN3ZXJfcmVtYXRjaBgEIAEoCzIVLmNoaWJyZS5BbnN3ZXJSZW1hdGNoSABSDWFuc3dlclJl'
     'bWF0Y2gSLgoIcHJlc2VuY2UYBSABKAsyEC5jaGlicmUuUHJlc2VuY2VIAFIIcHJlc2VuY2USJQ'
-    'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmUSOwoNZGlzbWlzc19tZWxkcxgH'
-    'IAEoCzIULmNoaWJyZS5EaXNtaXNzTWVsZHNIAFIMZGlzbWlzc01lbGRzEjgKDG1lbGRzX2Nob3'
+    'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmUSOwoNZGlzbWlzc19yZWNhcBgH'
+    'IAEoCzIULmNoaWJyZS5EaXNtaXNzUmVjYXBIAFIMZGlzbWlzc1JlY2FwEjgKDG1lbGRzX2Nob3'
     'NlbhgIIAEoCzITLmNoaWJyZS5NZWxkc0Nob3NlbkgAUgttZWxkc0Nob3NlbkIGCgRib2R5');
 
 @$core.Deprecated('Use welcomeDescriptor instead')
@@ -636,7 +636,7 @@ const TableSnapshot$json = {
       '10': 'insights'
     },
     {'1': 'trick_hold_ms', '3': 22, '4': 1, '5': 13, '10': 'trickHoldMs'},
-    {'1': 'meld_recap_for', '3': 23, '4': 3, '5': 13, '10': 'meldRecapFor'},
+    {'1': 'recap_for', '3': 23, '4': 3, '5': 13, '10': 'recapFor'},
     {'1': 'meld_choice_for', '3': 24, '4': 3, '5': 13, '10': 'meldChoiceFor'},
   ],
   '4': [TableSnapshot_Phase$json],
@@ -671,10 +671,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'ASgFUgt3aW5uaW5nVGVhbRIdCgpwYXVzZWRfZm9yGBMgASgJUglwYXVzZWRGb3ISMQoHcmVtYX'
     'RjaBgUIAEoCzIXLmNoaWJyZS5SZW1hdGNoUHJvcG9zYWxSB3JlbWF0Y2gSLAoIaW5zaWdodHMY'
     'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzEiIKDXRyaWNrX2hvbGRfbXMYFiABKA'
-    '1SC3RyaWNrSG9sZE1zEiQKDm1lbGRfcmVjYXBfZm9yGBcgAygNUgxtZWxkUmVjYXBGb3ISJgoP'
-    'bWVsZF9jaG9pY2VfZm9yGBggAygNUg1tZWxkQ2hvaWNlRm9yIn0KBVBoYXNlEhwKGFBIQVNFX1'
-    'dBSVRJTkdfRk9SX1BMQVlFUhAAEhgKFFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0Vf'
-    'UExBWUlORxACEhQKEFBIQVNFX1JPVU5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
+    '1SC3RyaWNrSG9sZE1zEhsKCXJlY2FwX2ZvchgXIAMoDVIIcmVjYXBGb3ISJgoPbWVsZF9jaG9p'
+    'Y2VfZm9yGBggAygNUg1tZWxkQ2hvaWNlRm9yIn0KBVBoYXNlEhwKGFBIQVNFX1dBSVRJTkdfRk'
+    '9SX1BMQVlFUhAAEhgKFFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0VfUExBWUlORxAC'
+    'EhQKEFBIQVNFX1JPVU5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {

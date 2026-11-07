@@ -94,8 +94,8 @@ message Presence {
 
 message Leave {}
 
-// The player closed the meld recap shown after the first trick.
-message DismissMelds {}
+// The player closed the recap of the announcements (melds, Stöck).
+message DismissRecap {}
 
 // The player chose their melds (sent with their first card) or not to
 // announce any.
@@ -109,7 +109,7 @@ message ClientMessage {
     AnswerRematch answer_rematch = 4;
     Presence presence = 5;
     Leave leave = 6;
-    DismissMelds dismiss_melds = 7;
+    DismissRecap dismiss_recap = 7;
     MeldsChosen melds_chosen = 8;
   }
 }
@@ -208,8 +208,9 @@ message TableSnapshot {
   Insights insights = 21;
   // How long a complete trick stays before sliding to its winner.
   uint32 trick_hold_ms = 22;
-  // Seats still reading the meld recap; nobody plays until it is empty.
-  repeated uint32 meld_recap_for = 23;
+  // Seats still reading the recap of the announcements; nobody plays until
+  // it is empty.
+  repeated uint32 recap_for = 23;
   // Humans still choosing their melds; the bots wait for them.
   repeated uint32 meld_choice_for = 24;
 }

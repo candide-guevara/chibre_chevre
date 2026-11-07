@@ -37,14 +37,14 @@ class FakeController implements GameController {
   @override
   void answerRematch({required bool accept}) {}
 
-  var dismissedMelds = false;
+  var dismissedRecap = false;
   var choseMelds = false;
 
   @override
   void meldsChosen() => choseMelds = true;
 
   @override
-  void dismissMelds() => dismissedMelds = true;
+  void dismissRecap() => dismissedRecap = true;
 
   @override
   void setAway(bool away) {}
@@ -72,7 +72,7 @@ GameState newGame() {
 TableView tableOf(
   GameState game, {
   int seat = 0,
-  List<int> meldRecapFor = const [],
+  List<int> recapFor = const [],
   List<int> meldChoiceFor = const [],
 }) => TableView(
   seat: seat,
@@ -88,7 +88,7 @@ TableView tableOf(
   seatToAct: game.seatToAct,
   roundPoints: game.round.points,
   trickHold: const Duration(milliseconds: 700),
-  meldRecapFor: meldRecapFor,
+  recapFor: recapFor,
   meldChoiceFor: meldChoiceFor,
 );
 
@@ -226,7 +226,7 @@ void main() {
       final seat = game.seatToAct;
       game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
     }
-    final controller = FakeController(tableOf(game, meldRecapFor: [0, 2]));
+    final controller = FakeController(tableOf(game, recapFor: [0, 2]));
     await pumpScreen(tester, controller);
     expect(find.text('Annonces'), findsOneWidget);
     expect(find.textContaining('Ana : 20 ('), findsOneWidget);
@@ -234,9 +234,9 @@ void main() {
     expect(find.text('Ordi +20'), findsOneWidget);
 
     await tester.tap(find.text('Annonces'));
-    expect(controller.dismissedMelds, isTrue);
+    expect(controller.dismissedRecap, isTrue);
 
-    controller.show(tableOf(game, meldRecapFor: [2]));
+    controller.show(tableOf(game, recapFor: [2]));
     await tester.pump();
     expect(find.text('Annonces'), findsNothing);
     expect(find.text('Bea lit les annonces…'), findsOneWidget);
@@ -348,6 +348,17 @@ void main() {
     final play = controller.actions.single as PlayCard;
     expect(play.card, king);
     expect(play.stoeck, isTrue);
+
+    // Once the trick is over, a pop-up says who announced Stöck.
+    game.apply(play);
+    while (game.round.currentTrick!.cards.isNotEmpty) {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
+    }
+    controller.show(tableOf(game, recapFor: [0, 2]));
+    await tester.pump();
+    expect(find.text('Ana : Stöck'), findsOneWidget);
+    expect(find.text('Nous +20'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
   });
 }
