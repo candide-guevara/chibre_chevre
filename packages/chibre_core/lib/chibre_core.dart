@@ -24,6 +24,7 @@ export 'src/engine/meld_comparison.dart';
 export 'src/engine/meld_finder.dart';
 export 'src/engine/meld_validator.dart';
 export 'src/engine/player_view.dart';
+export 'src/engine/preset_hand_deal_source.dart';
 export 'src/engine/random_deal_source.dart';
 export 'src/engine/replay_deal_source.dart';
 export 'src/engine/round_state.dart';

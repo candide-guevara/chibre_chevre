@@ -131,6 +131,22 @@ void main() {
     await restarted.close();
   });
 
+  test('new games can be dealt from a given deal source', () async {
+    final network = InMemoryNetwork();
+    final preset = CardSet.parse('D7 D9 DJ DA');
+    final host = HostSession(
+      transport: InMemoryTransport(network),
+      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      timing: SessionTiming.instant,
+      newDeals: (random) => PresetHandDealSource(0, preset, random),
+    );
+    await host.create(const HostConfig(gameName: 'g', nickname: 'Ana'));
+    await newClient(network).join(await findGame(network));
+    await pumpEventQueue();
+    expect(host.table!.player!.hand & preset, preset);
+    await host.close();
+  });
+
   test('illegal actions of the joiner are rejected', () async {
     final network = InMemoryNetwork();
     final (host, client) = await startGame(network);

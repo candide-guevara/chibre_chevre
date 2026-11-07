@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'compute_budget_loader.dart';
 import 'network_lock.dart';
 import 'profile_store.dart';
+import 'test_deal.dart';
 
 /// Lets two instances on one computer act as two phones in the local demo:
 /// `flutter run -d linux --dart-define=CHIBRE_PROFILE=bea`.
@@ -20,9 +21,10 @@ class AppServices {
     required this.transport,
     required this.savedGames,
     required this.budget,
+    this.testDeal,
   });
 
-  static Future<AppServices> start() async {
+  static Future<AppServices> start({TestDeal? testDeal}) async {
     final profile = await ProfileStore.open(profile: _profileName);
     final directory = await getApplicationSupportDirectory();
     final suffix = _profileName.isEmpty ? '' : '-$_profileName';
@@ -34,6 +36,7 @@ class AppServices {
         File('${directory.path}/saved-game$suffix.bin'),
       ),
       budget: loadComputeBudget(profile),
+      testDeal: testDeal,
     );
   }
 
@@ -44,10 +47,20 @@ class AppServices {
   /// Measured in the background at startup.
   final Future<ComputeBudget> budget;
 
+  /// Cards dealt to the host in every round, for testing.
+  final TestDeal? testDeal;
+
   Future<HostSession> newHostSession() async => HostSession(
     transport: transport,
     bots: IsolateBotRunner(budget: await budget),
     store: savedGames,
+    newDeals: testDeal == null
+        ? null
+        : (random) => PresetHandDealSource(
+            HostSession.hostSeat,
+            testDeal!.cards,
+            random,
+          ),
   );
 
   ClientSession newClientSession() => ClientSession(

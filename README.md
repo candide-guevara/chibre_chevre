@@ -36,6 +36,21 @@ flutter run -d linux --dart-define=CHIBRE_PROFILE=bea # second player
 Set a nickname in "Profil" on both, "Créer une partie" on one and
 "Rejoindre une partie" on the other.
 
+To test the screens without waiting for the right cards, start the host with
+`--test-fix-deal=<hand>`: in every round the host gets these cards (the rest
+of the deal is random), including 7♦ so it chooses trump first.
+
+| `<hand>` | Host's cards |
+|---|---|
+| `sequence` | ♥ 7 8 9 10: a 50 sequence to announce |
+| `stock` | ♠ K Q: Stöck when ♠ is trump |
+| `good-hand` | ♦ 7 9 J A |
+
+```bash
+flutter run -d linux --dart-entrypoint-args=--test-fix-deal=stock
+build/linux/x64/debug/bundle/chibre --test-fix-deal=stock  # already built
+```
+
 ## Android
 
 ```bash

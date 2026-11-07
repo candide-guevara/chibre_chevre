@@ -28,6 +28,7 @@ class HostSession {
     required this.bots,
     this.store,
     this.timing = const SessionTiming(),
+    this.newDeals,
     Random? random,
   }) : _random = random ?? Random();
 
@@ -38,6 +39,9 @@ class HostSession {
   final BotRunner bots;
   final SavedGameStore? store;
   final SessionTiming timing;
+
+  /// Where new games get their cards; random deals when null.
+  final DealSource Function(Random random)? newDeals;
   final Random _random;
 
   final _tables = StreamController<TableView>.broadcast();
@@ -144,12 +148,14 @@ class HostSession {
     _changed();
   }
 
+  DealSource _newDeals() =>
+      newDeals?.call(_random) ?? RandomDealSource(_random);
+
   CardStyle _randomStyle() =>
       CardStyle.values[_random.nextInt(CardStyle.values.length)];
 
   void _startGame({DealSource? deals}) {
-    _game =
-        GameState(options: _options, deals: deals ?? RandomDealSource(_random));
+    _game = GameState(options: _options, deals: deals ?? _newDeals());
     _cardStyle = _randomStyle();
     _insights = null;
     _analysing = false;
@@ -347,8 +353,7 @@ class HostSession {
     if (accept) {
       _startGame(
           deals: offer.sameCards
-              ? ReplayDealSource(_game!.record.deals,
-                  fallback: RandomDealSource(_random))
+              ? ReplayDealSource(_game!.record.deals, fallback: _newDeals())
               : null);
     }
     _changed();

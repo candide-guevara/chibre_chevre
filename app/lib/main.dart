@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'screens/start_screen.dart';
 import 'services/app_services.dart';
+import 'services/test_deal.dart';
 import 'theme/chibre_theme.dart';
 
-Future<void> main() async {
+/// [args] come from the command line on desktop, e.g. `--test-fix-deal=stock`.
+Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  final services = await AppServices.start();
+  final services = await AppServices.start(testDeal: TestDeal.fromArgs(args));
   runApp(ChibreApp(services: services));
 }
 
