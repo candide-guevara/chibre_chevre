@@ -294,7 +294,7 @@ void main() {
     await pumpScreen(tester, controller);
     Map<String, double> layout() => {
       for (final name in ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'])
-        name: tester.getRect(find.textContaining(RegExp('^$name( •)?\$'))).top,
+        name: tester.getRect(find.text(name)).top,
       'scores': tester.getRect(find.byType(ScoreBoard)).height,
     };
     final choosing = layout(); // Trump buttons in the action area.

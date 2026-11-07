@@ -4,16 +4,10 @@ import '../theme/chibre_theme.dart';
 
 /// A player's name around the table, highlighted when it's their turn.
 class SeatBadge extends StatelessWidget {
-  const SeatBadge({
-    super.key,
-    required this.nickname,
-    required this.isTurn,
-    this.isTrumpChooser = false,
-  });
+  const SeatBadge({super.key, required this.nickname, required this.isTurn});
 
   final String nickname;
   final bool isTurn;
-  final bool isTrumpChooser;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +20,7 @@ class SeatBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        isTrumpChooser ? '$nickname •' : nickname,
+        nickname,
         style: text.labelLarge?.copyWith(
           color: isTurn ? ChibreColors.feltDark : ChibreColors.ivory,
         ),
