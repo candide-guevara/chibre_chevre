@@ -28,7 +28,6 @@ class PlayerView {
 
   factory PlayerView.ofRound(RoundState round, int seat,
       {List<int> scores = const [0, 0]}) {
-    final revealed = round.meldWinningTeam;
     return PlayerView(
       seat: seat,
       options: round.options,
@@ -46,7 +45,9 @@ class PlayerView {
       ],
       revealedMelds: [
         for (var s = 0; s < seatCount; s++)
-          teamOf(s) == revealed || s == seat ? round.meldsOf(s) : const [],
+          round.completedTricks.isNotEmpty || s == seat
+              ? round.meldsOf(s)
+              : const [],
       ],
       stoeckSeat: round.stoeckSeat,
       scores: List.unmodifiable(scores),
@@ -70,7 +71,7 @@ class PlayerView {
   final List<List<int>> announcedMeldValues;
 
   /// The cards of the melds that were shown, by seat: the player's own melds
-  /// and, after the first trick, those of the team whose melds counted.
+  /// and, after the first trick, everyone's.
   final List<List<Meld>> revealedMelds;
 
   final int? stoeckSeat;

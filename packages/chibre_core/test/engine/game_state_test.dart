@@ -93,4 +93,31 @@ void main() {
     expect(view.handSizeOf(3), 9);
     expect(view.mode, isNull);
   });
+
+  test('every meld is shown once the first trick is over', () {
+    final game = GameState(
+      options: const GameOptions(),
+      deals: ReplayDealSource([
+        dealOf({
+          0: 'D7 H6 H7 H8 S6 S9 SA C10 CK',
+          1: 'S7 S8 S9 C6 D9 DJ DQ HJ CK'
+        }),
+      ]),
+    );
+    game.apply(const ChooseTrump(0, TrumpMode.hearts));
+    final sequence = Meld.fromCards(cards('H6 H7 H8'))!;
+    final other = Meld.fromCards(cards('S7 S8 S9'))!;
+    game.apply(PlayCard(0, c('D7'), melds: [sequence]));
+    game.apply(PlayCard(1, c('D9'), melds: [other]));
+    expect(game.viewFor(2).revealedMelds[1], isEmpty);
+    expect(game.viewFor(1).revealedMelds[1], [other]);
+    while (game.round.completedTricks.isEmpty) {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.round.legalCards.cards.first));
+    }
+    for (var viewer = 0; viewer < seatCount; viewer++) {
+      expect(game.viewFor(viewer).revealedMelds[0], [sequence]);
+      expect(game.viewFor(viewer).revealedMelds[1], [other]);
+    }
+  });
 }

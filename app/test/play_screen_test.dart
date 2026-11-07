@@ -218,14 +218,20 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final sequence = Meld.fromCards(CardSet.parse('H6 H7 H8'))!;
     game.apply(PlayCard(0, Card.parse('SA'), melds: [sequence]));
-    for (var i = 0; i < 3; i++) {
+    // An opponent's sequence of the same value with a higher card: it wins.
+    final opponents = Meld.fromCards(CardSet.parse('D8 D9 D10'))!;
+    final opponentCard = game.viewFor(1).legalCards.cards.first;
+    game.apply(PlayCard(1, opponentCard, melds: [opponents]));
+    for (var i = 0; i < 2; i++) {
       final seat = game.seatToAct;
       game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
     }
     final controller = FakeController(tableOf(game, meldRecapFor: [0, 2]));
     await pumpScreen(tester, controller);
     expect(find.text('Annonces'), findsOneWidget);
-    expect(find.textContaining('Ana : 20'), findsOneWidget);
+    expect(find.textContaining('Ana : 20 ('), findsOneWidget);
+    expect(find.textContaining('Ordi 1 : 20 ('), findsOneWidget);
+    expect(find.text('Ordi +20'), findsOneWidget);
 
     await tester.tap(find.text('Annonces'));
     expect(controller.dismissedMelds, isTrue);
