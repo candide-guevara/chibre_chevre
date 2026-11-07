@@ -3,6 +3,8 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../services/app_services.dart';
+import '../widgets/host_actions_bar.dart';
+import 'advanced_settings_screen.dart';
 import 'waiting_screen.dart';
 
 /// The options of a new game.
@@ -14,12 +16,12 @@ class HostScreen extends StatefulWidget {
 }
 
 class _HostScreenState extends State<HostScreen> {
-  late final _name = TextEditingController(
-    text: 'Partie de ${Services.of(context).profile.nickname}',
-  );
-  final _target = TextEditingController(text: '1000');
-  var _obenUnde = false;
-  var _multipliers = false;
+  static const _defaults = GameOptions();
+
+  late final _name = TextEditingController(text: _defaultName);
+  final _target = TextEditingController(text: '${_defaults.targetScore}');
+  var _obenUnde = _defaults.obenUndeAllowed;
+  var _multipliers = _defaults.multipliersEnabled;
   var _trickHold = HostConfig.defaultTrickHold;
   var _starting = false;
 
@@ -29,6 +31,21 @@ class _HostScreenState extends State<HostScreen> {
     _target.dispose();
     super.dispose();
   }
+
+  String get _defaultName =>
+      'Partie de ${Services.of(context).profile.nickname}';
+
+  void _loadDefaults() => setState(() {
+    _name.text = _defaultName;
+    _target.text = '${_defaults.targetScore}';
+    _obenUnde = _defaults.obenUndeAllowed;
+    _multipliers = _defaults.multipliersEnabled;
+    _trickHold = HostConfig.defaultTrickHold;
+  });
+
+  void _openAdvanced() => Navigator.of(context).push(
+    MaterialPageRoute<void>(builder: (_) => const AdvancedSettingsScreen()),
+  );
 
   int? get _targetScore {
     final value = int.tryParse(_target.text);
@@ -60,6 +77,11 @@ class _HostScreenState extends State<HostScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Créer une partie')),
+    bottomNavigationBar: HostActionsBar(
+      onDefaults: _loadDefaults,
+      onAdvanced: _openAdvanced,
+      onStart: _starting || _targetScore == null ? null : _start,
+    ),
     body: ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -105,13 +127,6 @@ class _HostScreenState extends State<HostScreen> {
           label: _seconds(_trickHold),
           onChanged: (value) => setState(
             () => _trickHold = Duration(milliseconds: (value * 1000).round()),
-          ),
-        ),
-        const SizedBox(height: 32),
-        Center(
-          child: FilledButton(
-            onPressed: _starting || _targetScore == null ? null : _start,
-            child: const Text('Lancer la partie'),
           ),
         ),
       ],

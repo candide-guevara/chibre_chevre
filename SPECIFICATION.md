@@ -132,7 +132,11 @@ Allows to configure different options:
 * multipliers: off (default) / on
 * pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 
-A button "Lancer la partie" (start game) will open the waiting for player screen and start advertising the game on the network.
+A bar of three buttons at the bottom of the screen:
+
+* "Par défaut" puts every option back to its default value.
+* "Avancé" opens the advanced settings screen (empty for now; advanced options will go there).
+* "Lancer la partie" (start game), a filled button brighter than the two others so the eye goes to it first, opens the waiting for player screen and starts advertising the game on the network.
 
 ## Waiting for player screen
 
