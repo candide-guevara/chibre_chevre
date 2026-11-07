@@ -11,6 +11,7 @@ import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/meld_summary.dart';
 import '../widgets/pause_overlay.dart';
+import '../widgets/playing_card.dart';
 import '../widgets/round_summary.dart';
 import '../widgets/score_board.dart';
 import '../widgets/seat_badge.dart';
@@ -297,11 +298,14 @@ class _PlayScreenState extends State<PlayScreen> {
     return LayoutBuilder(
       builder: (context, box) {
         final cardWidth = (box.maxHeight / 5.2).clamp(36.0, 72.0);
+        final sideNamesBottom =
+            box.maxHeight / 2 + cardWidth * cardAspectRatio / 2 + 4;
         return Stack(
           children: [
             Align(alignment: Alignment.topCenter, child: seat(top)),
-            Align(alignment: Alignment.centerLeft, child: seat(left)),
-            Align(alignment: Alignment.centerRight, child: seat(right)),
+            // Above the trick's side cards, to leave the row to the cards.
+            Positioned(left: 8, bottom: sideNamesBottom, child: seat(left)),
+            Positioned(right: 8, bottom: sideNamesBottom, child: seat(right)),
             Align(alignment: Alignment.bottomCenter, child: seat(table.seat)),
             if (shownTrick != null)
               Center(
