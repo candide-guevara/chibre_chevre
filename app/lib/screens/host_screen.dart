@@ -107,10 +107,6 @@ class _HostScreenState extends State<HostScreen> {
             () => _trickHold = Duration(milliseconds: (value * 1000).round()),
           ),
         ),
-        const Text(
-          'Plus longue pour laisser aux débutants le temps de retenir '
-          'les cartes jouées.',
-        ),
         const SizedBox(height: 32),
         Center(
           child: FilledButton(
