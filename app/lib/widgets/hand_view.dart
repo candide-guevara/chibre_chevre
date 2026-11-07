@@ -7,7 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'playing_card.dart';
 
 /// The player's cards at the bottom of the screen, overlapping to fit the
-/// width. Cards outside [enabled] are dimmed and can't be tapped.
+/// width. Cards outside [enabled] are dimmed and can't be tapped. A [badge]
+/// (e.g. the Stöck button) can be shown above one card.
 class HandView extends StatelessWidget {
   const HandView({
     super.key,
@@ -16,13 +17,18 @@ class HandView extends StatelessWidget {
     required this.enabled,
     this.selected = CardSet.empty,
     required this.onTap,
+    this.badge,
   });
+
+  /// Room above the cards for the badge, always kept so the hand never moves.
+  static const badgeHeight = 40.0;
 
   final List<Card> cards;
   final CardStyle style;
   final CardSet enabled;
   final CardSet selected;
   final void Function(Card card) onTap;
+  final ({Card card, Widget child})? badge;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -36,9 +42,11 @@ class HandView extends StatelessWidget {
               (box.maxWidth - cardWidth) / (cards.length - 1),
             );
       final width = cardWidth + step * (cards.length - 1);
+      final cardHeight = cardWidth * cardAspectRatio;
+      final badgeIndex = badge == null ? -1 : cards.indexOf(badge!.card);
       return SizedBox(
         width: width,
-        height: cardWidth * cardAspectRatio * 1.2,
+        height: cardHeight + badgeHeight,
         child: Stack(
           alignment: Alignment.bottomLeft,
           children: [
@@ -54,6 +62,14 @@ class HandView extends StatelessWidget {
                   selected: selected.contains(card),
                   onTap: () => onTap(card),
                 ),
+              ),
+            if (badgeIndex >= 0)
+              Positioned(
+                left: badgeIndex * step,
+                width: cardWidth,
+                bottom: cardHeight,
+                height: badgeHeight,
+                child: Center(child: badge!.child),
               ),
           ],
         ),

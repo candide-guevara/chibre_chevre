@@ -306,4 +306,48 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(layout(), choosing); // A status line only.
   });
+
+  testWidgets('the Stöck button above the card plays it with Stöck', (
+    tester,
+  ) async {
+    final hand = CardSet.parse('D7 H6 H7 H8 H9 H10 HJ HQ HK');
+    final rest = (CardSet.full - hand).cards;
+    final game = GameState(
+      options: const GameOptions(),
+      deals: ReplayDealSource([
+        [
+          hand,
+          for (var seat = 0; seat < 3; seat++)
+            CardSet.of(rest.sublist(seat * 9, seat * 9 + 9)),
+        ],
+      ]),
+    )..apply(const ChooseTrump(0, TrumpMode.hearts));
+    game.apply(PlayCard(0, Card.parse('HQ')));
+    final king = Card.parse('HK');
+    while (game.seatToAct != 0 || game.round.currentTrick!.cards.isEmpty) {
+      final seat = game.seatToAct;
+      final legal = game.viewFor(seat).legalCards;
+      game.apply(
+        PlayCard(
+          seat,
+          seat == 0
+              ? (legal - CardSet.of([king])).cards.first
+              : legal.cards.first,
+        ),
+      );
+    }
+    expect(game.viewFor(0).legalCards.contains(king), isTrue);
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final chip = tester.getCenter(find.text('Stöck'));
+    final card = tester.getRect(find.bySemanticsLabel('roi de cœur'));
+    expect(chip.dy, lessThan(card.top));
+    await tester.tap(find.text('Stöck'));
+    final play = controller.actions.single as PlayCard;
+    expect(play.card, king);
+    expect(play.stoeck, isTrue);
+    await tester.pump(const Duration(seconds: 3));
+  });
 }

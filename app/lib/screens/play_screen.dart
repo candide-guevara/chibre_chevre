@@ -41,7 +41,6 @@ class _PlayScreenState extends State<PlayScreen> {
   var _meldsDecided = false;
   var _selection = CardSet.empty;
   var _melds = <Meld>[];
-  var _stoeck = false;
 
   /// Fits the trump choice: a title and two rows of buttons.
   static const _actionAreaHeight = 136.0;
@@ -157,14 +156,13 @@ class _PlayScreenState extends State<PlayScreen> {
       return;
     }
     if (!table.isMyTurn || !player.legalCards.contains(card)) return;
-    final stoeck =
-        _stoeck &&
-        completesStoeck(card, player.playedBy(player.seat), player.mode!);
+    _play(card);
+  }
+
+  void _play(Card card, {bool stoeck = false}) {
+    final player = _table!.player!;
     _controller.act(PlayCard(player.seat, card, melds: _melds, stoeck: stoeck));
-    setState(() {
-      _resetMelds();
-      if (stoeck) _stoeck = false;
-    });
+    setState(_resetMelds);
   }
 
   void _skipMelds() {
@@ -193,12 +191,22 @@ class _PlayScreenState extends State<PlayScreen> {
     });
   }
 
-  bool _canAnnounceStoeck(PlayerView player) =>
-      player.stoeckSeat == null &&
-      player.legalCards.cards.any(
-        (card) =>
-            completesStoeck(card, player.playedBy(player.seat), player.mode!),
-      );
+  /// The card that completes Stöck if the player can play it now: tapping
+  /// the Stöck button above it plays it and announces Stöck.
+  Card? _stoeckCard(TableView table) {
+    final player = table.player!;
+    if (!table.isMyTurn ||
+        table.phase != TablePhase.playing ||
+        _choosingMelds ||
+        player.stoeckSeat != null) {
+      return null;
+    }
+    final played = player.playedBy(player.seat);
+    for (final card in player.legalCards.cards) {
+      if (completesStoeck(card, played, player.mode!)) return card;
+    }
+    return null;
+  }
 
   // ------------------------------------------------------------- Layout
 
@@ -241,6 +249,16 @@ class _PlayScreenState extends State<PlayScreen> {
                       enabled: _enabledCards(table),
                       selected: _selection,
                       onTap: _onCardTap,
+                      badge: switch (_stoeckCard(table)) {
+                        final card? => (
+                          card: card,
+                          child: ActionChip(
+                            label: const Text('Stöck'),
+                            onPressed: () => _play(card, stoeck: true),
+                          ),
+                        ),
+                        null => null,
+                      },
                     ),
                   ),
                 ],
@@ -389,12 +407,6 @@ class _PlayScreenState extends State<PlayScreen> {
               ],
             ),
           ],
-          if (table.isMyTurn && !_choosingMelds && _canAnnounceStoeck(player))
-            FilterChip(
-              label: const Text('Stöck'),
-              selected: _stoeck,
-              onSelected: (value) => setState(() => _stoeck = value),
-            ),
         ],
       );
     } else if (table.seatToAct != null) {
