@@ -41,6 +41,9 @@ class _PlayScreenState extends State<PlayScreen> {
   var _melds = <Meld>[];
   var _stoeck = false;
 
+  /// Fits the trump choice: a title and two rows of buttons.
+  static const _actionAreaHeight = 136.0;
+
   GameController get _controller => widget.controller;
 
   @override
@@ -381,9 +384,19 @@ class _PlayScreenState extends State<PlayScreen> {
     } else {
       content = const SizedBox.shrink();
     }
-    return Padding(
+    // A fixed height keeps the table, and the names on it, from moving when
+    // the content changes; content that would not fit is scaled down.
+    return Container(
+      height: _actionAreaHeight,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: content,
+      alignment: Alignment.center,
+      child: LayoutBuilder(
+        builder: (context, box) => FittedBox(
+          fit: BoxFit.scaleDown,
+          // Full width, so that rows of buttons wrap rather than shrink.
+          child: SizedBox(width: box.maxWidth, child: content),
+        ),
+      ),
     );
   }
 

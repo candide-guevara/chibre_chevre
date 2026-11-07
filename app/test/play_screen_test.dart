@@ -4,6 +4,7 @@ import 'package:chibre/game/game_controller.dart';
 import 'package:chibre/screens/play_screen.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/played_card.dart';
+import 'package:chibre/widgets/score_board.dart';
 import 'package:chibre/widgets/trick_view.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
@@ -249,5 +250,33 @@ void main() {
     expect(offsetOf(second), greaterThan(0)); // From the right.
     await tester.pump(const Duration(milliseconds: 300));
     expect(offsetOf(second), 0);
+  });
+
+  testWidgets('names and the score bar stay in place during the game', (
+    tester,
+  ) async {
+    final game = newGame();
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    Map<String, double> layout() => {
+      for (final name in ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'])
+        name: tester.getRect(find.textContaining(RegExp('^$name'))).top,
+      'scores': tester.getRect(find.byType(ScoreBoard)).height,
+    };
+    final choosing = layout(); // Trump buttons in the action area.
+
+    game.apply(const ChooseTrump(0, TrumpMode.hearts));
+    controller.show(tableOf(game));
+    await tester.pump();
+    expect(layout(), choosing); // Meld buttons, trump in the score bar.
+
+    await tester.tap(find.text('Annoncer'));
+    await tester.pump();
+    expect(layout(), choosing);
+
+    game.apply(PlayCard(0, Card.parse('SA')));
+    controller.show(tableOf(game));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(layout(), choosing); // A status line only.
   });
 }

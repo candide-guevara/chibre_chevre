@@ -28,7 +28,9 @@ class ScoreBoard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return Container(
       color: ChibreColors.feltDark,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      // Fixed, so that the table below does not move when the trump appears.
+      height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Text('Nous ${scores[team]}', style: text.titleMedium),

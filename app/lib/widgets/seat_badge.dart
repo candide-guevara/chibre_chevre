@@ -40,14 +40,15 @@ class SeatBadge extends StatelessWidget {
             ),
           ),
         ),
-        if (announcement != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text(
-              announcement!,
-              style: text.labelSmall?.copyWith(color: ChibreColors.brass),
-            ),
+        // The line is always there, so the name does not move when an
+        // announcement appears.
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            announcement ?? '',
+            style: text.labelSmall?.copyWith(color: ChibreColors.brass),
           ),
+        ),
       ],
     );
   }
