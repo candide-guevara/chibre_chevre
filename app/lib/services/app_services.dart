@@ -59,7 +59,7 @@ class AppServices {
 
   Future<HostSession> newHostSession() async => HostSession(
     transport: transport,
-    bots: IsolateBotRunner(budget: await budget),
+    bots: IsolateBotRunner(budget: await budget, seed: _seed),
     store: savedGames,
     newDeals: testDeal == null
         ? null
@@ -68,7 +68,10 @@ class AppServices {
 
   /// Runs the expert computer player for this phone's suggestions.
   Future<BotRunner> newAdvisor() async =>
-      IsolateBotRunner(budget: await budget);
+      IsolateBotRunner(budget: await budget, seed: _seed);
+
+  /// With a test deal, the computer players replay the same game.
+  int? get _seed => testDeal == null ? null : 0;
 
   ClientSession newClientSession() => ClientSession(
     transport: transport,

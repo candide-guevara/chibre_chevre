@@ -37,14 +37,15 @@ Set a nickname in "Profil" on both, "Créer une partie" on one and
 "Rejoindre une partie" on the other.
 
 To test the screens without waiting for the right cards, start the host with
-`--test-fix-deal=<hand>`: in every round the host gets these cards (the rest
-of the deal is random), including 7♦ so it chooses trump first.
+`--test-fix-deal=<hand>`: every round gets the same deal, every player's cards
+fixed, and the host holds 7♦ so it chooses trump first. The computer players
+use a fixed seed, so they replay the same moves.
 
 | `<hand>` | Host's cards |
 |---|---|
-| `sequence` | ♥ 7 8 9 10: a 50 sequence. The whole deal is fixed: every other player has a 20 sequence, so the host's wins |
-| `stock` | ♠ K Q: Stöck when ♠ is trump |
-| `good-hand` | ♦ 7 9 J A |
+| `sequence` | ♥ 7 8 9 10: a 50 sequence. Every other player has a 20 sequence, so the host's wins |
+| `stock` | ♠ K Q: Stöck when ♠ is trump. Nobody has a meld or another Stöck |
+| `good-hand` | ♦ 7 9 J A. Nobody has a meld or Stöck |
 
 ```bash
 flutter run -d linux --dart-entrypoint-args=--test-fix-deal=stock
