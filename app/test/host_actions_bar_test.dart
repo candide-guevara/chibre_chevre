@@ -18,7 +18,8 @@ Future<List<String>> pumpBar(
         bottomNavigationBar: HostActionsBar(
           onDefaults: () => taps.add('defaults'),
           onAdvanced: () => taps.add('advanced'),
-          onStart: canStart ? () => taps.add('start') : null,
+          primaryLabel: 'Lancer la partie',
+          onPrimary: canStart ? () => taps.add('start') : null,
         ),
       ),
     ),

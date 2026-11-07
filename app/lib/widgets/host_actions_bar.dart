@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
-/// The buttons at the bottom of the host screen. Starting the game is the
-/// filled, brighter button, so the eye goes to it first.
+/// The buttons at the bottom of the host screen. The primary action
+/// (starting the game, or saving the defaults) is the filled, brighter
+/// button, so the eye goes to it first.
 class HostActionsBar extends StatelessWidget {
   const HostActionsBar({
     super.key,
     required this.onDefaults,
     required this.onAdvanced,
-    required this.onStart,
+    required this.primaryLabel,
+    required this.onPrimary,
   });
 
   final VoidCallback onDefaults;
   final VoidCallback onAdvanced;
 
-  /// Null while the game cannot start.
-  final VoidCallback? onStart;
+  final String primaryLabel;
+
+  /// Null while the options are not valid.
+  final VoidCallback? onPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +60,8 @@ class HostActionsBar extends StatelessWidget {
                   textStyle: text,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
-                onPressed: onStart,
-                child: const Text('Lancer la partie'),
+                onPressed: onPrimary,
+                child: Text(primaryLabel),
               ),
             ),
           ],

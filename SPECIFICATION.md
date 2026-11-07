@@ -109,8 +109,8 @@ Until the player details are input, the join and host buttons must be greyed out
 
 ## Player details screen
 
-Just a text input field for their nickname.
-The players details will be stored locally on the phone, never sent to any server.
+A text input field for their nickname, and a "Paramètres par défaut" button opening the host game screen in a mode that edits the player's game defaults: no game name (it is each game's own), the title "Paramètres par défaut", and "Enregistrer" in place of "Lancer la partie", which saves the options (including the advanced settings) and goes back. There, "Par défaut" puts the app's own defaults back.
+The players details and game defaults will be stored locally on the phone, never sent to any server.
 It is however allowed to communicate those details to the other player when joining a game.
 
 ## Join game screen
@@ -124,7 +124,7 @@ Displays the list of games found on the local network, refreshed live.
 
 ## Host game screen
 
-Allows to configure different options:
+Allows to configure different options, starting from the player's game defaults (see the player details screen), or the values below when none are saved:
 
 * game name (prefilled with "<nickname>'s game", in French "Partie de <nickname>")
 * number of points (default 1000)
@@ -133,7 +133,7 @@ Allows to configure different options:
 
 A bar of three buttons at the bottom of the screen:
 
-* "Par défaut" puts every option back to its default value.
+* "Par défaut" puts every option back to the player's game defaults.
 * "Avancé" opens the advanced settings screen (see below).
 * "Lancer la partie" (start game), a filled button brighter than the two others so the eye goes to it first, opens the waiting for player screen and starts advertising the game on the network.
 

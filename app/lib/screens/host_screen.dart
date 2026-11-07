@@ -3,28 +3,39 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/advanced_settings.dart';
+import '../game/game_defaults.dart';
 import '../services/app_services.dart';
 import '../widgets/host_actions_bar.dart';
 import 'advanced_settings_screen.dart';
 import 'waiting_screen.dart';
 
-/// The options of a new game.
+/// The options of a new game, starting from the player's game defaults.
+/// With [editingDefaults], the same options edit those defaults instead.
 class HostScreen extends StatefulWidget {
-  const HostScreen({super.key});
+  const HostScreen({super.key, this.editingDefaults = false});
+
+  final bool editingDefaults;
 
   @override
   State<HostScreen> createState() => _HostScreenState();
 }
 
 class _HostScreenState extends State<HostScreen> {
-  static const _defaults = GameOptions();
-
   late final _name = TextEditingController(text: _defaultName);
-  final _target = TextEditingController(text: '${_defaults.targetScore}');
-  var _obenUnde = _defaults.obenUndeAllowed;
-  var _multipliers = _defaults.multipliersEnabled;
+  final _target = TextEditingController();
+  var _obenUnde = false;
+  var _multipliers = false;
   var _advanced = const AdvancedSettings();
   var _starting = false;
+  var _loaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loaded) return;
+    _loaded = true;
+    _apply(Services.of(context).profile.gameDefaults);
+  }
 
   @override
   void dispose() {
@@ -36,13 +47,35 @@ class _HostScreenState extends State<HostScreen> {
   String get _defaultName =>
       'Partie de ${Services.of(context).profile.nickname}';
 
+  void _apply(GameDefaults defaults) {
+    _target.text = '${defaults.options.targetScore}';
+    _obenUnde = defaults.options.obenUndeAllowed;
+    _multipliers = defaults.options.multipliersEnabled;
+    _advanced = defaults.advanced;
+  }
+
+  /// Back to the player's defaults when hosting, or to the app's own when
+  /// editing them.
   void _loadDefaults() => setState(() {
     _name.text = _defaultName;
-    _target.text = '${_defaults.targetScore}';
-    _obenUnde = _defaults.obenUndeAllowed;
-    _multipliers = _defaults.multipliersEnabled;
-    _advanced = const AdvancedSettings();
+    _apply(
+      widget.editingDefaults
+          ? const GameDefaults()
+          : Services.of(context).profile.gameDefaults,
+    );
   });
+
+  GameOptions get _options => GameOptions(
+    targetScore: _targetScore!,
+    obenUndeAllowed: _obenUnde,
+    multipliersEnabled: _multipliers,
+  );
+
+  Future<void> _saveDefaults() async {
+    await Services.of(context).profile
+        .setGameDefaults(GameDefaults(options: _options, advanced: _advanced));
+    if (mounted) Navigator.of(context).pop();
+  }
 
   void _openAdvanced() => Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -66,11 +99,7 @@ class _HostScreenState extends State<HostScreen> {
       HostConfig(
         gameName: _name.text.trim().isEmpty ? 'Chibre' : _name.text.trim(),
         nickname: services.profile.nickname!,
-        options: GameOptions(
-          targetScore: _targetScore!,
-          obenUndeAllowed: _obenUnde,
-          multipliersEnabled: _multipliers,
-        ),
+        options: _options,
         trickHold: _advanced.trickHold,
         assistance: _advanced.assistance,
         sortByTrump: _advanced.sortByTrump,
@@ -85,21 +114,33 @@ class _HostScreenState extends State<HostScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Créer une partie')),
+    appBar: AppBar(
+      title: Text(
+        widget.editingDefaults ? 'Paramètres par défaut' : 'Créer une partie',
+      ),
+    ),
     bottomNavigationBar: HostActionsBar(
       onDefaults: _loadDefaults,
       onAdvanced: _openAdvanced,
-      onStart: _starting || _targetScore == null ? null : _start,
+      primaryLabel: widget.editingDefaults ? 'Enregistrer' : 'Lancer la partie',
+      onPrimary: _starting || _targetScore == null
+          ? null
+          : widget.editingDefaults
+          ? _saveDefaults
+          : _start,
     ),
     body: ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        TextField(
-          controller: _name,
-          maxLength: 30,
-          decoration: const InputDecoration(labelText: 'Nom de la partie'),
-        ),
-        const SizedBox(height: 16),
+        // The name is the game's own, not a default.
+        if (!widget.editingDefaults) ...[
+          TextField(
+            controller: _name,
+            maxLength: 30,
+            decoration: const InputDecoration(labelText: 'Nom de la partie'),
+          ),
+          const SizedBox(height: 16),
+        ],
         TextField(
           controller: _target,
           keyboardType: TextInputType.number,

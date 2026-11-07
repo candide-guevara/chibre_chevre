@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../services/app_services.dart';
+import 'host_screen.dart';
 
-/// The nickname, kept on this phone only.
+/// The nickname and the game defaults, kept on this phone only.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -49,6 +50,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: value.text.trim().isEmpty ? null : _save,
               child: const Text('Enregistrer'),
             ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const HostScreen(editingDefaults: true),
+              ),
+            ),
+            child: const Text('Paramètres par défaut'),
           ),
         ],
       ),

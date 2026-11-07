@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// What the app remembers on the phone: the nickname, a random installation
-/// id (to recognise a reconnecting player, never tied to a person) and the
-/// result of the speed benchmark. Nothing leaves the phone except the
-/// nickname, shared with the other player of a game.
+import '../game/game_defaults.dart';
+
+/// What the app remembers on the phone: the nickname, the game defaults, a
+/// random installation id (to recognise a reconnecting player, never tied to
+/// a person) and the result of the speed benchmark. Nothing leaves the phone
+/// except the nickname, shared with the other player of a game.
 ///
 /// [profile] namespaces the keys so that two app instances on one computer
 /// (local demo) behave like two phones.
@@ -24,6 +27,22 @@ class ProfileStore {
 
   Future<void> setNickname(String nickname) =>
       _preferences.setString(_key('nickname'), nickname.trim());
+
+  /// The options the host screen starts with.
+  GameDefaults get gameDefaults {
+    final saved = _preferences.getString(_key('gameDefaults'));
+    if (saved == null) return const GameDefaults();
+    try {
+      return GameDefaults.fromJson(jsonDecode(saved) as Map<String, Object?>);
+    } on FormatException {
+      return const GameDefaults();
+    }
+  }
+
+  Future<void> setGameDefaults(GameDefaults defaults) => _preferences.setString(
+    _key('gameDefaults'),
+    jsonEncode(defaults.toJson()),
+  );
 
   String get installationId {
     final existing = _preferences.getString(_key('installationId'));
