@@ -372,24 +372,78 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
   });
 
-  testWidgets('"Jouer pour moi" plays the suggestion, keeping meld choices', (
+  testWidgets('"Jouer pour moi" highlights a card, the player plays it', (
     tester,
   ) async {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final controller = FakeController(tableOf(game))
-      ..suggestion = PlayCard(
-        0,
-        Card.parse('SA'),
-        melds: [Meld.fromCards(CardSet.parse('H6 H7 H8'))!],
-      );
+      ..suggestion = PlayCard(0, Card.parse('SA'));
+    await pumpScreen(tester, controller);
+    PlayingCard card(String name) => tester.widget<PlayingCard>(
+      find.byWidgetPredicate(
+        (widget) => widget is PlayingCard && widget.card == Card.parse(name),
+      ),
+    );
+
+    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.pump();
+    await tester.tap(find.text('Jouer pour moi'));
+    await tester.pump();
+    expect(controller.actions, isEmpty);
+    expect(card('SA').selected, isTrue);
+
+    await tester.tap(find.bySemanticsLabel('as de pique'));
+    final play = controller.actions.single as PlayCard;
+    expect(play.card, Card.parse('SA'));
+    expect(play.melds, isEmpty); // The player chose not to announce.
+  });
+
+  testWidgets('"Jouer pour moi" leaves the player free to play another card', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final controller = FakeController(tableOf(game))
+      ..suggestion = PlayCard(0, Card.parse('SA'));
     await pumpScreen(tester, controller);
     await tester.tap(find.text('Ne pas annoncer, jouer'));
     await tester.pump();
     await tester.tap(find.text('Jouer pour moi'));
     await tester.pump();
-    final play = controller.actions.single as PlayCard;
-    expect(play.card, Card.parse('SA'));
-    expect(play.melds, isEmpty); // The player chose not to announce.
+    await tester.tap(find.bySemanticsLabel('6 de pique'));
+    expect((controller.actions.single as PlayCard).card, Card.parse('S6'));
+  });
+
+  testWidgets('"Jouer pour moi" only outlines the suggested trump', (
+    tester,
+  ) async {
+    final controller = FakeController(tableOf(newGame()))
+      ..suggestion = const ChooseTrump(0, TrumpMode.spades);
+    await pumpScreen(tester, controller);
+    await tester.tap(find.text('Jouer pour moi'));
+    await tester.pump();
+    expect(controller.actions, isEmpty);
+    final spades = tester.widget<FilledButton>(
+      find.ancestor(
+        of: find.bySemanticsLabel('Atout pique'),
+        matching: find.byType(FilledButton),
+      ),
+    );
+    expect(spades.style!.side!.resolve({}), isNotNull);
+  });
+
+  testWidgets('"Jouer pour moi" is disabled while choosing melds', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    final button = tester.widget<OutlinedButton>(
+      find.ancestor(
+        of: find.text('Jouer pour moi'),
+        matching: find.byType(OutlinedButton),
+      ),
+    );
+    expect(button.onPressed, isNull);
   });
 
   testWidgets('"Cartes jouées" shows the announcements and cards by suit', (

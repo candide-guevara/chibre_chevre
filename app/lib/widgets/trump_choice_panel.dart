@@ -2,9 +2,11 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
 import '../labels.dart';
+import '../theme/chibre_theme.dart';
 import 'suit_icon.dart';
 
-/// The choices of the player who must make trump.
+/// The choices of the player who must make trump; the [suggested] one, if
+/// any, is outlined.
 class TrumpChoicePanel extends StatelessWidget {
   const TrumpChoicePanel({
     super.key,
@@ -12,12 +14,18 @@ class TrumpChoicePanel extends StatelessWidget {
     required this.canChibrer,
     required this.onChoose,
     required this.onChibrer,
+    this.suggested,
   });
 
   final List<TrumpMode> modes;
   final bool canChibrer;
   final void Function(TrumpMode mode) onChoose;
   final VoidCallback onChibrer;
+
+  /// [ChooseTrump] or [Chibrer] suggested by the computer player.
+  final GameAction? suggested;
+
+  static const _outline = BorderSide(color: ChibreColors.brass, width: 3);
 
   @override
   Widget build(BuildContext context) => Wrap(
@@ -27,7 +35,15 @@ class TrumpChoicePanel extends StatelessWidget {
     children: [
       for (final mode in modes)
         FilledButton(
-          style: FilledButton.styleFrom(minimumSize: const Size(64, 48)),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(64, 48),
+            side: switch (suggested) {
+              ChooseTrump(mode: final suggestedMode)
+                  when suggestedMode == mode =>
+                _outline,
+              _ => null,
+            },
+          ),
           onPressed: () => onChoose(mode),
           child: Semantics(
             label: modeName(mode),
@@ -39,7 +55,10 @@ class TrumpChoicePanel extends StatelessWidget {
         ),
       if (canChibrer)
         OutlinedButton(
-          style: OutlinedButton.styleFrom(minimumSize: const Size(64, 48)),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(64, 48),
+            side: suggested is Chibrer ? _outline : null,
+          ),
           onPressed: onChibrer,
           child: const Text('Chibrer'),
         ),

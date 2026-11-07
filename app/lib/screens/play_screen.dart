@@ -47,6 +47,9 @@ class _PlayScreenState extends State<PlayScreen> {
   /// The computer player is choosing a move for this player.
   var _thinking = false;
 
+  /// The move it suggested, until the table changes.
+  GameAction? _suggestion;
+
   /// Fits the trump choice: a title and two rows of buttons.
   static const _actionAreaHeight = 136.0;
 
@@ -80,6 +83,7 @@ class _PlayScreenState extends State<PlayScreen> {
     final previous = _table;
     setState(() {
       _table = table;
+      if (!_sameMove(previous, table)) _suggestion = null;
       if (!(table.player?.mayAnnounceMelds ?? false)) _resetMelds();
     });
     if (table.leftBy != null && previous?.leftBy == null) {
@@ -161,37 +165,52 @@ class _PlayScreenState extends State<PlayScreen> {
       return;
     }
     if (!table.isMyTurn || !player.legalCards.contains(card)) return;
-    _play(card);
+    final suggestion = _suggestion;
+    _play(
+      card,
+      stoeck:
+          suggestion is PlayCard &&
+          suggestion.card == card &&
+          suggestion.stoeck,
+    );
   }
 
   void _play(Card card, {bool stoeck = false}) {
     final player = _table!.player!;
     _controller.act(PlayCard(player.seat, card, melds: _melds, stoeck: stoeck));
-    setState(_resetMelds);
+    setState(() {
+      _resetMelds();
+      _suggestion = null;
+    });
   }
 
-  /// Plays the move the expert computer player suggests. Melds the player
-  /// already chose, or chose not to announce, are kept.
-  Future<void> _playForMe() async {
+  /// Asks the expert computer player for a move and highlights it: the card
+  /// to play, or the trump to choose. The player still taps it to play it.
+  Future<void> _suggest() async {
     final asked = _table;
     setState(() => _thinking = true);
     try {
-      var action = await _controller.suggestAction();
-      if (!mounted || !identical(_table, asked)) return;
-      if (action is PlayCard && _meldsDecided) {
-        action = PlayCard(
-          action.seat,
-          action.card,
-          melds: _melds,
-          stoeck: action.stoeck,
-        );
+      final action = await _controller.suggestAction();
+      if (mounted && _sameMove(asked, _table!)) {
+        setState(() => _suggestion = action);
       }
-      _controller.act(action);
-      if (action is PlayCard) setState(_resetMelds);
     } finally {
       if (mounted) setState(() => _thinking = false);
     }
   }
+
+  /// Whether [table] still asks this player for the same move as [before],
+  /// so that a suggestion stays valid.
+  bool _sameMove(TableView? before, TableView table) =>
+      table.isMyTurn &&
+      before != null &&
+      before.phase == table.phase &&
+      before.player?.hand == table.player?.hand;
+
+  CardSet get _suggestedCards => switch (_suggestion) {
+    PlayCard(:final card) => CardSet.of([card]),
+    _ => CardSet.empty,
+  };
 
   void _openPlayedCards() => Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -285,7 +304,7 @@ class _PlayScreenState extends State<PlayScreen> {
                       ),
                       style: table.cardStyle,
                       enabled: _enabledCards(table),
-                      selected: _selection,
+                      selected: _choosingMelds ? _selection : _suggestedCards,
                       onTap: _onCardTap,
                       badge: switch (_stoeckCard(table)) {
                         final card? => (
@@ -301,7 +320,9 @@ class _PlayScreenState extends State<PlayScreen> {
                   ),
                   if (table.assistance)
                     GameActionsBar(
-                      onPlayForMe: table.isMyTurn ? _playForMe : null,
+                      onPlayForMe: table.isMyTurn && !_choosingMelds
+                          ? _suggest
+                          : null,
                       thinking: _thinking,
                       onPlayedCards: _openPlayedCards,
                     ),
@@ -419,6 +440,7 @@ class _PlayScreenState extends State<PlayScreen> {
             canChibrer: !player.chibred,
             onChoose: (mode) => _controller.act(ChooseTrump(table.seat, mode)),
             onChibrer: () => _controller.act(Chibrer(table.seat)),
+            suggested: _suggestion,
           ),
         ],
       );
