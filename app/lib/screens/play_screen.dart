@@ -9,6 +9,7 @@ import '../game/hand_order.dart';
 import '../game/meld_selection.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
+import '../widgets/game_actions_bar.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/announcement_summary.dart';
@@ -20,6 +21,7 @@ import '../widgets/seat_badge.dart';
 import '../widgets/trick_view.dart';
 import '../widgets/trump_choice_panel.dart';
 import 'end_screen.dart';
+import 'played_cards_screen.dart';
 
 /// The table: the player's hand at the bottom, partner on top, computer
 /// players on the sides. Shows the end screen once the game is over.
@@ -41,6 +43,9 @@ class _PlayScreenState extends State<PlayScreen> {
   var _meldsDecided = false;
   var _selection = CardSet.empty;
   var _melds = <Meld>[];
+
+  /// The computer player is choosing a move for this player.
+  var _thinking = false;
 
   /// Fits the trump choice: a title and two rows of buttons.
   static const _actionAreaHeight = 136.0;
@@ -165,6 +170,35 @@ class _PlayScreenState extends State<PlayScreen> {
     setState(_resetMelds);
   }
 
+  /// Plays the move the expert computer player suggests. Melds the player
+  /// already chose, or chose not to announce, are kept.
+  Future<void> _playForMe() async {
+    final asked = _table;
+    setState(() => _thinking = true);
+    try {
+      var action = await _controller.suggestAction();
+      if (!mounted || !identical(_table, asked)) return;
+      if (action is PlayCard && _meldsDecided) {
+        action = PlayCard(
+          action.seat,
+          action.card,
+          melds: _melds,
+          stoeck: action.stoeck,
+        );
+      }
+      _controller.act(action);
+      if (action is PlayCard) setState(_resetMelds);
+    } finally {
+      if (mounted) setState(() => _thinking = false);
+    }
+  }
+
+  void _openPlayedCards() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => PlayedCardsScreen(controller: _controller),
+    ),
+  );
+
   void _skipMelds() {
     _controller.meldsChosen();
     setState(() => _meldsDecided = true);
@@ -260,6 +294,11 @@ class _PlayScreenState extends State<PlayScreen> {
                         null => null,
                       },
                     ),
+                  ),
+                  GameActionsBar(
+                    onPlayForMe: table.isMyTurn ? _playForMe : null,
+                    thinking: _thinking,
+                    onPlayedCards: _openPlayedCards,
                   ),
                 ],
               ),

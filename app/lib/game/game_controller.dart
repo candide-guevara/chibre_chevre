@@ -10,6 +10,10 @@ abstract interface class GameController {
 
   void act(GameAction action);
 
+  /// The move the expert computer player would make in this player's place,
+  /// from what this player can see only.
+  Future<GameAction> suggestAction();
+
   void proposeRematch({required bool sameCards});
 
   void answerRematch({required bool accept});

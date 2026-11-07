@@ -31,6 +31,12 @@ class FakeController implements GameController {
   @override
   void act(GameAction action) => actions.add(action);
 
+  /// What [suggestAction] answers.
+  GameAction? suggestion;
+
+  @override
+  Future<GameAction> suggestAction() async => suggestion!;
+
   @override
   void proposeRematch({required bool sameCards}) {}
 
@@ -360,5 +366,40 @@ void main() {
     expect(find.text('Ana : Stöck'), findsOneWidget);
     expect(find.text('Nous +20'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('"Jouer pour moi" plays the suggestion, keeping meld choices', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final controller = FakeController(tableOf(game))
+      ..suggestion = PlayCard(
+        0,
+        Card.parse('SA'),
+        melds: [Meld.fromCards(CardSet.parse('H6 H7 H8'))!],
+      );
+    await pumpScreen(tester, controller);
+    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.pump();
+    await tester.tap(find.text('Jouer pour moi'));
+    await tester.pump();
+    final play = controller.actions.single as PlayCard;
+    expect(play.card, Card.parse('SA'));
+    expect(play.melds, isEmpty); // The player chose not to announce.
+  });
+
+  testWidgets('"Cartes jouées" shows the announcements and the tricks', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final sequence = Meld.fromCards(CardSet.parse('H6 H7 H8'))!;
+    game.apply(PlayCard(0, Card.parse('SA'), melds: [sequence]));
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    await tester.tap(find.text('Cartes jouées'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Ana : 20 ('), findsOneWidget);
+    expect(find.text('Pli 1'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('as de pique')), findsOneWidget);
   });
 }

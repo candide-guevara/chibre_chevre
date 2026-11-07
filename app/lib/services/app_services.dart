@@ -59,6 +59,10 @@ class AppServices {
         : (random) => PresetHandDealSource(testDeal!.presets, random),
   );
 
+  /// Runs the expert computer player for this phone's suggestions.
+  Future<BotRunner> newAdvisor() async =>
+      IsolateBotRunner(budget: await budget);
+
   ClientSession newClientSession() => ClientSession(
     transport: transport,
     installationId: profile.installationId,

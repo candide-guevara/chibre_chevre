@@ -29,13 +29,17 @@ class _JoinScreenState extends State<JoinScreen> {
 
   Future<void> _join(OpenGame game) async {
     setState(() => _joining = true);
-    final session = Services.of(context).newClientSession();
+    final services = Services.of(context);
+    final session = services.newClientSession();
     try {
       await session.join(game);
+      final advisor = await services.newAdvisor();
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => PlayScreen(controller: ClientGameController(session)),
+          builder: (_) => PlayScreen(
+            controller: ClientGameController(session, advisor: advisor),
+          ),
         ),
       );
     } on JoinRejectedException catch (error) {

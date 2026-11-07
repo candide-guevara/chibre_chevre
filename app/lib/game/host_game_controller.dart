@@ -18,6 +18,10 @@ class HostGameController implements GameController {
   void act(GameAction action) => session.act(action);
 
   @override
+  Future<GameAction> suggestAction() =>
+      session.bots.decide(session.table!.player!);
+
+  @override
   void proposeRematch({required bool sameCards}) =>
       session.proposeRematch(sameCards: sameCards);
 

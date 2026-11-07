@@ -4,9 +4,12 @@ import 'package:chibre_net/chibre_net.dart';
 import 'game_controller.dart';
 
 class ClientGameController implements GameController {
-  const ClientGameController(this.session);
+  const ClientGameController(this.session, {required this.advisor});
 
   final ClientSession session;
+
+  /// Computes the suggested moves on this phone.
+  final BotRunner advisor;
 
   @override
   Stream<TableView> get tables => session.tables;
@@ -16,6 +19,9 @@ class ClientGameController implements GameController {
 
   @override
   void act(GameAction action) => session.act(action);
+
+  @override
+  Future<GameAction> suggestAction() => advisor.decide(session.table!.player!);
 
   @override
   void proposeRematch({required bool sameCards}) =>
