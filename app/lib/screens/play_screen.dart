@@ -7,7 +7,6 @@ import 'package:flutter/material.dart' hide Card;
 import '../game/game_controller.dart';
 import '../game/hand_order.dart';
 import '../theme/chibre_theme.dart';
-import '../widgets/card_back.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/meld_summary.dart';
@@ -281,27 +280,11 @@ class _PlayScreenState extends State<PlayScreen> {
 
   Widget _tableArea(TableView table) {
     final player = table.player!;
-    Widget seat(int seat) => Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SeatBadge(
-          nickname: table.nicknames[seat],
-          isTurn: table.seatToAct == seat,
-          isTrumpChooser: player.trumpChooser == seat && player.mode != null,
-          announcement: _announcement(player, seat),
-        ),
-        if (seat != table.seat) ...[
-          const SizedBox(height: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CardBack(width: 16),
-              const SizedBox(width: 4),
-              Text('${player.handSizeOf(seat)}'),
-            ],
-          ),
-        ],
-      ],
+    Widget seat(int seat) => SeatBadge(
+      nickname: table.nicknames[seat],
+      isTurn: table.seatToAct == seat,
+      isTrumpChooser: player.trumpChooser == seat && player.mode != null,
+      announcement: _announcement(player, seat),
     );
 
     final shownTrick = switch (player.currentTrick) {
