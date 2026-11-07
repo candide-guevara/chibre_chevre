@@ -4,7 +4,9 @@ import 'package:chibre/game/game_controller.dart';
 import 'package:chibre/screens/play_screen.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/played_card.dart';
+import 'package:chibre/widgets/playing_card.dart';
 import 'package:chibre/widgets/score_board.dart';
+import 'package:chibre/widgets/suit_column.dart';
 import 'package:chibre/widgets/trick_view.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
@@ -390,7 +392,7 @@ void main() {
     expect(play.melds, isEmpty); // The player chose not to announce.
   });
 
-  testWidgets('"Cartes jouées" shows the announcements and the tricks', (
+  testWidgets('"Cartes jouées" shows the announcements and cards by suit', (
     tester,
   ) async {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
@@ -401,8 +403,17 @@ void main() {
     await tester.tap(find.text('Cartes jouées'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Ana : 20 ('), findsOneWidget);
-    expect(find.text('Pli 1'), findsOneWidget);
-    expect(find.bySemanticsLabel(RegExp('as de pique')), findsOneWidget);
+    expect(find.byType(Divider), findsOneWidget);
+    expect(find.byType(SuitColumn), findsNWidgets(4));
+    expect(
+      find.descendant(
+        of: find.byType(SuitColumn).at(1), // Spades.
+        matching: find.byWidgetPredicate(
+          (widget) => widget is PlayingCard && widget.card == Card.parse('SA'),
+        ),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('the assistance buttons are only shown when the host chose so', (
