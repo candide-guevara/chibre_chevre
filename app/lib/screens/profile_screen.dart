@@ -31,6 +31,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Profil')),
+    bottomNavigationBar: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: ValueListenableBuilder(
+          valueListenable: _nickname,
+          builder: (context, value, _) => FilledButton(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(52),
+            ),
+            onPressed: value.text.trim().isEmpty ? null : _save,
+            child: const Text('Enregistrer'),
+          ),
+        ),
+      ),
+    ),
     body: Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -42,14 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(labelText: 'Pseudo'),
             onSubmitted: (_) => _save(),
-          ),
-          const SizedBox(height: 24),
-          ValueListenableBuilder(
-            valueListenable: _nickname,
-            builder: (context, value, _) => FilledButton(
-              onPressed: value.text.trim().isEmpty ? null : _save,
-              child: const Text('Enregistrer'),
-            ),
           ),
           const SizedBox(height: 16),
           OutlinedButton(
