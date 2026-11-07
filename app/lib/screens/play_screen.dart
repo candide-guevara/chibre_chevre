@@ -274,7 +274,13 @@ class _PlayScreenState extends State<PlayScreen> {
             box.maxHeight / 2 + cardWidth * cardAspectRatio / 2 + 16;
         return Stack(
           children: [
-            Align(alignment: Alignment.topCenter, child: seat(top)),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: seat(top),
+              ),
+            ),
             // Above the trick's side cards, to leave the row to the cards.
             Positioned(left: 8, bottom: sideNamesBottom, child: seat(left)),
             Positioned(right: 8, bottom: sideNamesBottom, child: seat(right)),
