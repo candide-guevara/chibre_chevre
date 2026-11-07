@@ -52,7 +52,8 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "chibre");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+  // Phone form factor (OnePlus 13R: 1264x2780 px, ~412x906 logical).
+  gtk_window_set_default_size(window, 412, 906);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(
