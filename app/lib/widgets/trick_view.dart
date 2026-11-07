@@ -3,14 +3,9 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'played_card.dart';
 import 'playing_card.dart';
-
-/// Where a seat sits on screen, seen from [viewer] (always at the bottom).
-/// Play is counter-clockwise, so the next seat is on the right.
-enum TablePosition { bottom, right, top, left }
-
-TablePosition positionOf(int seat, int viewer) =>
-    TablePosition.values[(seat - viewer) % seatCount];
+import 'table_position.dart';
 
 /// The cards of a trick, each in front of the seat that played it. Once the
 /// trick is complete, the cards slide towards its [winner].
@@ -85,15 +80,9 @@ class _TrickViewState extends State<TrickView>
     super.dispose();
   }
 
-  Offset get _direction => switch (widget.winner == null
-      ? null
-      : positionOf(widget.winner!, widget.viewer)) {
-    TablePosition.bottom => const Offset(0, 1),
-    TablePosition.right => const Offset(1, 0),
-    TablePosition.top => const Offset(0, -1),
-    TablePosition.left => const Offset(-1, 0),
-    null => Offset.zero,
-  };
+  Offset get _direction => widget.winner == null
+      ? Offset.zero
+      : positionOf(widget.winner!, widget.viewer).direction;
 
   @override
   Widget build(BuildContext context) {
@@ -119,26 +108,26 @@ class _TrickViewState extends State<TrickView>
         height: height * 2.3,
         child: Stack(
           children: [
-            for (final (position, card) in widget.trick.cards.indexed)
-              Align(
-                alignment: switch (positionOf(
-                  widget.trick.seatAt(position),
-                  widget.viewer,
-                )) {
-                  TablePosition.bottom => Alignment.bottomCenter,
-                  TablePosition.right => Alignment.centerRight,
-                  TablePosition.top => Alignment.topCenter,
-                  TablePosition.left => Alignment.centerLeft,
-                },
-                child: PlayingCard(
-                  card: card,
-                  style: widget.style,
-                  width: width,
-                ),
+            for (final (index, card) in widget.trick.cards.indexed)
+              _place(
+                card,
+                positionOf(widget.trick.seatAt(index), widget.viewer),
               ),
           ],
         ),
       ),
     );
   }
+
+  Widget _place(Card card, TablePosition position) => Align(
+    alignment: position.alignment,
+    child: PlayedCard(
+      // Keyed so that only newly played cards slide in.
+      key: ValueKey(card),
+      card: card,
+      style: widget.style,
+      width: widget.cardWidth,
+      from: position,
+    ),
+  );
 }

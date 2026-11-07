@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chibre/game/game_controller.dart';
 import 'package:chibre/screens/play_screen.dart';
 import 'package:chibre/theme/chibre_theme.dart';
+import 'package:chibre/widgets/played_card.dart';
 import 'package:chibre/widgets/trick_view.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
@@ -206,5 +207,38 @@ void main() {
     expect(find.textContaining('Ana : 20'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.text('Annonces'), findsNothing);
+  });
+
+  testWidgets('a played card slides in, cards already played stay put', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    game.apply(PlayCard(0, Card.parse('SA')));
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final second = game.viewFor(1).legalCards.cards.first;
+    game.apply(PlayCard(1, second));
+    controller.show(tableOf(game));
+    await tester.pump();
+    double offsetOf(Card card) => tester
+        .widget<Transform>(
+          find
+              .descendant(
+                of: find.byWidgetPredicate(
+                  (widget) => widget is PlayedCard && widget.card == card,
+                ),
+                matching: find.byType(Transform),
+              )
+              .first,
+        )
+        .transform
+        .getTranslation()
+        .x;
+    expect(offsetOf(Card.parse('SA')), 0);
+    expect(offsetOf(second), greaterThan(0)); // From the right.
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(offsetOf(second), 0);
   });
 }
