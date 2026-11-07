@@ -26,6 +26,9 @@ class HostGameController implements GameController {
       session.answerRematch(accept: accept);
 
   @override
+  void meldsChosen() => session.meldsChosen();
+
+  @override
   void dismissMelds() => session.dismissMelds();
 
   @override

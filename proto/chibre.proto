@@ -97,6 +97,10 @@ message Leave {}
 // The player closed the meld recap shown after the first trick.
 message DismissMelds {}
 
+// The player chose their melds (sent with their first card) or not to
+// announce any.
+message MeldsChosen {}
+
 message ClientMessage {
   oneof body {
     Hello hello = 1;
@@ -106,6 +110,7 @@ message ClientMessage {
     Presence presence = 5;
     Leave leave = 6;
     DismissMelds dismiss_melds = 7;
+    MeldsChosen melds_chosen = 8;
   }
 }
 
@@ -205,6 +210,8 @@ message TableSnapshot {
   uint32 trick_hold_ms = 22;
   // Seats still reading the meld recap; nobody plays until it is empty.
   repeated uint32 meld_recap_for = 23;
+  // Humans still choosing their melds; the bots wait for them.
+  repeated uint32 meld_choice_for = 24;
 }
 
 message ActionRejected {

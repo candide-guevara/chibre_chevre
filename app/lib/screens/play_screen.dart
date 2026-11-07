@@ -167,7 +167,10 @@ class _PlayScreenState extends State<PlayScreen> {
     });
   }
 
-  void _skipMelds() => setState(() => _meldsDecided = true);
+  void _skipMelds() {
+    _controller.meldsChosen();
+    setState(() => _meldsDecided = true);
+  }
 
   /// Announces the selected cards; there is no going back once valid.
   void _validateMelds() {
@@ -182,6 +185,7 @@ class _PlayScreenState extends State<PlayScreen> {
         );
       return;
     }
+    _controller.meldsChosen();
     setState(() {
       _melds = melds;
       _meldsDecided = true;
@@ -415,29 +419,30 @@ class _PlayScreenState extends State<PlayScreen> {
   }
 
   Widget _statusText(TableView table) {
-    final text = Theme.of(context).textTheme;
-    if (_choosingMelds) {
-      return Text('Choisissez votre annonce', style: text.titleMedium);
-    }
-    if (table.isMyTurn) return Text('À vous de jouer', style: text.titleMedium);
-    final reading = table.meldRecapFor.where((seat) => seat != table.seat);
-    if (reading.isNotEmpty) {
-      return Text(
-        '${table.nicknames[reading.first]} lit les annonces…',
-        style: text.titleMedium?.copyWith(
-          color: ChibreColors.ivory.withValues(alpha: 0.7),
-        ),
-      );
-    }
-    if (table.seatToAct == null) return const SizedBox.shrink();
-    final name = table.nicknames[table.seatToAct!];
+    final style = Theme.of(context).textTheme.titleMedium;
+    if (_choosingMelds) return Text('Choisissez votre annonce', style: style);
+    if (table.isMyTurn) return Text('À vous de jouer', style: style);
+    final waiting = _waitingFor(table);
+    if (waiting == null) return const SizedBox.shrink();
     return Text(
-      table.phase == TablePhase.choosingTrump
-          ? '$name choisit l\'atout…'
-          : '$name joue…',
-      style: text.titleMedium?.copyWith(
-        color: ChibreColors.ivory.withValues(alpha: 0.7),
-      ),
+      waiting,
+      style: style?.copyWith(color: ChibreColors.ivory.withValues(alpha: 0.7)),
     );
+  }
+
+  /// What the game waits for when it is not this player's turn.
+  String? _waitingFor(TableView table) {
+    String name(int seat) => table.nicknames[seat];
+    final reading = table.meldRecapFor.where((seat) => seat != table.seat);
+    if (reading.isNotEmpty) return '${name(reading.first)} lit les annonces…';
+    final choosing = table.meldChoiceFor.where((seat) => seat != table.seat);
+    if (choosing.isNotEmpty) {
+      return '${name(choosing.first)} choisit son annonce…';
+    }
+    final seat = table.seatToAct;
+    if (seat == null) return null;
+    return table.phase == TablePhase.choosingTrump
+        ? '${name(seat)} choisit l\'atout…'
+        : '${name(seat)} joue…';
   }
 }

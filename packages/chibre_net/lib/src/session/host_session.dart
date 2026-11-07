@@ -15,6 +15,7 @@ import '../transport/transport.dart';
 import 'bot_runner.dart';
 import 'card_style.dart';
 import 'host_config.dart';
+import 'meld_choice.dart';
 import 'meld_recap.dart';
 import 'saved_game_store.dart';
 import 'session_timing.dart';
@@ -69,6 +70,7 @@ class HostSession {
   var _version = 0;
   Timer? _timer;
   final _meldRecap = MeldRecap();
+  final _meldChoice = MeldChoice();
   var _closed = false;
 
   /// The host's table, after every change.
@@ -124,6 +126,9 @@ class HostSession {
 
   void answerRematch({required bool accept}) =>
       _answerRematch(hostSeat, accept);
+
+  /// The host chose its melds, or not to announce any.
+  void meldsChosen() => _chooseMelds(hostSeat);
 
   /// The host closed the meld recap.
   void dismissMelds() => _dismissMelds(hostSeat);
@@ -231,6 +236,7 @@ class HostSession {
       insights: _insights,
       leftBy: _leftBy,
       meldRecapFor: _meldRecap.waitingFor,
+      meldChoiceFor: _meldChoice.pending(game.round, _humans),
     );
   }
 
@@ -305,9 +311,11 @@ class HostSession {
           _changed();
         });
       case GamePhase.choosingTrump || GamePhase.playing:
+        if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
         if (_scheduleMeldRecap(game.round)) return;
         final seat = game.seatToAct;
         if (seat == hostSeat || seat == joinerSeat) return;
+        if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
         _timer = Timer(
             _pauseBeforeBot(game.round), () => _playBot(game, seat, version));
     }
@@ -337,6 +345,13 @@ class HostSession {
   /// From the end of the first trick until the meld recap is closed.
   bool _waitsForMeldRecap(RoundState round) =>
       _meldRecap.isActive || _meldRecap.isDue(round);
+
+  static const _humans = [hostSeat, joinerSeat];
+
+  void _chooseMelds(int seat) {
+    _meldChoice.choose(seat);
+    _changed();
+  }
 
   void _dismissMelds(int seat) {
     if (!_meldRecap.isActive) return;
@@ -477,6 +492,8 @@ class HostSession {
       case pb.ClientMessage_Body.presence:
         _joinerAway = message.presence.away;
         _changed();
+      case pb.ClientMessage_Body.meldsChosen:
+        _chooseMelds(joinerSeat);
       case pb.ClientMessage_Body.dismissMelds:
         _dismissMelds(joinerSeat);
       case pb.ClientMessage_Body.leave:

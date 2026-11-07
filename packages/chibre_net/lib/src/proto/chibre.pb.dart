@@ -847,6 +847,49 @@ class DismissMelds extends $pb.GeneratedMessage {
   static DismissMelds? _defaultInstance;
 }
 
+/// The player chose their melds (sent with their first card) or not to
+/// announce any.
+class MeldsChosen extends $pb.GeneratedMessage {
+  factory MeldsChosen() => MeldsChosen._();
+
+  MeldsChosen._();
+
+  factory MeldsChosen.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      MeldsChosen()..mergeFromBuffer(data, registry);
+  factory MeldsChosen.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      MeldsChosen()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MeldsChosen',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
+      createEmptyInstance: MeldsChosen.$_createMessage)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MeldsChosen clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MeldsChosen copyWith(void Function(MeldsChosen) updates) =>
+      super.copyWith((message) => updates(message as MeldsChosen))
+          as MeldsChosen;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use MeldsChosen() / MeldsChosen.new instead')
+  static MeldsChosen create() => MeldsChosen._();
+  static $pb.GeneratedMessage $_createMessage() => MeldsChosen._();
+  @$core.override
+  MeldsChosen createEmptyInstance() => MeldsChosen._();
+  @$core.pragma('dart2js:noInline')
+  static MeldsChosen getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MeldsChosen>(
+          MeldsChosen.$_createMessage);
+  static MeldsChosen? _defaultInstance;
+}
+
 enum ClientMessage_Body {
   hello,
   action,
@@ -855,6 +898,7 @@ enum ClientMessage_Body {
   presence,
   leave,
   dismissMelds,
+  meldsChosen,
   notSet
 }
 
@@ -867,6 +911,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     Presence? presence,
     Leave? leave,
     DismissMelds? dismissMelds,
+    MeldsChosen? meldsChosen,
   }) {
     final result = ClientMessage._();
     if (hello != null) result.hello = hello;
@@ -876,6 +921,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     if (presence != null) result.presence = presence;
     if (leave != null) result.leave = leave;
     if (dismissMelds != null) result.dismissMelds = dismissMelds;
+    if (meldsChosen != null) result.meldsChosen = meldsChosen;
     return result;
   }
 
@@ -897,13 +943,14 @@ class ClientMessage extends $pb.GeneratedMessage {
     5: ClientMessage_Body.presence,
     6: ClientMessage_Body.leave,
     7: ClientMessage_Body.dismissMelds,
+    8: ClientMessage_Body.meldsChosen,
     0: ClientMessage_Body.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ClientMessage',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
       createEmptyInstance: ClientMessage.$_createMessage)
-    ..oo(0, [1, 2, 3, 4, 5, 6, 7])
+    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8])
     ..aOM<Hello>(1, _omitFieldNames ? '' : 'hello',
         subBuilder: Hello.$_createMessage)
     ..aOM<Action>(2, _omitFieldNames ? '' : 'action',
@@ -918,6 +965,8 @@ class ClientMessage extends $pb.GeneratedMessage {
         subBuilder: Leave.$_createMessage)
     ..aOM<DismissMelds>(7, _omitFieldNames ? '' : 'dismissMelds',
         subBuilder: DismissMelds.$_createMessage)
+    ..aOM<MeldsChosen>(8, _omitFieldNames ? '' : 'meldsChosen',
+        subBuilder: MeldsChosen.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -949,6 +998,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   @$pb.TagNumber(6)
   @$pb.TagNumber(7)
+  @$pb.TagNumber(8)
   ClientMessage_Body whichBody() => _ClientMessage_BodyByTag[$_whichOneof(0)]!;
   @$pb.TagNumber(1)
   @$pb.TagNumber(2)
@@ -957,6 +1007,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   @$pb.TagNumber(6)
   @$pb.TagNumber(7)
+  @$pb.TagNumber(8)
   void clearBody() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -1035,6 +1086,17 @@ class ClientMessage extends $pb.GeneratedMessage {
   void clearDismissMelds() => $_clearField(7);
   @$pb.TagNumber(7)
   DismissMelds ensureDismissMelds() => $_ensure(6);
+
+  @$pb.TagNumber(8)
+  MeldsChosen get meldsChosen => $_getN(7);
+  @$pb.TagNumber(8)
+  set meldsChosen(MeldsChosen value) => $_setField(8, value);
+  @$pb.TagNumber(8)
+  $core.bool hasMeldsChosen() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearMeldsChosen() => $_clearField(8);
+  @$pb.TagNumber(8)
+  MeldsChosen ensureMeldsChosen() => $_ensure(7);
 }
 
 class Welcome extends $pb.GeneratedMessage {
@@ -1620,6 +1682,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     Insights? insights,
     $core.int? trickHoldMs,
     $core.Iterable<$core.int>? meldRecapFor,
+    $core.Iterable<$core.int>? meldChoiceFor,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1645,6 +1708,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (insights != null) result.insights = insights;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     if (meldRecapFor != null) result.meldRecapFor.addAll(meldRecapFor);
+    if (meldChoiceFor != null) result.meldChoiceFor.addAll(meldChoiceFor);
     return result;
   }
 
@@ -1697,6 +1761,8 @@ class TableSnapshot extends $pb.GeneratedMessage {
         fieldType: $pb.PbFieldType.OU3)
     ..p<$core.int>(
         23, _omitFieldNames ? '' : 'meldRecapFor', $pb.PbFieldType.KU3)
+    ..p<$core.int>(
+        24, _omitFieldNames ? '' : 'meldChoiceFor', $pb.PbFieldType.KU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1902,6 +1968,10 @@ class TableSnapshot extends $pb.GeneratedMessage {
   /// Seats still reading the meld recap; nobody plays until it is empty.
   @$pb.TagNumber(23)
   $pb.PbList<$core.int> get meldRecapFor => $_getList(22);
+
+  /// Humans still choosing their melds; the bots wait for them.
+  @$pb.TagNumber(24)
+  $pb.PbList<$core.int> get meldChoiceFor => $_getList(23);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {

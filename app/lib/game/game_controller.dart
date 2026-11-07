@@ -14,6 +14,10 @@ abstract interface class GameController {
 
   void answerRematch({required bool accept});
 
+  /// The player chose their melds (sent with the first card), or not to
+  /// announce any; the computer players wait for it.
+  void meldsChosen();
+
   /// The player closed the meld recap.
   void dismissMelds();
 

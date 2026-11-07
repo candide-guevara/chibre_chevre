@@ -266,6 +266,15 @@ const DismissMelds$json = {
 final $typed_data.Uint8List dismissMeldsDescriptor =
     $convert.base64Decode('CgxEaXNtaXNzTWVsZHM=');
 
+@$core.Deprecated('Use meldsChosenDescriptor instead')
+const MeldsChosen$json = {
+  '1': 'MeldsChosen',
+};
+
+/// Descriptor for `MeldsChosen`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List meldsChosenDescriptor =
+    $convert.base64Decode('CgtNZWxkc0Nob3Nlbg==');
+
 @$core.Deprecated('Use clientMessageDescriptor instead')
 const ClientMessage$json = {
   '1': 'ClientMessage',
@@ -333,6 +342,15 @@ const ClientMessage$json = {
       '9': 0,
       '10': 'dismissMelds'
     },
+    {
+      '1': 'melds_chosen',
+      '3': 8,
+      '4': 1,
+      '5': 11,
+      '6': '.chibre.MeldsChosen',
+      '9': 0,
+      '10': 'meldsChosen'
+    },
   ],
   '8': [
     {'1': 'body'},
@@ -347,7 +365,8 @@ final $typed_data.Uint8List clientMessageDescriptor = $convert.base64Decode(
     '5hbnN3ZXJfcmVtYXRjaBgEIAEoCzIVLmNoaWJyZS5BbnN3ZXJSZW1hdGNoSABSDWFuc3dlclJl'
     'bWF0Y2gSLgoIcHJlc2VuY2UYBSABKAsyEC5jaGlicmUuUHJlc2VuY2VIAFIIcHJlc2VuY2USJQ'
     'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmUSOwoNZGlzbWlzc19tZWxkcxgH'
-    'IAEoCzIULmNoaWJyZS5EaXNtaXNzTWVsZHNIAFIMZGlzbWlzc01lbGRzQgYKBGJvZHk=');
+    'IAEoCzIULmNoaWJyZS5EaXNtaXNzTWVsZHNIAFIMZGlzbWlzc01lbGRzEjgKDG1lbGRzX2Nob3'
+    'NlbhgIIAEoCzITLmNoaWJyZS5NZWxkc0Nob3NlbkgAUgttZWxkc0Nob3NlbkIGCgRib2R5');
 
 @$core.Deprecated('Use welcomeDescriptor instead')
 const Welcome$json = {
@@ -618,6 +637,7 @@ const TableSnapshot$json = {
     },
     {'1': 'trick_hold_ms', '3': 22, '4': 1, '5': 13, '10': 'trickHoldMs'},
     {'1': 'meld_recap_for', '3': 23, '4': 3, '5': 13, '10': 'meldRecapFor'},
+    {'1': 'meld_choice_for', '3': 24, '4': 3, '5': 13, '10': 'meldChoiceFor'},
   ],
   '4': [TableSnapshot_Phase$json],
 };
@@ -651,10 +671,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'ASgFUgt3aW5uaW5nVGVhbRIdCgpwYXVzZWRfZm9yGBMgASgJUglwYXVzZWRGb3ISMQoHcmVtYX'
     'RjaBgUIAEoCzIXLmNoaWJyZS5SZW1hdGNoUHJvcG9zYWxSB3JlbWF0Y2gSLAoIaW5zaWdodHMY'
     'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzEiIKDXRyaWNrX2hvbGRfbXMYFiABKA'
-    '1SC3RyaWNrSG9sZE1zEiQKDm1lbGRfcmVjYXBfZm9yGBcgAygNUgxtZWxkUmVjYXBGb3IifQoF'
-    'UGhhc2USHAoYUEhBU0VfV0FJVElOR19GT1JfUExBWUVSEAASGAoUUEhBU0VfQ0hPT1NJTkdfVF'
-    'JVTVAQARIRCg1QSEFTRV9QTEFZSU5HEAISFAoQUEhBU0VfUk9VTkRfT1ZFUhADEhMKD1BIQVNF'
-    'X0dBTUVfT1ZFUhAE');
+    '1SC3RyaWNrSG9sZE1zEiQKDm1lbGRfcmVjYXBfZm9yGBcgAygNUgxtZWxkUmVjYXBGb3ISJgoP'
+    'bWVsZF9jaG9pY2VfZm9yGBggAygNUg1tZWxkQ2hvaWNlRm9yIn0KBVBoYXNlEhwKGFBIQVNFX1'
+    'dBSVRJTkdfRk9SX1BMQVlFUhAAEhgKFFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0Vf'
+    'UExBWUlORxACEhQKEFBIQVNFX1JPVU5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {

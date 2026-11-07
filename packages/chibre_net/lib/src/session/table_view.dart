@@ -41,6 +41,7 @@ class TableView {
     this.leftBy,
     this.trickHold = HostConfig.defaultTrickHold,
     this.meldRecapFor = const [],
+    this.meldChoiceFor = const [],
   });
 
   final int seat;
@@ -82,6 +83,9 @@ class TableView {
   /// The seats still reading the meld recap; nobody plays until it is empty.
   final List<int> meldRecapFor;
 
+  /// The humans still choosing their melds; the computer players wait.
+  final List<int> meldChoiceFor;
+
   /// Whether this player should see the meld recap.
   bool get showsMeldRecap => meldRecapFor.contains(seat);
 
@@ -109,5 +113,6 @@ class TableView {
         leftBy: leftBy ?? this.leftBy,
         trickHold: trickHold,
         meldRecapFor: meldRecapFor,
+        meldChoiceFor: meldChoiceFor,
       );
 }

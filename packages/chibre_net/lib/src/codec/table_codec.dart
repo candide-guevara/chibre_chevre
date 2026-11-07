@@ -22,6 +22,7 @@ pb.TableSnapshot encodeTable(TableView table) {
     pausedFor: table.pausedFor ?? '',
     trickHoldMs: table.trickHold.inMilliseconds,
     meldRecapFor: table.meldRecapFor,
+    meldChoiceFor: table.meldChoiceFor,
   );
   if (player != null) {
     snapshot
@@ -69,6 +70,7 @@ TableView decodeTable(pb.TableSnapshot snapshot) {
     cardStyle: CardStyle.values[snapshot.cardStyle.value],
     trickHold: Duration(milliseconds: snapshot.trickHoldMs),
     meldRecapFor: List.unmodifiable(snapshot.meldRecapFor),
+    meldChoiceFor: List.unmodifiable(snapshot.meldChoiceFor),
     phase: phase,
     roundIndex: snapshot.roundIndex,
     scores: scores,

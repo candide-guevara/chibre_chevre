@@ -38,6 +38,10 @@ class FakeController implements GameController {
   void answerRematch({required bool accept}) {}
 
   var dismissedMelds = false;
+  var choseMelds = false;
+
+  @override
+  void meldsChosen() => choseMelds = true;
 
   @override
   void dismissMelds() => dismissedMelds = true;
@@ -69,6 +73,7 @@ TableView tableOf(
   GameState game, {
   int seat = 0,
   List<int> meldRecapFor = const [],
+  List<int> meldChoiceFor = const [],
 }) => TableView(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
@@ -84,6 +89,7 @@ TableView tableOf(
   roundPoints: game.round.points,
   trickHold: const Duration(milliseconds: 700),
   meldRecapFor: meldRecapFor,
+  meldChoiceFor: meldChoiceFor,
 );
 
 Future<void> pumpScreen(WidgetTester tester, FakeController controller) async {
@@ -116,6 +122,7 @@ void main() {
     await pumpScreen(tester, controller);
     await tester.tap(find.text('Ne pas annoncer, jouer'));
     await tester.pump();
+    expect(controller.choseMelds, isTrue);
     expect(find.text('À vous de jouer'), findsOneWidget);
     await tester.tap(find.bySemanticsLabel('as de pique'));
     final play = controller.actions.single as PlayCard;
@@ -148,6 +155,7 @@ void main() {
     await tester.pump();
     expect(find.textContaining('20 ('), findsOneWidget);
     expect(find.text('Valider l\'annonce'), findsNothing); // No going back.
+    expect(controller.choseMelds, isTrue);
 
     await tester.tap(find.bySemanticsLabel('as de pique'));
     final play = controller.actions.single as PlayCard;
@@ -172,6 +180,10 @@ void main() {
     await pumpScreen(tester, controller);
     expect(find.text('Choisissez votre annonce'), findsOneWidget);
     await tester.tap(find.text('Ne pas annoncer, jouer'));
+    controller.show(tableOf(game, seat: 2, meldChoiceFor: [0]));
+    await tester.pump();
+    expect(find.text('Ana choisit son annonce…'), findsOneWidget);
+    controller.show(tableOf(game, seat: 2));
     await tester.pump();
     expect(find.text('Ana joue…'), findsOneWidget);
   });

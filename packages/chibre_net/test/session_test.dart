@@ -48,10 +48,11 @@ Future<OpenGame> findGame(InMemoryNetwork network,
         .firstWhere(where ?? (_) => true);
 
 /// Plays for a human seat with the heuristic player whenever it's its turn.
-StreamSubscription<TableView> autoplay(
-    Stream<TableView> tables, void Function(GameAction) act) {
+StreamSubscription<TableView> autoplay(Stream<TableView> tables,
+    void Function(GameAction) act, void Function() chooseMelds) {
   final heuristic = HeuristicPlayer();
   return tables.listen((table) {
+    if (table.meldChoiceFor.contains(table.seat)) chooseMelds();
     if (table.isMyTurn) act(heuristic.decide(table.player!));
   });
 }
@@ -96,8 +97,8 @@ void main() {
       () async {
     final network = InMemoryNetwork();
     final (host, client) = await startGame(network);
-    autoplay(host.tables, host.act);
-    autoplay(client.tables, client.act);
+    autoplay(host.tables, host.act, host.meldsChosen);
+    autoplay(client.tables, client.act, client.meldsChosen);
     // Kick off in case the host must act first.
     if (host.table!.isMyTurn) {
       host.act(HeuristicPlayer().decide(host.table!.player!));
@@ -147,6 +148,34 @@ void main() {
     await host.close();
   });
 
+  test('the bots wait for both humans to choose their melds', () async {
+    final network = InMemoryNetwork();
+    final host = HostSession(
+      transport: InMemoryTransport(network),
+      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      timing: SessionTiming.instant,
+      newDeals: (random) =>
+          PresetHandDealSource({0: CardSet.parse('D7')}, random),
+    );
+    await host.create(const HostConfig(
+        gameName: 'g', nickname: 'Ana', trickHold: Duration.zero));
+    final client = newClient(network);
+    await client.join(await findGame(network));
+    await pumpEventQueue();
+    host.act(const ChooseTrump(0, TrumpMode.hearts));
+    expect(host.table!.meldChoiceFor, [0, 2]);
+    host.meldsChosen();
+    host.act(PlayCard(0, Card.parse('D7')));
+    await pumpEventQueue(times: 50);
+    expect(host.table!.seatToAct, 1);
+    expect(host.table!.meldChoiceFor, [2]);
+
+    client.meldsChosen();
+    await host.tables.firstWhere((t) => t.seatToAct == 2);
+    expect(host.table!.meldChoiceFor, isEmpty);
+    await host.close();
+  });
+
   group('the meld recap after the first trick', () {
     /// The host announces a sequence in the first trick; resolves once the
     /// recap is shown.
@@ -168,7 +197,8 @@ void main() {
           gameName: 'g', nickname: 'Ana', trickHold: Duration.zero));
       final client = newClient(network);
       await client.join(await findGame(network));
-      final clientPlay = autoplay(client.tables, client.act);
+      final clientPlay =
+          autoplay(client.tables, client.act, client.meldsChosen);
       final shown = host.tables.firstWhere((t) => t.meldRecapFor.isNotEmpty);
       await pumpEventQueue();
       host.act(const ChooseTrump(0, TrumpMode.hearts));
@@ -273,8 +303,8 @@ void main() {
     final network = InMemoryNetwork();
     final (host, client) = await startGame(network);
     final firstHand = host.table!.player!.hand;
-    autoplay(host.tables, host.act);
-    final clientPlay = autoplay(client.tables, client.act);
+    autoplay(host.tables, host.act, host.meldsChosen);
+    final clientPlay = autoplay(client.tables, client.act, client.meldsChosen);
     if (host.table!.isMyTurn) {
       host.act(HeuristicPlayer().decide(host.table!.player!));
     }
@@ -298,8 +328,8 @@ void main() {
     final store = MemoryStore();
     final (host, client) = await startGame(network, store: store);
     final heuristic = HeuristicPlayer();
-    final hostPlay = autoplay(host.tables, host.act);
-    final clientPlay = autoplay(client.tables, client.act);
+    final hostPlay = autoplay(host.tables, host.act, host.meldsChosen);
+    final clientPlay = autoplay(client.tables, client.act, client.meldsChosen);
     if (host.table!.isMyTurn) host.act(heuristic.decide(host.table!.player!));
     final reached = await host.tables.firstWhere((t) => t.roundIndex == 1);
     await hostPlay.cancel();
