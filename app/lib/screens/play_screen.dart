@@ -278,7 +278,11 @@ class _PlayScreenState extends State<PlayScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                     child: HandView(
-                      cards: sortHand(table.player!.hand, table.player!.mode),
+                      cards: sortHand(
+                        table.player!.hand,
+                        table.player!.mode,
+                        byTrump: table.sortByTrump,
+                      ),
                       style: table.cardStyle,
                       enabled: _enabledCards(table),
                       selected: _selection,

@@ -143,6 +143,7 @@ Opened from the host game screen; its options are part of the game the host crea
 
 * pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 * "Aide de jeu": a toggle (default off) showing the button bar of the play game screen ("Jouer pour moi" and "Cartes jouées") on both phones.
+* "Trier la main selon l'atout": a toggle (default off). Off, hands are always sorted ♥ ♠ ♦ ♣, from 6 to ace; on, trump comes first once chosen and each suit is sorted by strength in the round's trump mode. Applies to both phones (hand and insights).
 
 ## Waiting for player screen
 
@@ -151,7 +152,7 @@ As soon as a player joins, both phones open the play game screen. The host picks
 
 ## Play game screen
 
-* The player's cards are shown at the bottom, sorted by suit and rank (trump first once chosen).
+* The player's cards are shown at the bottom, sorted by suit in the fixed order ♥ ♠ ♦ ♣, each suit from 6 to ace; or, when the host turned on "Trier la main selon l'atout", trump first once chosen and each suit by strength in the round's trump mode.
 * The partner is at the top, bots on the left and right, each with their nickname ("Ordi 1", "Ordi 2" for bots). The current trick is in the center.
 * Always visible: both team scores ("Nous" and "Ordi", for the bots' team), target score, current trump mode, whose turn it is. The trump is shown prominently: an "Atout :" label followed by the suit drawn large on an ivory badge (⬇ / ⬆ for Obenabe / Undenufe), plus the multiplier when it applies. The same "Nous" / "Ordi" labels are used in the round summary and the end game screen.
 * **Trump choice**: when it is the player's turn to choose, a panel shows the allowed trump modes plus "Chibrer" (if allowed).

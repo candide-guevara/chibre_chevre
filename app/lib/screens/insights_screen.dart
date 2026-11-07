@@ -80,7 +80,11 @@ class InsightsScreen extends StatelessWidget {
     if (blunders.isEmpty) return [const Text('Aucune erreur notable. Bravo !')];
     return [
       for (final blunder in blunders)
-        BlunderTile(blunder: blunder, style: table.cardStyle),
+        BlunderTile(
+          blunder: blunder,
+          style: table.cardStyle,
+          sortByTrump: table.sortByTrump,
+        ),
     ];
   }
 }

@@ -11,10 +11,16 @@ import 'playing_card.dart';
 /// One blunder of the insights: the situation, what was done, what was
 /// better and what it cost.
 class BlunderTile extends StatelessWidget {
-  const BlunderTile({super.key, required this.blunder, required this.style});
+  const BlunderTile({
+    super.key,
+    required this.blunder,
+    required this.style,
+    required this.sortByTrump,
+  });
 
   final Blunder blunder;
   final CardStyle style;
+  final bool sortByTrump;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +51,10 @@ class BlunderTile extends StatelessWidget {
             ),
             Text(where, style: text.bodySmall),
             const SizedBox(height: 8),
-            _cards('Main', sortHand(blunder.hand, blunder.mode)),
+            _cards(
+              'Main',
+              sortHand(blunder.hand, blunder.mode, byTrump: sortByTrump),
+            ),
             if (blunder.trick.isNotEmpty) _cards('Sur la table', blunder.trick),
             const SizedBox(height: 8),
             Text(_explanation(), style: text.bodyMedium),

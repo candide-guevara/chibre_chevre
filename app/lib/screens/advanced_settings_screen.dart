@@ -56,6 +56,13 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
           value: _settings.assistance,
           onChanged: (value) => _update(_settings.copyWith(assistance: value)),
         ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Trier la main selon l\'atout'),
+          subtitle: const Text('Sinon : ♥ ♠ ♦ ♣, du 6 à l\'as'),
+          value: _settings.sortByTrump,
+          onChanged: (value) => _update(_settings.copyWith(sortByTrump: value)),
+        ),
       ],
     ),
   );

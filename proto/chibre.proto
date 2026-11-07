@@ -216,6 +216,9 @@ message TableSnapshot {
   // Whether the play screen shows the "Jouer pour moi" and "Cartes jouées"
   // buttons.
   bool assistance = 25;
+  // Whether hands are sorted by trump (trump first, by strength) rather
+  // than in the fixed order ♥ ♠ ♦ ♣.
+  bool sort_by_trump = 26;
 }
 
 message ActionRejected {
@@ -258,4 +261,5 @@ message SavedGame {
   GameRecord record = 6;
   uint32 trick_hold_ms = 7;
   bool assistance = 8;
+  bool sort_by_trump = 9;
 }

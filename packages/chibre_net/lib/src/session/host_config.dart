@@ -8,6 +8,7 @@ class HostConfig {
     this.options = const GameOptions(),
     this.trickHold = defaultTrickHold,
     this.assistance = false,
+    this.sortByTrump = false,
   });
 
   static const defaultTrickHold = Duration(milliseconds: 1500);
@@ -23,4 +24,7 @@ class HostConfig {
   /// Whether the players get the "Jouer pour moi" and "Cartes jouées"
   /// buttons.
   final bool assistance;
+
+  /// Whether hands are sorted by trump rather than in a fixed suit order.
+  final bool sortByTrump;
 }

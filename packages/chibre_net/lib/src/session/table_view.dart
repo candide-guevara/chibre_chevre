@@ -43,6 +43,7 @@ class TableView {
     this.recapFor = const [],
     this.meldChoiceFor = const [],
     this.assistance = false,
+    this.sortByTrump = false,
   });
 
   final int seat;
@@ -92,6 +93,9 @@ class TableView {
   /// buttons.
   final bool assistance;
 
+  /// Whether hands are sorted by trump rather than in a fixed suit order.
+  final bool sortByTrump;
+
   /// Whether this player should see the recap of the announcements.
   bool get showsRecap => recapFor.contains(seat);
 
@@ -121,5 +125,6 @@ class TableView {
         recapFor: recapFor,
         meldChoiceFor: meldChoiceFor,
         assistance: assistance,
+        sortByTrump: sortByTrump,
       );
 }

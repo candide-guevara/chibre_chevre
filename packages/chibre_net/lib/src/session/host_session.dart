@@ -56,6 +56,7 @@ class HostSession {
   late CardStyle _cardStyle;
   late Duration _trickHold;
   late bool _assistance;
+  late bool _sortByTrump;
   String? _joinerId;
   GameState? _game;
   GameServer? _server;
@@ -97,6 +98,7 @@ class HostSession {
     _options = config.options;
     _trickHold = config.trickHold;
     _assistance = config.assistance;
+    _sortByTrump = config.sortByTrump;
     _nicknames = [config.nickname, 'Ordi 1', '', 'Ordi 2'];
     _cardStyle = _randomStyle();
     await _open();
@@ -114,6 +116,7 @@ class HostSession {
     _cardStyle = CardStyle.values[saved.cardStyle.value];
     _trickHold = Duration(milliseconds: saved.trickHoldMs);
     _assistance = saved.assistance;
+    _sortByTrump = saved.sortByTrump;
     _game = replayRecord(record);
     await _open();
   }
@@ -208,6 +211,7 @@ class HostSession {
         cardStyle: _cardStyle,
         trickHold: _trickHold,
         assistance: _assistance,
+        sortByTrump: _sortByTrump,
         phase: TablePhase.waitingForPlayer,
         roundIndex: 0,
         scores: const [0, 0],
@@ -229,6 +233,7 @@ class HostSession {
       cardStyle: _cardStyle,
       trickHold: _trickHold,
       assistance: _assistance,
+      sortByTrump: _sortByTrump,
       phase: phase,
       roundIndex: game.roundIndex,
       scores: game.scores,
@@ -293,6 +298,7 @@ class HostSession {
       cardStyle: pb.CardStyle.valueOf(_cardStyle.index),
       trickHoldMs: _trickHold.inMilliseconds,
       assistance: _assistance,
+      sortByTrump: _sortByTrump,
       record: encodeRecord(game.record),
     ).writeToBuffer());
   }

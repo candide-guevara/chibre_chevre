@@ -1684,6 +1684,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.Iterable<$core.int>? recapFor,
     $core.Iterable<$core.int>? meldChoiceFor,
     $core.bool? assistance,
+    $core.bool? sortByTrump,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1711,6 +1712,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (recapFor != null) result.recapFor.addAll(recapFor);
     if (meldChoiceFor != null) result.meldChoiceFor.addAll(meldChoiceFor);
     if (assistance != null) result.assistance = assistance;
+    if (sortByTrump != null) result.sortByTrump = sortByTrump;
     return result;
   }
 
@@ -1765,6 +1767,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     ..p<$core.int>(
         24, _omitFieldNames ? '' : 'meldChoiceFor', $pb.PbFieldType.KU3)
     ..aOB(25, _omitFieldNames ? '' : 'assistance')
+    ..aOB(26, _omitFieldNames ? '' : 'sortByTrump')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1986,6 +1989,17 @@ class TableSnapshot extends $pb.GeneratedMessage {
   $core.bool hasAssistance() => $_has(24);
   @$pb.TagNumber(25)
   void clearAssistance() => $_clearField(25);
+
+  /// Whether hands are sorted by trump (trump first, by strength) rather
+  /// than in the fixed order ♥ ♠ ♦ ♣.
+  @$pb.TagNumber(26)
+  $core.bool get sortByTrump => $_getBF(25);
+  @$pb.TagNumber(26)
+  set sortByTrump($core.bool value) => $_setBool(25, value);
+  @$pb.TagNumber(26)
+  $core.bool hasSortByTrump() => $_has(25);
+  @$pb.TagNumber(26)
+  void clearSortByTrump() => $_clearField(26);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
@@ -2381,6 +2395,7 @@ class SavedGame extends $pb.GeneratedMessage {
     GameRecord? record,
     $core.int? trickHoldMs,
     $core.bool? assistance,
+    $core.bool? sortByTrump,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2392,6 +2407,7 @@ class SavedGame extends $pb.GeneratedMessage {
     if (record != null) result.record = record;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     if (assistance != null) result.assistance = assistance;
+    if (sortByTrump != null) result.sortByTrump = sortByTrump;
     return result;
   }
 
@@ -2419,6 +2435,7 @@ class SavedGame extends $pb.GeneratedMessage {
     ..aI(7, _omitFieldNames ? '' : 'trickHoldMs',
         fieldType: $pb.PbFieldType.OU3)
     ..aOB(8, _omitFieldNames ? '' : 'assistance')
+    ..aOB(9, _omitFieldNames ? '' : 'sortByTrump')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2508,6 +2525,15 @@ class SavedGame extends $pb.GeneratedMessage {
   $core.bool hasAssistance() => $_has(7);
   @$pb.TagNumber(8)
   void clearAssistance() => $_clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.bool get sortByTrump => $_getBF(8);
+  @$pb.TagNumber(9)
+  set sortByTrump($core.bool value) => $_setBool(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasSortByTrump() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearSortByTrump() => $_clearField(9);
 }
 
 const $core.bool _omitFieldNames =

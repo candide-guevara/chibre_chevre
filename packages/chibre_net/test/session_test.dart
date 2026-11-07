@@ -122,18 +122,21 @@ void main() {
         gameName: 'g',
         nickname: 'Ana',
         trickHold: Duration(seconds: 3),
-        assistance: true));
+        assistance: true,
+        sortByTrump: true));
     final client = newClient(network);
     await client.join(await findGame(network));
     final table = await client.tables.firstWhere((t) => t.player != null);
     expect(table.trickHold, const Duration(seconds: 3));
     expect(table.assistance, isTrue);
+    expect(table.sortByTrump, isTrue);
 
     network.disconnectAll();
     final restarted = newHost(network, store: store);
     await restarted.resume();
     expect(restarted.table!.trickHold, const Duration(seconds: 3));
     expect(restarted.table!.assistance, isTrue);
+    expect(restarted.table!.sortByTrump, isTrue);
     await restarted.close();
   });
 
