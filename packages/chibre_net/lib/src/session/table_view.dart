@@ -1,6 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
 
 import 'card_style.dart';
+import 'host_config.dart';
 
 enum TablePhase {
   waitingForPlayer,
@@ -38,6 +39,7 @@ class TableView {
     this.rematch,
     this.insights,
     this.leftBy,
+    this.trickHold = HostConfig.defaultTrickHold,
   });
 
   final int seat;
@@ -73,6 +75,9 @@ class TableView {
   /// Set when the other human left: the game is over for good.
   final String? leftBy;
 
+  /// How long a complete trick stays before sliding to its winner.
+  final Duration trickHold;
+
   bool get isPaused => pausedFor != null;
 
   bool get isMyTurn => !isPaused && leftBy == null && seatToAct == seat;
@@ -94,5 +99,6 @@ class TableView {
         rematch: rematch,
         insights: insights,
         leftBy: leftBy ?? this.leftBy,
+        trickHold: trickHold,
       );
 }

@@ -21,6 +21,7 @@ class TrickView extends StatefulWidget {
     required this.viewer,
     required this.style,
     required this.cardWidth,
+    required this.hold,
     this.winner,
   });
 
@@ -28,6 +29,9 @@ class TrickView extends StatefulWidget {
   final int viewer;
   final CardStyle style;
   final double cardWidth;
+
+  /// How long the complete trick stays before sliding to its winner.
+  final Duration hold;
 
   /// The seat that won the trick, once it is complete.
   final int? winner;
@@ -38,11 +42,10 @@ class TrickView extends StatefulWidget {
 
 class _TrickViewState extends State<TrickView>
     with SingleTickerProviderStateMixin {
-  /// Shorter than the host's pause before the next trick is led.
-  static const _hold = Duration(milliseconds: 700);
-  static const _slide = Duration(milliseconds: 400);
-
-  late final _controller = AnimationController(vsync: this, duration: _slide);
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const SessionTiming().trickSlide,
+  );
 
   /// Bumped whenever another trick is shown, to drop pending collections.
   var _generation = 0;
@@ -72,7 +75,7 @@ class _TrickViewState extends State<TrickView>
   Future<void> _collectIfWon() async {
     if (widget.winner == null) return;
     final generation = _generation;
-    await Future<void>.delayed(_hold);
+    await Future<void>.delayed(widget.hold);
     if (mounted && generation == _generation) _controller.forward();
   }
 

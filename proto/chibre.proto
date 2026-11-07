@@ -197,6 +197,8 @@ message TableSnapshot {
   string paused_for = 19;
   RematchProposal rematch = 20;
   Insights insights = 21;
+  // How long a complete trick stays before sliding to its winner.
+  uint32 trick_hold_ms = 22;
 }
 
 message ActionRejected {
@@ -237,4 +239,5 @@ message SavedGame {
   string joiner_installation_id = 4;
   CardStyle card_style = 5;
   GameRecord record = 6;
+  uint32 trick_hold_ms = 7;
 }

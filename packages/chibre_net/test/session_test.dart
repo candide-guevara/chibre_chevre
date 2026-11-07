@@ -60,7 +60,10 @@ Future<(HostSession, ClientSession)> startGame(InMemoryNetwork network,
     {SavedGameStore? store}) async {
   final host = newHost(network, store: store);
   await host.create(const HostConfig(
-      gameName: 'Partie de Ana', nickname: 'Ana', options: options));
+      gameName: 'Partie de Ana',
+      nickname: 'Ana',
+      options: options,
+      trickHold: Duration.zero));
   final client = newClient(network);
   await client.join(await findGame(network));
   return (host, client);
@@ -108,6 +111,24 @@ void main() {
     expect(clientEnd.scores, hostEnd.scores);
     expect(hostEnd.scores.reduce(max), greaterThanOrEqualTo(300));
     await host.close();
+  });
+
+  test('the joiner and a resumed game use the host\'s trick hold', () async {
+    final network = InMemoryNetwork();
+    final store = MemoryStore();
+    final host = newHost(network, store: store);
+    await host.create(const HostConfig(
+        gameName: 'g', nickname: 'Ana', trickHold: Duration(seconds: 3)));
+    final client = newClient(network);
+    await client.join(await findGame(network));
+    final table = await client.tables.firstWhere((t) => t.player != null);
+    expect(table.trickHold, const Duration(seconds: 3));
+
+    network.disconnectAll();
+    final restarted = newHost(network, store: store);
+    await restarted.resume();
+    expect(restarted.table!.trickHold, const Duration(seconds: 3));
+    await restarted.close();
   });
 
   test('illegal actions of the joiner are rejected', () async {

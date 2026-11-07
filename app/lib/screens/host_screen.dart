@@ -20,6 +20,7 @@ class _HostScreenState extends State<HostScreen> {
   final _target = TextEditingController(text: '1000');
   var _obenUnde = false;
   var _multipliers = false;
+  var _trickHold = HostConfig.defaultTrickHold;
   var _starting = false;
 
   @override
@@ -47,6 +48,7 @@ class _HostScreenState extends State<HostScreen> {
           obenUndeAllowed: _obenUnde,
           multipliersEnabled: _multipliers,
         ),
+        trickHold: _trickHold,
       ),
     );
     if (!mounted) return;
@@ -93,6 +95,22 @@ class _HostScreenState extends State<HostScreen> {
           value: _multipliers,
           onChanged: (value) => setState(() => _multipliers = value),
         ),
+        const SizedBox(height: 16),
+        Text('Pause avant de ramasser un pli : ${_seconds(_trickHold)}'),
+        Slider(
+          value: _trickHold.inMilliseconds / 1000,
+          min: 0.5,
+          max: 5,
+          divisions: 9,
+          label: _seconds(_trickHold),
+          onChanged: (value) => setState(
+            () => _trickHold = Duration(milliseconds: (value * 1000).round()),
+          ),
+        ),
+        const Text(
+          'Plus longue pour laisser aux débutants le temps de retenir '
+          'les cartes jouées.',
+        ),
         const SizedBox(height: 32),
         Center(
           child: FilledButton(
@@ -104,3 +122,7 @@ class _HostScreenState extends State<HostScreen> {
     ),
   );
 }
+
+/// "1,5 s": French decimal comma.
+String _seconds(Duration duration) =>
+    '${(duration.inMilliseconds / 1000).toStringAsFixed(1).replaceAll('.', ',')} s';

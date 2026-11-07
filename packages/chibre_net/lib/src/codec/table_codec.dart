@@ -20,6 +20,7 @@ pb.TableSnapshot encodeTable(TableView table) {
     roundPoints: table.roundPoints,
     winningTeam: encodeOptional(table.winningTeam),
     pausedFor: table.pausedFor ?? '',
+    trickHoldMs: table.trickHold.inMilliseconds,
   );
   if (player != null) {
     snapshot
@@ -65,6 +66,7 @@ TableView decodeTable(pb.TableSnapshot snapshot) {
     nicknames: List.unmodifiable(snapshot.nicknames),
     options: options,
     cardStyle: CardStyle.values[snapshot.cardStyle.value],
+    trickHold: Duration(milliseconds: snapshot.trickHoldMs),
     phase: phase,
     roundIndex: snapshot.roundIndex,
     scores: scores,

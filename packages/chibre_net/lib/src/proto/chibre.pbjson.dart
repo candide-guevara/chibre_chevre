@@ -597,6 +597,7 @@ const TableSnapshot$json = {
       '6': '.chibre.Insights',
       '10': 'insights'
     },
+    {'1': 'trick_hold_ms', '3': 22, '4': 1, '5': 13, '10': 'trickHoldMs'},
   ],
   '4': [TableSnapshot_Phase$json],
 };
@@ -629,9 +630,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'VzEiEKDHJvdW5kX3BvaW50cxgRIAMoBVILcm91bmRQb2ludHMSIQoMd2lubmluZ190ZWFtGBIg'
     'ASgFUgt3aW5uaW5nVGVhbRIdCgpwYXVzZWRfZm9yGBMgASgJUglwYXVzZWRGb3ISMQoHcmVtYX'
     'RjaBgUIAEoCzIXLmNoaWJyZS5SZW1hdGNoUHJvcG9zYWxSB3JlbWF0Y2gSLAoIaW5zaWdodHMY'
-    'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzIn0KBVBoYXNlEhwKGFBIQVNFX1dBSV'
-    'RJTkdfRk9SX1BMQVlFUhAAEhgKFFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0VfUExB'
-    'WUlORxACEhQKEFBIQVNFX1JPVU5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
+    'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzEiIKDXRyaWNrX2hvbGRfbXMYFiABKA'
+    '1SC3RyaWNrSG9sZE1zIn0KBVBoYXNlEhwKGFBIQVNFX1dBSVRJTkdfRk9SX1BMQVlFUhAAEhgK'
+    'FFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0VfUExBWUlORxACEhQKEFBIQVNFX1JPVU'
+    '5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {
@@ -797,6 +799,7 @@ const SavedGame$json = {
       '6': '.chibre.GameRecord',
       '10': 'record'
     },
+    {'1': 'trick_hold_ms', '3': 7, '4': 1, '5': 13, '10': 'trickHoldMs'},
   ],
 };
 
@@ -806,4 +809,5 @@ final $typed_data.Uint8List savedGameDescriptor = $convert.base64Decode(
     'IIZ2FtZU5hbWUSHAoJbmlja25hbWVzGAMgAygJUgluaWNrbmFtZXMSNAoWam9pbmVyX2luc3Rh'
     'bGxhdGlvbl9pZBgEIAEoCVIUam9pbmVySW5zdGFsbGF0aW9uSWQSMAoKY2FyZF9zdHlsZRgFIA'
     'EoDjIRLmNoaWJyZS5DYXJkU3R5bGVSCWNhcmRTdHlsZRIqCgZyZWNvcmQYBiABKAsyEi5jaGli'
-    'cmUuR2FtZVJlY29yZFIGcmVjb3Jk');
+    'cmUuR2FtZVJlY29yZFIGcmVjb3JkEiIKDXRyaWNrX2hvbGRfbXMYByABKA1SC3RyaWNrSG9sZE'
+    '1z');

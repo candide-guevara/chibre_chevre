@@ -6,9 +6,16 @@ class HostConfig {
     required this.gameName,
     required this.nickname,
     this.options = const GameOptions(),
+    this.trickHold = defaultTrickHold,
   });
+
+  static const defaultTrickHold = Duration(milliseconds: 1500);
 
   final String gameName;
   final String nickname;
   final GameOptions options;
+
+  /// How long a complete trick stays on the table before sliding to its
+  /// winner, so that beginners can memorize the cards played.
+  final Duration trickHold;
 }

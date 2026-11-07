@@ -1557,6 +1557,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.String? pausedFor,
     RematchProposal? rematch,
     Insights? insights,
+    $core.int? trickHoldMs,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1580,6 +1581,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (pausedFor != null) result.pausedFor = pausedFor;
     if (rematch != null) result.rematch = rematch;
     if (insights != null) result.insights = insights;
+    if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     return result;
   }
 
@@ -1628,6 +1630,8 @@ class TableSnapshot extends $pb.GeneratedMessage {
         subBuilder: RematchProposal.$_createMessage)
     ..aOM<Insights>(21, _omitFieldNames ? '' : 'insights',
         subBuilder: Insights.$_createMessage)
+    ..aI(22, _omitFieldNames ? '' : 'trickHoldMs',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1819,6 +1823,16 @@ class TableSnapshot extends $pb.GeneratedMessage {
   void clearInsights() => $_clearField(21);
   @$pb.TagNumber(21)
   Insights ensureInsights() => $_ensure(20);
+
+  /// How long a complete trick stays before sliding to its winner.
+  @$pb.TagNumber(22)
+  $core.int get trickHoldMs => $_getIZ(21);
+  @$pb.TagNumber(22)
+  set trickHoldMs($core.int value) => $_setUnsignedInt32(21, value);
+  @$pb.TagNumber(22)
+  $core.bool hasTrickHoldMs() => $_has(21);
+  @$pb.TagNumber(22)
+  void clearTrickHoldMs() => $_clearField(22);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
@@ -2212,6 +2226,7 @@ class SavedGame extends $pb.GeneratedMessage {
     $core.String? joinerInstallationId,
     CardStyle? cardStyle,
     GameRecord? record,
+    $core.int? trickHoldMs,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2221,6 +2236,7 @@ class SavedGame extends $pb.GeneratedMessage {
       result.joinerInstallationId = joinerInstallationId;
     if (cardStyle != null) result.cardStyle = cardStyle;
     if (record != null) result.record = record;
+    if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     return result;
   }
 
@@ -2245,6 +2261,8 @@ class SavedGame extends $pb.GeneratedMessage {
         enumValues: CardStyle.values)
     ..aOM<GameRecord>(6, _omitFieldNames ? '' : 'record',
         subBuilder: GameRecord.$_createMessage)
+    ..aI(7, _omitFieldNames ? '' : 'trickHoldMs',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2316,6 +2334,15 @@ class SavedGame extends $pb.GeneratedMessage {
   void clearRecord() => $_clearField(6);
   @$pb.TagNumber(6)
   GameRecord ensureRecord() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  $core.int get trickHoldMs => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set trickHoldMs($core.int value) => $_setUnsignedInt32(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasTrickHoldMs() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearTrickHoldMs() => $_clearField(7);
 }
 
 const $core.bool _omitFieldNames =

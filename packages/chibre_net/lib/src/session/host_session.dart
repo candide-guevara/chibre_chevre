@@ -48,6 +48,7 @@ class HostSession {
   late GameOptions _options;
   late List<String> _nicknames;
   late CardStyle _cardStyle;
+  late Duration _trickHold;
   String? _joinerId;
   GameState? _game;
   GameServer? _server;
@@ -85,6 +86,7 @@ class HostSession {
         .join();
     _gameName = config.gameName;
     _options = config.options;
+    _trickHold = config.trickHold;
     _nicknames = [config.nickname, 'Ordi 1', '', 'Ordi 2'];
     _cardStyle = _randomStyle();
     await _open();
@@ -100,6 +102,7 @@ class HostSession {
     _nicknames = List.of(saved.nicknames);
     _joinerId = saved.joinerInstallationId;
     _cardStyle = CardStyle.values[saved.cardStyle.value];
+    _trickHold = Duration(milliseconds: saved.trickHoldMs);
     _game = replayRecord(record);
     await _open();
   }
@@ -184,6 +187,7 @@ class HostSession {
         nicknames: List.unmodifiable(_nicknames),
         options: _options,
         cardStyle: _cardStyle,
+        trickHold: _trickHold,
         phase: TablePhase.waitingForPlayer,
         roundIndex: 0,
         scores: const [0, 0],
@@ -202,6 +206,7 @@ class HostSession {
       nicknames: List.unmodifiable(_nicknames),
       options: _options,
       cardStyle: _cardStyle,
+      trickHold: _trickHold,
       phase: phase,
       roundIndex: game.roundIndex,
       scores: game.scores,
@@ -262,6 +267,7 @@ class HostSession {
       nicknames: _nicknames,
       joinerInstallationId: _joinerId,
       cardStyle: pb.CardStyle.valueOf(_cardStyle.index),
+      trickHoldMs: _trickHold.inMilliseconds,
       record: encodeRecord(game.record),
     ).writeToBuffer());
   }
@@ -291,7 +297,8 @@ class HostSession {
         final round = game.round;
         final trickJustEnded = round.currentTrick?.isEmpty == true &&
             round.completedTricks.isNotEmpty;
-        _timer = Timer(trickJustEnded ? timing.trickPause : Duration.zero,
+        _timer = Timer(
+            trickJustEnded ? _trickHold + timing.trickSlide : Duration.zero,
             () => _playBot(game, seat, version));
     }
   }

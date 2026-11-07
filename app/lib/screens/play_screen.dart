@@ -299,6 +299,7 @@ class _PlayScreenState extends State<PlayScreen> {
                   viewer: table.seat,
                   style: table.cardStyle,
                   cardWidth: cardWidth,
+                  hold: table.trickHold,
                   winner: shownTrick.isComplete
                       ? shownTrick.winner(player.mode!)
                       : null,

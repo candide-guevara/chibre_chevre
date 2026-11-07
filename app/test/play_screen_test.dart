@@ -71,6 +71,7 @@ TableView tableOf(GameState game, {int seat = 0}) => TableView(
   player: game.viewFor(seat),
   seatToAct: game.seatToAct,
   roundPoints: game.round.points,
+  trickHold: const Duration(milliseconds: 700),
 );
 
 Future<void> pumpScreen(WidgetTester tester, FakeController controller) async {

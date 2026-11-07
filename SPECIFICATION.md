@@ -65,7 +65,7 @@ Packages:
 
 ## Local development
 
-* The app must also build and run as a **Linux desktop** app so two instances can be launched on the developer machine and play against each other over localhost.
+* The app must also build and run as a **Linux desktop** app so two instances can be launched on the developer machine and play against each other over localhost. The desktop window opens with a phone form factor (412×906 logical pixels, like a OnePlus 13R).
 * Two Android emulators on the same machine must also work. Because broadcasts don't cross the emulators' virtual networks, debug builds offer a manual "host:port" entry on the join screen.
 * A command-line bot-vs-bot simulator (pure Dart, `dart run`) is provided to test the engine and measure AI strength.
 * `README.md` documents how to run all of the above.
@@ -129,6 +129,7 @@ Allows to configure different options:
 * number of points (default 1000)
 * trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
 * multipliers: off (default) / on
+* pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 
 A button "Lancer la partie" (start game) will open the waiting for player screen and start advertising the game on the network.
 
@@ -141,10 +142,11 @@ As soon as a player joins, both phones open the play game screen. The host picks
 
 * The player's cards are shown at the bottom, sorted by suit and rank (trump first once chosen).
 * The partner is at the top, bots on the left and right, each with their nickname ("Ordi 1", "Ordi 2" for bots). The current trick is in the center.
-* Always visible: both team scores, target score, current trump mode, whose turn it is.
+* Always visible: both team scores ("Nous" and "Ordi", for the bots' team), target score, current trump mode, whose turn it is. The trump is shown prominently: an "Atout :" label followed by the suit drawn large on an ivory badge (⬇ / ⬆ for Obenabe / Undenufe), plus the multiplier when it applies. The same "Nous" / "Ordi" labels are used in the round summary and the end game screen.
 * **Trump choice**: when it is the player's turn to choose, a panel shows the allowed trump modes plus "Chibrer" (if allowed).
 * **Playing a card**: a single tap on a card plays it. Illegal cards are greyed out and cannot be tapped. Cards cannot be played when it's not the player's turn.
-* **Melds**: during the first trick, before playing their first card, the player can tap "Annoncer". This switches to a selection mode where taps select/deselect cards; "Valider" announces the meld, "Annuler" goes back. The app verifies the selected cards form a valid meld and shows an error otherwise. Several melds may be announced. Then the player plays a card normally.
+* **Melds**: once trump is chosen and during the first trick, until they play their first card, the player can tap "Annoncer", even when it is not their turn: both humans can prepare their melds at the same time. This switches to a selection mode where taps select/deselect cards; "Valider" announces the meld, "Annuler" goes back. The app verifies the selected cards form a valid meld and shows an error otherwise. Several melds may be announced. The prepared melds are only sent, and shown to the others, with the player's first card, as the rules require.
+* **Collecting a trick**: once a trick is complete it stays on the table for the host's chosen pause, then its cards slide towards the seat of the player who won it and fade out. The host waits for the pause and the slide before a bot leads the next trick.
 * **Stöck**: when playing the second card of King+Queen of trump, a "Stöck" button is offered.
 * Announced melds are displayed to all players; at the end of the first trick, the winning team's melds are revealed and scored.
 * At the end of each round, a short summary (points per team for the round) is shown before the next deal.
