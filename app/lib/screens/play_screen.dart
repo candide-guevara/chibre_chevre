@@ -6,6 +6,8 @@ import 'package:flutter/material.dart' hide Card;
 
 import '../game/game_controller.dart';
 import '../game/hand_order.dart';
+import '../game/meld_selection.dart';
+import '../labels.dart';
 import '../theme/chibre_theme.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
@@ -35,8 +37,8 @@ class _PlayScreenState extends State<PlayScreen> {
   late final AppLifecycleListener _lifecycle;
   TableView? _table;
 
-  // Melds being prepared during the first trick.
-  var _selectingMeld = false;
+  // Melds chosen at the start of the round, sent with the first card.
+  var _meldsDecided = false;
   var _selection = CardSet.empty;
   var _melds = <Meld>[];
   var _stoeck = false;
@@ -81,8 +83,18 @@ class _PlayScreenState extends State<PlayScreen> {
     }
   }
 
+  /// From the trump choice until the player validates a meld or chooses to
+  /// play without one: card taps select the cards of the meld.
+  bool get _choosingMelds {
+    final player = _table?.player;
+    return player != null &&
+        player.mayAnnounceMelds &&
+        player.hand.length == handSize &&
+        !_meldsDecided;
+  }
+
   void _resetMelds() {
-    _selectingMeld = false;
+    _meldsDecided = false;
     _selection = CardSet.empty;
     _melds = [];
   }
@@ -136,7 +148,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void _onCardTap(Card card) {
     final table = _table!;
     final player = table.player!;
-    if (_selectingMeld) {
+    if (_choosingMelds) {
       setState(
         () => _selection = _selection.contains(card)
             ? _selection.remove(card)
@@ -155,25 +167,24 @@ class _PlayScreenState extends State<PlayScreen> {
     });
   }
 
-  void _validateMeld() {
-    final meld = Meld.fromCards(_selection);
-    final String? error;
-    if (meld == null) {
-      error = 'Ces cartes ne forment pas une annonce.';
-    } else if (validateMelds([..._melds, meld], _table!.player!.hand) != null) {
-      error = 'Ces cartes sont déjà annoncées.';
-    } else {
-      error = null;
-    }
-    if (error != null) {
+  void _skipMelds() => setState(() => _meldsDecided = true);
+
+  /// Announces the selected cards; there is no going back once valid.
+  void _validateMelds() {
+    final melds = meldsFromSelection(_selection);
+    if (melds == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(error)));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Ces cartes ne forment pas une annonce.'),
+          ),
+        );
       return;
     }
     setState(() {
-      _melds = [..._melds, meld!];
-      _selectingMeld = false;
+      _melds = melds;
+      _meldsDecided = true;
       _selection = CardSet.empty;
     });
   }
@@ -246,7 +257,7 @@ class _PlayScreenState extends State<PlayScreen> {
 
   CardSet _enabledCards(TableView table) {
     final player = table.player!;
-    if (_selectingMeld) return player.hand;
+    if (_choosingMelds) return player.hand;
     if (table.isMyTurn && table.phase == TablePhase.playing) {
       return player.legalCards;
     }
@@ -356,22 +367,25 @@ class _PlayScreenState extends State<PlayScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _statusText(table),
-          // Melds can be prepared before the player's turn; they are sent
-          // with the player's first card.
-          if (player.mayAnnounceMelds) ...[
+          // Melds are chosen as soon as the trump is known, even before
+          // the player's turn; they are sent with the player's first card.
+          if (_choosingMelds) ...[
             const SizedBox(height: 8),
             MeldControls(
-              selecting: _selectingMeld,
-              announced: _melds,
-              onStart: () => setState(() => _selectingMeld = true),
-              onValidate: _validateMeld,
-              onCancel: () => setState(() {
-                _selectingMeld = false;
-                _selection = CardSet.empty;
-              }),
+              hasSelection: _selection.isNotEmpty,
+              onSkip: _skipMelds,
+              onValidate: _validateMelds,
+            ),
+          ] else if (_melds.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final meld in _melds) Chip(label: Text(meldName(meld))),
+              ],
             ),
           ],
-          if (table.isMyTurn && _canAnnounceStoeck(player))
+          if (table.isMyTurn && !_choosingMelds && _canAnnounceStoeck(player))
             FilterChip(
               label: const Text('Stöck'),
               selected: _stoeck,
@@ -402,11 +416,8 @@ class _PlayScreenState extends State<PlayScreen> {
 
   Widget _statusText(TableView table) {
     final text = Theme.of(context).textTheme;
-    if (_selectingMeld) {
-      return Text(
-        'Sélectionnez les cartes de l\'annonce',
-        style: text.titleMedium,
-      );
+    if (_choosingMelds) {
+      return Text('Choisissez votre annonce', style: text.titleMedium);
     }
     if (table.isMyTurn) return Text('À vous de jouer', style: text.titleMedium);
     final reading = table.meldRecapFor.where((seat) => seat != table.seat);

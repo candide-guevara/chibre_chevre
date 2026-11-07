@@ -114,9 +114,13 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
+    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.pump();
     expect(find.text('À vous de jouer'), findsOneWidget);
     await tester.tap(find.bySemanticsLabel('as de pique'));
-    expect((controller.actions.single as PlayCard).card, Card.parse('SA'));
+    final play = controller.actions.single as PlayCard;
+    expect(play.card, Card.parse('SA'));
+    expect(play.melds, isEmpty);
   });
 
   testWidgets('melds are selected, validated and sent with the card', (
@@ -125,23 +129,25 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
+    expect(find.text('Choisissez votre annonce'), findsOneWidget);
 
-    await tester.tap(find.text('Annoncer'));
-    await tester.pump();
+    // Selecting a card turns the button into a validation.
     for (final name in ['6 de cœur', '8 de cœur']) {
       await tester.tap(find.bySemanticsLabel(name));
     }
     await tester.pump();
-    await tester.tap(find.text('Valider'));
+    expect(find.text('Ne pas annoncer, jouer'), findsNothing);
+    await tester.tap(find.text('Valider l\'annonce'));
     await tester.pump();
     expect(find.text('Ces cartes ne forment pas une annonce.'), findsOneWidget);
     expect(controller.actions, isEmpty);
 
     await tester.tap(find.bySemanticsLabel('7 de cœur'));
     await tester.pump();
-    await tester.tap(find.text('Valider'));
+    await tester.tap(find.text('Valider l\'annonce'));
     await tester.pump();
     expect(find.textContaining('20 ('), findsOneWidget);
+    expect(find.text('Valider l\'annonce'), findsNothing); // No going back.
 
     await tester.tap(find.bySemanticsLabel('as de pique'));
     final play = controller.actions.single as PlayCard;
@@ -164,10 +170,10 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final controller = FakeController(tableOf(game, seat: 2));
     await pumpScreen(tester, controller);
-    expect(find.text('Ana joue…'), findsOneWidget);
-    await tester.tap(find.text('Annoncer'));
+    expect(find.text('Choisissez votre annonce'), findsOneWidget);
+    await tester.tap(find.text('Ne pas annoncer, jouer'));
     await tester.pump();
-    expect(find.text('Valider'), findsOneWidget);
+    expect(find.text('Ana joue…'), findsOneWidget);
   });
 
   testWidgets('a complete trick slides away towards its winner', (
@@ -260,7 +266,7 @@ void main() {
     await pumpScreen(tester, controller);
     Map<String, double> layout() => {
       for (final name in ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'])
-        name: tester.getRect(find.textContaining(RegExp('^$name'))).top,
+        name: tester.getRect(find.textContaining(RegExp('^$name( •)?\$'))).top,
       'scores': tester.getRect(find.byType(ScoreBoard)).height,
     };
     final choosing = layout(); // Trump buttons in the action area.
@@ -270,7 +276,10 @@ void main() {
     await tester.pump();
     expect(layout(), choosing); // Meld buttons, trump in the score bar.
 
-    await tester.tap(find.text('Annoncer'));
+    await tester.tap(find.bySemanticsLabel('7 de cœur'));
+    await tester.pump();
+    expect(layout(), choosing);
+    await tester.tap(find.text('Valider l\'annonce'));
     await tester.pump();
     expect(layout(), choosing);
 
