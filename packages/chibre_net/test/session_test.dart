@@ -147,6 +147,63 @@ void main() {
     await host.close();
   });
 
+  group('the meld recap after the first trick', () {
+    /// The host announces a sequence in the first trick; resolves once the
+    /// recap is shown.
+    Future<(HostSession, ClientSession, StreamSubscription<TableView>)>
+        playFirstTrick(Duration recap) async {
+      final network = InMemoryNetwork();
+      final host = HostSession(
+        transport: InMemoryTransport(network),
+        bots: InlineBotRunner(budget: budget, random: Random(1)),
+        timing: SessionTiming(
+            botDelay: Duration.zero,
+            trickSlide: Duration.zero,
+            roundSummary: Duration.zero,
+            meldRecap: recap),
+        newDeals: (random) =>
+            PresetHandDealSource({0: CardSet.parse('D7 H7 H8 H9 H10')}, random),
+      );
+      await host.create(const HostConfig(
+          gameName: 'g', nickname: 'Ana', trickHold: Duration.zero));
+      final client = newClient(network);
+      await client.join(await findGame(network));
+      final clientPlay = autoplay(client.tables, client.act);
+      final shown = host.tables.firstWhere((t) => t.meldRecapFor.isNotEmpty);
+      await pumpEventQueue();
+      host.act(const ChooseTrump(0, TrumpMode.hearts));
+      final sequence = Meld.fromCards(CardSet.parse('H7 H8 H9 H10'))!;
+      host.act(PlayCard(0, Card.parse('D7'), melds: [sequence]));
+      final table = await shown;
+      expect(table.meldRecapFor, [0, 2]);
+      expect(table.showsMeldRecap, isTrue);
+      expect(table.isMyTurn, isFalse);
+      return (host, client, clientPlay);
+    }
+
+    test('ends once both humans closed it', () async {
+      final (host, client, clientPlay) =
+          await playFirstTrick(const Duration(minutes: 1));
+      client.dismissMelds();
+      await host.tables.firstWhere((t) => t.meldRecapFor.length == 1);
+      expect(host.table!.showsMeldRecap, isTrue);
+      expect(() => host.act(PlayCard(0, host.table!.player!.hand.cards.first)),
+          throwsA(isA<IllegalActionException>()));
+      host.dismissMelds();
+      expect(host.table!.meldRecapFor, isEmpty);
+      await clientPlay.cancel();
+      await host.close();
+    });
+
+    test('ends by itself after its duration', () async {
+      final (host, _, clientPlay) =
+          await playFirstTrick(const Duration(milliseconds: 50));
+      await host.tables.firstWhere((t) => t.meldRecapFor.isEmpty);
+      await clientPlay.cancel();
+      await host.close();
+    });
+  });
+
   test('illegal actions of the joiner are rejected', () async {
     final network = InMemoryNetwork();
     final (host, client) = await startGame(network);

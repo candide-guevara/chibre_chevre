@@ -257,6 +257,15 @@ const Leave$json = {
 final $typed_data.Uint8List leaveDescriptor =
     $convert.base64Decode('CgVMZWF2ZQ==');
 
+@$core.Deprecated('Use dismissMeldsDescriptor instead')
+const DismissMelds$json = {
+  '1': 'DismissMelds',
+};
+
+/// Descriptor for `DismissMelds`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dismissMeldsDescriptor =
+    $convert.base64Decode('CgxEaXNtaXNzTWVsZHM=');
+
 @$core.Deprecated('Use clientMessageDescriptor instead')
 const ClientMessage$json = {
   '1': 'ClientMessage',
@@ -315,6 +324,15 @@ const ClientMessage$json = {
       '9': 0,
       '10': 'leave'
     },
+    {
+      '1': 'dismiss_melds',
+      '3': 7,
+      '4': 1,
+      '5': 11,
+      '6': '.chibre.DismissMelds',
+      '9': 0,
+      '10': 'dismissMelds'
+    },
   ],
   '8': [
     {'1': 'body'},
@@ -328,7 +346,8 @@ final $typed_data.Uint8List clientMessageDescriptor = $convert.base64Decode(
     'YXRjaBgDIAEoCzIWLmNoaWJyZS5Qcm9wb3NlUmVtYXRjaEgAUg5wcm9wb3NlUmVtYXRjaBI+Cg'
     '5hbnN3ZXJfcmVtYXRjaBgEIAEoCzIVLmNoaWJyZS5BbnN3ZXJSZW1hdGNoSABSDWFuc3dlclJl'
     'bWF0Y2gSLgoIcHJlc2VuY2UYBSABKAsyEC5jaGlicmUuUHJlc2VuY2VIAFIIcHJlc2VuY2USJQ'
-    'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmVCBgoEYm9keQ==');
+    'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmUSOwoNZGlzbWlzc19tZWxkcxgH'
+    'IAEoCzIULmNoaWJyZS5EaXNtaXNzTWVsZHNIAFIMZGlzbWlzc01lbGRzQgYKBGJvZHk=');
 
 @$core.Deprecated('Use welcomeDescriptor instead')
 const Welcome$json = {
@@ -598,6 +617,7 @@ const TableSnapshot$json = {
       '10': 'insights'
     },
     {'1': 'trick_hold_ms', '3': 22, '4': 1, '5': 13, '10': 'trickHoldMs'},
+    {'1': 'meld_recap_for', '3': 23, '4': 3, '5': 13, '10': 'meldRecapFor'},
   ],
   '4': [TableSnapshot_Phase$json],
 };
@@ -631,9 +651,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'ASgFUgt3aW5uaW5nVGVhbRIdCgpwYXVzZWRfZm9yGBMgASgJUglwYXVzZWRGb3ISMQoHcmVtYX'
     'RjaBgUIAEoCzIXLmNoaWJyZS5SZW1hdGNoUHJvcG9zYWxSB3JlbWF0Y2gSLAoIaW5zaWdodHMY'
     'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzEiIKDXRyaWNrX2hvbGRfbXMYFiABKA'
-    '1SC3RyaWNrSG9sZE1zIn0KBVBoYXNlEhwKGFBIQVNFX1dBSVRJTkdfRk9SX1BMQVlFUhAAEhgK'
-    'FFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0VfUExBWUlORxACEhQKEFBIQVNFX1JPVU'
-    '5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
+    '1SC3RyaWNrSG9sZE1zEiQKDm1lbGRfcmVjYXBfZm9yGBcgAygNUgxtZWxkUmVjYXBGb3IifQoF'
+    'UGhhc2USHAoYUEhBU0VfV0FJVElOR19GT1JfUExBWUVSEAASGAoUUEhBU0VfQ0hPT1NJTkdfVF'
+    'JVTVAQARIRCg1QSEFTRV9QTEFZSU5HEAISFAoQUEhBU0VfUk9VTkRfT1ZFUhADEhMKD1BIQVNF'
+    'X0dBTUVfT1ZFUhAE');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {

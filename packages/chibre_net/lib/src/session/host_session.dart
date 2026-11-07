@@ -15,6 +15,7 @@ import '../transport/transport.dart';
 import 'bot_runner.dart';
 import 'card_style.dart';
 import 'host_config.dart';
+import 'meld_recap.dart';
 import 'saved_game_store.dart';
 import 'session_timing.dart';
 import 'table_view.dart';
@@ -67,6 +68,7 @@ class HostSession {
   var _analysing = false;
   var _version = 0;
   Timer? _timer;
+  final _meldRecap = MeldRecap();
   var _closed = false;
 
   /// The host's table, after every change.
@@ -122,6 +124,9 @@ class HostSession {
 
   void answerRematch({required bool accept}) =>
       _answerRematch(hostSeat, accept);
+
+  /// The host closed the meld recap.
+  void dismissMelds() => _dismissMelds(hostSeat);
 
   /// The host app went to the background (or came back): pause the game.
   void setAway(bool away) {
@@ -206,7 +211,8 @@ class HostSession {
       GamePhase.gameOver => TablePhase.gameOver,
     };
     final acting =
-        phase == TablePhase.choosingTrump || phase == TablePhase.playing;
+        (phase == TablePhase.choosingTrump || phase == TablePhase.playing) &&
+            !_waitsForMeldRecap(game.round);
     return TableView(
       seat: seat,
       nicknames: List.unmodifiable(_nicknames),
@@ -224,6 +230,7 @@ class HostSession {
       rematch: _rematch,
       insights: _insights,
       leftBy: _leftBy,
+      meldRecapFor: _meldRecap.waitingFor,
     );
   }
 
@@ -298,6 +305,7 @@ class HostSession {
           _changed();
         });
       case GamePhase.choosingTrump || GamePhase.playing:
+        if (_scheduleMeldRecap(game.round)) return;
         final seat = game.seatToAct;
         if (seat == hostSeat || seat == joinerSeat) return;
         _timer = Timer(
@@ -305,17 +313,46 @@ class HostSession {
     }
   }
 
+  /// Opens the meld recap once the first trick has been collected, and
+  /// closes it when it times out. Returns whether play must wait for it.
+  bool _scheduleMeldRecap(RoundState round) {
+    if (round.completedTricks.isEmpty) _meldRecap.reset();
+    if (_meldRecap.isActive) {
+      _timer = Timer(_meldRecap.remaining, () {
+        _meldRecap.end();
+        _changed();
+      });
+      return true;
+    }
+    if (_meldRecap.isDue(round)) {
+      _timer = Timer(_trickHold + timing.trickSlide, () {
+        _meldRecap.start([hostSeat, joinerSeat], timing.meldRecap);
+        _changed();
+      });
+      return true;
+    }
+    return false;
+  }
+
+  /// From the end of the first trick until the meld recap is closed.
+  bool _waitsForMeldRecap(RoundState round) =>
+      _meldRecap.isActive || _meldRecap.isDue(round);
+
+  void _dismissMelds(int seat) {
+    if (!_meldRecap.isActive) return;
+    _meldRecap.dismiss(seat);
+    _changed();
+  }
+
   /// After a trick, the humans watch it stay on the table and slide to its
-  /// winner; after the first one, they also read the melds for as long.
+  /// winner, unless the meld recap already gave them that time.
   Duration _pauseBeforeBot(RoundState round) {
     final trickJustEnded =
         round.currentTrick?.isEmpty == true && round.completedTricks.isNotEmpty;
-    if (!trickJustEnded) return Duration.zero;
-    final collect = _trickHold + timing.trickSlide;
-    final meldsShown = round.completedTricks.length == 1 &&
-        [for (var seat = 0; seat < seatCount; seat++) ...round.meldsOf(seat)]
-            .isNotEmpty;
-    return meldsShown ? collect + _trickHold : collect;
+    final afterRecap = round.completedTricks.length == 1 && _meldRecap.wasShown;
+    return trickJustEnded && !afterRecap
+        ? _trickHold + timing.trickSlide
+        : Duration.zero;
   }
 
   Future<void> _playBot(GameState game, int seat, int version) async {
@@ -344,6 +381,9 @@ class HostSession {
     }
     if (_pausedFor != null) {
       throw const IllegalActionException('The game is paused');
+    }
+    if (_waitsForMeldRecap(game.round)) {
+      throw const IllegalActionException('The melds are being shown');
     }
     game.apply(action);
     _changed();
@@ -437,6 +477,8 @@ class HostSession {
       case pb.ClientMessage_Body.presence:
         _joinerAway = message.presence.away;
         _changed();
+      case pb.ClientMessage_Body.dismissMelds:
+        _dismissMelds(joinerSeat);
       case pb.ClientMessage_Body.leave:
         _leftBy = _nicknames[joinerSeat];
         _timer?.cancel();

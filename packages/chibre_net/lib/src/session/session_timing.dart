@@ -4,6 +4,7 @@ class SessionTiming {
     this.botDelay = const Duration(milliseconds: 600),
     this.trickSlide = const Duration(milliseconds: 400),
     this.roundSummary = const Duration(seconds: 4),
+    this.meldRecap = const Duration(seconds: 10),
   });
 
   /// No waiting at all, for tests.
@@ -11,6 +12,7 @@ class SessionTiming {
     botDelay: Duration.zero,
     trickSlide: Duration.zero,
     roundSummary: Duration.zero,
+    meldRecap: Duration.zero,
   );
 
   /// Minimum time a computer player takes to act.
@@ -22,4 +24,7 @@ class SessionTiming {
 
   /// How long the round summary is shown before the next deal.
   final Duration roundSummary;
+
+  /// How long the meld recap stays at most, if the humans don't close it.
+  final Duration meldRecap;
 }

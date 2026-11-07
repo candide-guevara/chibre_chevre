@@ -64,6 +64,10 @@ class ClientSession {
   void setAway(bool away) =>
       _send(pb.ClientMessage(presence: pb.Presence(away: away)));
 
+  /// The player closed the meld recap.
+  void dismissMelds() =>
+      _send(pb.ClientMessage(dismissMelds: pb.DismissMelds()));
+
   /// Leaves the game for good.
   Future<void> leave() async {
     _send(pb.ClientMessage(leave: pb.Leave()));

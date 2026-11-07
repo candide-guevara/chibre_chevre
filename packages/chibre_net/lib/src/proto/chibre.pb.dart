@@ -805,6 +805,48 @@ class Leave extends $pb.GeneratedMessage {
   static Leave? _defaultInstance;
 }
 
+/// The player closed the meld recap shown after the first trick.
+class DismissMelds extends $pb.GeneratedMessage {
+  factory DismissMelds() => DismissMelds._();
+
+  DismissMelds._();
+
+  factory DismissMelds.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      DismissMelds()..mergeFromBuffer(data, registry);
+  factory DismissMelds.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      DismissMelds()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DismissMelds',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
+      createEmptyInstance: DismissMelds.$_createMessage)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissMelds clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissMelds copyWith(void Function(DismissMelds) updates) =>
+      super.copyWith((message) => updates(message as DismissMelds))
+          as DismissMelds;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use DismissMelds() / DismissMelds.new instead')
+  static DismissMelds create() => DismissMelds._();
+  static $pb.GeneratedMessage $_createMessage() => DismissMelds._();
+  @$core.override
+  DismissMelds createEmptyInstance() => DismissMelds._();
+  @$core.pragma('dart2js:noInline')
+  static DismissMelds getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DismissMelds>(
+          DismissMelds.$_createMessage);
+  static DismissMelds? _defaultInstance;
+}
+
 enum ClientMessage_Body {
   hello,
   action,
@@ -812,6 +854,7 @@ enum ClientMessage_Body {
   answerRematch,
   presence,
   leave,
+  dismissMelds,
   notSet
 }
 
@@ -823,6 +866,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     AnswerRematch? answerRematch,
     Presence? presence,
     Leave? leave,
+    DismissMelds? dismissMelds,
   }) {
     final result = ClientMessage._();
     if (hello != null) result.hello = hello;
@@ -831,6 +875,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     if (answerRematch != null) result.answerRematch = answerRematch;
     if (presence != null) result.presence = presence;
     if (leave != null) result.leave = leave;
+    if (dismissMelds != null) result.dismissMelds = dismissMelds;
     return result;
   }
 
@@ -851,13 +896,14 @@ class ClientMessage extends $pb.GeneratedMessage {
     4: ClientMessage_Body.answerRematch,
     5: ClientMessage_Body.presence,
     6: ClientMessage_Body.leave,
+    7: ClientMessage_Body.dismissMelds,
     0: ClientMessage_Body.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ClientMessage',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
       createEmptyInstance: ClientMessage.$_createMessage)
-    ..oo(0, [1, 2, 3, 4, 5, 6])
+    ..oo(0, [1, 2, 3, 4, 5, 6, 7])
     ..aOM<Hello>(1, _omitFieldNames ? '' : 'hello',
         subBuilder: Hello.$_createMessage)
     ..aOM<Action>(2, _omitFieldNames ? '' : 'action',
@@ -870,6 +916,8 @@ class ClientMessage extends $pb.GeneratedMessage {
         subBuilder: Presence.$_createMessage)
     ..aOM<Leave>(6, _omitFieldNames ? '' : 'leave',
         subBuilder: Leave.$_createMessage)
+    ..aOM<DismissMelds>(7, _omitFieldNames ? '' : 'dismissMelds',
+        subBuilder: DismissMelds.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -900,6 +948,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   @$pb.TagNumber(5)
   @$pb.TagNumber(6)
+  @$pb.TagNumber(7)
   ClientMessage_Body whichBody() => _ClientMessage_BodyByTag[$_whichOneof(0)]!;
   @$pb.TagNumber(1)
   @$pb.TagNumber(2)
@@ -907,6 +956,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   @$pb.TagNumber(5)
   @$pb.TagNumber(6)
+  @$pb.TagNumber(7)
   void clearBody() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -974,6 +1024,17 @@ class ClientMessage extends $pb.GeneratedMessage {
   void clearLeave() => $_clearField(6);
   @$pb.TagNumber(6)
   Leave ensureLeave() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  DismissMelds get dismissMelds => $_getN(6);
+  @$pb.TagNumber(7)
+  set dismissMelds(DismissMelds value) => $_setField(7, value);
+  @$pb.TagNumber(7)
+  $core.bool hasDismissMelds() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearDismissMelds() => $_clearField(7);
+  @$pb.TagNumber(7)
+  DismissMelds ensureDismissMelds() => $_ensure(6);
 }
 
 class Welcome extends $pb.GeneratedMessage {
@@ -1558,6 +1619,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     RematchProposal? rematch,
     Insights? insights,
     $core.int? trickHoldMs,
+    $core.Iterable<$core.int>? meldRecapFor,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1582,6 +1644,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (rematch != null) result.rematch = rematch;
     if (insights != null) result.insights = insights;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
+    if (meldRecapFor != null) result.meldRecapFor.addAll(meldRecapFor);
     return result;
   }
 
@@ -1632,6 +1695,8 @@ class TableSnapshot extends $pb.GeneratedMessage {
         subBuilder: Insights.$_createMessage)
     ..aI(22, _omitFieldNames ? '' : 'trickHoldMs',
         fieldType: $pb.PbFieldType.OU3)
+    ..p<$core.int>(
+        23, _omitFieldNames ? '' : 'meldRecapFor', $pb.PbFieldType.KU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1833,6 +1898,10 @@ class TableSnapshot extends $pb.GeneratedMessage {
   $core.bool hasTrickHoldMs() => $_has(21);
   @$pb.TagNumber(22)
   void clearTrickHoldMs() => $_clearField(22);
+
+  /// Seats still reading the meld recap; nobody plays until it is empty.
+  @$pb.TagNumber(23)
+  $pb.PbList<$core.int> get meldRecapFor => $_getList(22);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {

@@ -14,6 +14,9 @@ abstract interface class GameController {
 
   void answerRematch({required bool accept});
 
+  /// The player closed the meld recap.
+  void dismissMelds();
+
   /// The app went to the background (or came back).
   void setAway(bool away);
 

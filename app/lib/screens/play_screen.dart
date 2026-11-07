@@ -41,10 +41,6 @@ class _PlayScreenState extends State<PlayScreen> {
   var _melds = <Meld>[];
   var _stoeck = false;
 
-  // The meld calls, shown once the first trick has been collected.
-  var _showMelds = false;
-  Timer? _meldTimer;
-
   GameController get _controller => widget.controller;
 
   @override
@@ -67,7 +63,6 @@ class _PlayScreenState extends State<PlayScreen> {
   void dispose() {
     _subscription.cancel();
     _lifecycle.dispose();
-    _meldTimer?.cancel();
     super.dispose();
   }
 
@@ -78,31 +73,9 @@ class _PlayScreenState extends State<PlayScreen> {
       _table = table;
       if (!(table.player?.mayAnnounceMelds ?? false)) _resetMelds();
     });
-    if (_meldsJustRevealed(previous, table)) _scheduleMelds(table.trickHold);
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
-  }
-
-  bool _meldsJustRevealed(TableView? previous, TableView table) {
-    final player = table.player;
-    return (previous?.player?.isFirstTrick ?? false) &&
-        player != null &&
-        player.completedTricks.length == 1 &&
-        player.announcedMeldValues.any((values) => values.isNotEmpty);
-  }
-
-  /// Shows the melds after the first trick has slid away, for as long as a
-  /// complete trick stays on the table.
-  void _scheduleMelds(Duration hold) {
-    _meldTimer?.cancel();
-    _meldTimer = Timer(hold + const SessionTiming().trickSlide, () {
-      if (!mounted) return;
-      setState(() => _showMelds = true);
-      _meldTimer = Timer(hold, () {
-        if (mounted) setState(() => _showMelds = false);
-      });
-    });
   }
 
   void _resetMelds() {
@@ -160,7 +133,6 @@ class _PlayScreenState extends State<PlayScreen> {
   void _onCardTap(Card card) {
     final table = _table!;
     final player = table.player!;
-    if (_showMelds) return;
     if (_selectingMeld) {
       setState(
         () => _selection = _selection.contains(card)
@@ -320,12 +292,13 @@ class _PlayScreenState extends State<PlayScreen> {
                       : null,
                 ),
               ),
-            if (_showMelds)
+            if (table.showsMeldRecap)
               Center(
                 child: MeldSummary(
                   player: player,
                   nicknames: table.nicknames,
                   multiplier: table.options.multiplierFor(player.mode!),
+                  onDismiss: _controller.dismissMelds,
                 ),
               ),
             if (table.phase == TablePhase.roundOver)
@@ -417,6 +390,15 @@ class _PlayScreenState extends State<PlayScreen> {
       );
     }
     if (table.isMyTurn) return Text('À vous de jouer', style: text.titleMedium);
+    final reading = table.meldRecapFor.where((seat) => seat != table.seat);
+    if (reading.isNotEmpty) {
+      return Text(
+        '${table.nicknames[reading.first]} lit les annonces…',
+        style: text.titleMedium?.copyWith(
+          color: ChibreColors.ivory.withValues(alpha: 0.7),
+        ),
+      );
+    }
     if (table.seatToAct == null) return const SizedBox.shrink();
     final name = table.nicknames[table.seatToAct!];
     return Text(

@@ -40,6 +40,7 @@ class TableView {
     this.insights,
     this.leftBy,
     this.trickHold = HostConfig.defaultTrickHold,
+    this.meldRecapFor = const [],
   });
 
   final int seat;
@@ -78,9 +79,16 @@ class TableView {
   /// How long a complete trick stays before sliding to its winner.
   final Duration trickHold;
 
+  /// The seats still reading the meld recap; nobody plays until it is empty.
+  final List<int> meldRecapFor;
+
+  /// Whether this player should see the meld recap.
+  bool get showsMeldRecap => meldRecapFor.contains(seat);
+
   bool get isPaused => pausedFor != null;
 
-  bool get isMyTurn => !isPaused && leftBy == null && seatToAct == seat;
+  bool get isMyTurn =>
+      !isPaused && leftBy == null && meldRecapFor.isEmpty && seatToAct == seat;
 
   /// A copy with the given fields set (null keeps the current value).
   TableView copyWith({String? pausedFor, String? leftBy}) => TableView(
@@ -100,5 +108,6 @@ class TableView {
         insights: insights,
         leftBy: leftBy ?? this.leftBy,
         trickHold: trickHold,
+        meldRecapFor: meldRecapFor,
       );
 }

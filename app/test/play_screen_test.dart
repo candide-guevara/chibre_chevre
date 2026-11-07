@@ -36,6 +36,11 @@ class FakeController implements GameController {
   @override
   void answerRematch({required bool accept}) {}
 
+  var dismissedMelds = false;
+
+  @override
+  void dismissMelds() => dismissedMelds = true;
+
   @override
   void setAway(bool away) {}
 
@@ -59,7 +64,11 @@ GameState newGame() {
   );
 }
 
-TableView tableOf(GameState game, {int seat = 0}) => TableView(
+TableView tableOf(
+  GameState game, {
+  int seat = 0,
+  List<int> meldRecapFor = const [],
+}) => TableView(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
   options: game.options,
@@ -73,6 +82,7 @@ TableView tableOf(GameState game, {int seat = 0}) => TableView(
   seatToAct: game.seatToAct,
   roundPoints: game.round.points,
   trickHold: const Duration(milliseconds: 700),
+  meldRecapFor: meldRecapFor,
 );
 
 Future<void> pumpScreen(WidgetTester tester, FakeController controller) async {
@@ -183,30 +193,29 @@ void main() {
     expect(opacity(), 0);
   });
 
-  testWidgets('the melds are shown once the first trick is collected', (
+  testWidgets('the meld recap is shown until the player closes it', (
     tester,
   ) async {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final sequence = Meld.fromCards(CardSet.parse('H6 H7 H8'))!;
     game.apply(PlayCard(0, Card.parse('SA'), melds: [sequence]));
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < 3; i++) {
       final seat = game.seatToAct;
       game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
     }
-    final controller = FakeController(tableOf(game));
+    final controller = FakeController(tableOf(game, meldRecapFor: [0, 2]));
     await pumpScreen(tester, controller);
-    expect(find.textContaining('20'), findsNothing);
-
-    final last = game.seatToAct;
-    game.apply(PlayCard(last, game.viewFor(last).legalCards.cards.first));
-    controller.show(tableOf(game));
-    await tester.pump();
-    expect(find.text('Annonces'), findsNothing);
-    await tester.pump(const Duration(milliseconds: 1100));
     expect(find.text('Annonces'), findsOneWidget);
     expect(find.textContaining('Ana : 20'), findsOneWidget);
-    await tester.pump(const Duration(milliseconds: 700));
+
+    await tester.tap(find.text('Annonces'));
+    expect(controller.dismissedMelds, isTrue);
+
+    controller.show(tableOf(game, meldRecapFor: [2]));
+    await tester.pump();
     expect(find.text('Annonces'), findsNothing);
+    expect(find.text('Bea lit les annonces…'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
   });
 
   testWidgets('a played card slides in, cards already played stay put', (

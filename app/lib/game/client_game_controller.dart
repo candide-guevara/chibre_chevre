@@ -26,6 +26,9 @@ class ClientGameController implements GameController {
       session.answerRematch(accept: accept);
 
   @override
+  void dismissMelds() => session.dismissMelds();
+
+  @override
   void setAway(bool away) => session.setAway(away);
 
   @override
