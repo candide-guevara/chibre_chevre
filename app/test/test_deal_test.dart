@@ -22,6 +22,39 @@ void main() {
     }
   });
 
+  test('every deal fixes all the cards', () {
+    for (final deal in TestDeal.values) {
+      final hands = deal.presets;
+      expect(hands.length, 4, reason: deal.name);
+      expect(hands.values.every((hand) => hand.length == 9), isTrue);
+      expect(
+        hands.values.fold(CardSet.empty, (all, hand) => all | hand),
+        CardSet.full,
+        reason: deal.name,
+      );
+    }
+  });
+
+  test('the stock and good-hand deals have no melds, Stöck only for the '
+      'host of the stock deal', () {
+    for (final deal in [TestDeal.stoeck, TestDeal.goodHand]) {
+      for (final (seat, hand) in deal.presets.entries.map(
+        (e) => (e.key, e.value),
+      )) {
+        expect(findBestMelds(hand), isEmpty, reason: '${deal.name} $seat');
+        for (final mode in TrumpMode.suits) {
+          final stoeck =
+              deal == TestDeal.stoeck && seat == 0 && mode == TrumpMode.spades;
+          expect(
+            holdsStoeck(hand, mode),
+            stoeck,
+            reason: '${deal.name} $seat $mode',
+          );
+        }
+      }
+    }
+  });
+
   test(
     'in the sequence deal, everyone has a sequence and the host\'s wins',
     () {
