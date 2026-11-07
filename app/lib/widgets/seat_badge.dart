@@ -14,7 +14,7 @@ class SeatBadge extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: isTurn ? ChibreColors.brass : ChibreColors.feltDark,
         borderRadius: BorderRadius.circular(12),
