@@ -28,7 +28,7 @@ class RoundSummary extends StatelessWidget {
             const SizedBox(height: 12),
             Text('Nous +${roundPoints[team]}', style: text.titleMedium),
             Text(
-              'Eux +${roundPoints[opponentTeam(team)]}',
+              'Ordi +${roundPoints[opponentTeam(team)]}',
               style: text.titleMedium,
             ),
           ],

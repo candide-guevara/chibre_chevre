@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chibre/game/game_controller.dart';
 import 'package:chibre/screens/play_screen.dart';
 import 'package:chibre/theme/chibre_theme.dart';
+import 'package:chibre/widgets/trick_view.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart' hide Card;
@@ -57,8 +58,8 @@ GameState newGame() {
   );
 }
 
-TableView tableOf(GameState game) => TableView(
-  seat: 0,
+TableView tableOf(GameState game, {int seat = 0}) => TableView(
+  seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
   options: game.options,
   cardStyle: CardStyle.cow,
@@ -67,7 +68,7 @@ TableView tableOf(GameState game) => TableView(
       : TablePhase.playing,
   roundIndex: 0,
   scores: game.scores,
-  player: game.viewFor(0),
+  player: game.viewFor(seat),
   seatToAct: game.seatToAct,
   roundPoints: game.round.points,
 );
@@ -142,5 +143,41 @@ void main() {
     controller.show(paused);
     await tester.pump();
     expect(find.text('En attente de Bea…'), findsOneWidget);
+  });
+
+  testWidgets('melds can be prepared before the player\'s turn', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final controller = FakeController(tableOf(game, seat: 2));
+    await pumpScreen(tester, controller);
+    expect(find.text('Ana joue…'), findsOneWidget);
+    await tester.tap(find.text('Annoncer'));
+    await tester.pump();
+    expect(find.text('Valider'), findsOneWidget);
+  });
+
+  testWidgets('a complete trick slides away towards its winner', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    for (var i = 0; i < 4; i++) {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
+    }
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    double opacity() => tester
+        .widget<Opacity>(
+          find.descendant(
+            of: find.byType(TrickView),
+            matching: find.byType(Opacity),
+          ),
+        )
+        .opacity;
+    expect(opacity(), 1);
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(opacity(), 0);
   });
 }

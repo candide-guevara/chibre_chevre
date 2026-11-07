@@ -35,7 +35,7 @@ class EndScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Text('Nous ${table.scores[team]}', style: text.headlineSmall),
                 Text(
-                  'Eux ${table.scores[opponentTeam(team)]}',
+                  'Ordi ${table.scores[opponentTeam(team)]}',
                   style: text.headlineSmall,
                 ),
                 const SizedBox(height: 40),

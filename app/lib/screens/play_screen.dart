@@ -299,6 +299,9 @@ class _PlayScreenState extends State<PlayScreen> {
                   viewer: table.seat,
                   style: table.cardStyle,
                   cardWidth: cardWidth,
+                  winner: shownTrick.isComplete
+                      ? shownTrick.winner(player.mode!)
+                      : null,
                 ),
               ),
             if (table.phase == TablePhase.roundOver)
@@ -348,16 +351,13 @@ class _PlayScreenState extends State<PlayScreen> {
           ),
         ],
       );
-    } else if (table.isMyTurn) {
+    } else if (table.phase == TablePhase.playing) {
       content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            _selectingMeld
-                ? 'Sélectionnez les cartes de l\'annonce'
-                : 'À vous de jouer',
-            style: text.titleMedium,
-          ),
+          _statusText(table),
+          // Melds can be prepared before the player's turn; they are sent
+          // with the player's first card.
           if (player.mayAnnounceMelds) ...[
             const SizedBox(height: 8),
             MeldControls(
@@ -371,7 +371,7 @@ class _PlayScreenState extends State<PlayScreen> {
               }),
             ),
           ],
-          if (_canAnnounceStoeck(player))
+          if (table.isMyTurn && _canAnnounceStoeck(player))
             FilterChip(
               label: const Text('Stöck'),
               selected: _stoeck,
@@ -380,21 +380,34 @@ class _PlayScreenState extends State<PlayScreen> {
         ],
       );
     } else if (table.seatToAct != null) {
-      final name = table.nicknames[table.seatToAct!];
-      content = Text(
-        table.phase == TablePhase.choosingTrump
-            ? '$name choisit l\'atout…'
-            : '$name joue…',
-        style: text.titleMedium?.copyWith(
-          color: ChibreColors.ivory.withValues(alpha: 0.7),
-        ),
-      );
+      content = _statusText(table);
     } else {
       content = const SizedBox.shrink();
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: content,
+    );
+  }
+
+  Widget _statusText(TableView table) {
+    final text = Theme.of(context).textTheme;
+    if (_selectingMeld) {
+      return Text(
+        'Sélectionnez les cartes de l\'annonce',
+        style: text.titleMedium,
+      );
+    }
+    if (table.isMyTurn) return Text('À vous de jouer', style: text.titleMedium);
+    if (table.seatToAct == null) return const SizedBox.shrink();
+    final name = table.nicknames[table.seatToAct!];
+    return Text(
+      table.phase == TablePhase.choosingTrump
+          ? '$name choisit l\'atout…'
+          : '$name joue…',
+      style: text.titleMedium?.copyWith(
+        color: ChibreColors.ivory.withValues(alpha: 0.7),
+      ),
     );
   }
 }
