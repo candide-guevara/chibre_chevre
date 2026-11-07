@@ -7,6 +7,7 @@ class HostConfig {
     required this.nickname,
     this.options = const GameOptions(),
     this.trickHold = defaultTrickHold,
+    this.assistance = false,
   });
 
   static const defaultTrickHold = Duration(milliseconds: 1500);
@@ -18,4 +19,8 @@ class HostConfig {
   /// How long a complete trick stays on the table before sliding to its
   /// winner, so that beginners can memorize the cards played.
   final Duration trickHold;
+
+  /// Whether the players get the "Jouer pour moi" and "Cartes jouées"
+  /// buttons.
+  final bool assistance;
 }

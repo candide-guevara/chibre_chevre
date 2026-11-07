@@ -114,21 +114,26 @@ void main() {
     await host.close();
   });
 
-  test('the joiner and a resumed game use the host\'s trick hold', () async {
+  test('the joiner and a resumed game use the host\'s settings', () async {
     final network = InMemoryNetwork();
     final store = MemoryStore();
     final host = newHost(network, store: store);
     await host.create(const HostConfig(
-        gameName: 'g', nickname: 'Ana', trickHold: Duration(seconds: 3)));
+        gameName: 'g',
+        nickname: 'Ana',
+        trickHold: Duration(seconds: 3),
+        assistance: true));
     final client = newClient(network);
     await client.join(await findGame(network));
     final table = await client.tables.firstWhere((t) => t.player != null);
     expect(table.trickHold, const Duration(seconds: 3));
+    expect(table.assistance, isTrue);
 
     network.disconnectAll();
     final restarted = newHost(network, store: store);
     await restarted.resume();
     expect(restarted.table!.trickHold, const Duration(seconds: 3));
+    expect(restarted.table!.assistance, isTrue);
     await restarted.close();
   });
 

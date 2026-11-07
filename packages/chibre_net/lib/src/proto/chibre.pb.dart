@@ -1683,6 +1683,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.int? trickHoldMs,
     $core.Iterable<$core.int>? recapFor,
     $core.Iterable<$core.int>? meldChoiceFor,
+    $core.bool? assistance,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1709,6 +1710,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     if (recapFor != null) result.recapFor.addAll(recapFor);
     if (meldChoiceFor != null) result.meldChoiceFor.addAll(meldChoiceFor);
+    if (assistance != null) result.assistance = assistance;
     return result;
   }
 
@@ -1762,6 +1764,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     ..p<$core.int>(23, _omitFieldNames ? '' : 'recapFor', $pb.PbFieldType.KU3)
     ..p<$core.int>(
         24, _omitFieldNames ? '' : 'meldChoiceFor', $pb.PbFieldType.KU3)
+    ..aOB(25, _omitFieldNames ? '' : 'assistance')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1972,6 +1975,17 @@ class TableSnapshot extends $pb.GeneratedMessage {
   /// Humans still choosing their melds; the bots wait for them.
   @$pb.TagNumber(24)
   $pb.PbList<$core.int> get meldChoiceFor => $_getList(23);
+
+  /// Whether the play screen shows the "Jouer pour moi" and "Cartes jouées"
+  /// buttons.
+  @$pb.TagNumber(25)
+  $core.bool get assistance => $_getBF(24);
+  @$pb.TagNumber(25)
+  set assistance($core.bool value) => $_setBool(24, value);
+  @$pb.TagNumber(25)
+  $core.bool hasAssistance() => $_has(24);
+  @$pb.TagNumber(25)
+  void clearAssistance() => $_clearField(25);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
@@ -2366,6 +2380,7 @@ class SavedGame extends $pb.GeneratedMessage {
     CardStyle? cardStyle,
     GameRecord? record,
     $core.int? trickHoldMs,
+    $core.bool? assistance,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2376,6 +2391,7 @@ class SavedGame extends $pb.GeneratedMessage {
     if (cardStyle != null) result.cardStyle = cardStyle;
     if (record != null) result.record = record;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
+    if (assistance != null) result.assistance = assistance;
     return result;
   }
 
@@ -2402,6 +2418,7 @@ class SavedGame extends $pb.GeneratedMessage {
         subBuilder: GameRecord.$_createMessage)
     ..aI(7, _omitFieldNames ? '' : 'trickHoldMs',
         fieldType: $pb.PbFieldType.OU3)
+    ..aOB(8, _omitFieldNames ? '' : 'assistance')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2482,6 +2499,15 @@ class SavedGame extends $pb.GeneratedMessage {
   $core.bool hasTrickHoldMs() => $_has(6);
   @$pb.TagNumber(7)
   void clearTrickHoldMs() => $_clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.bool get assistance => $_getBF(7);
+  @$pb.TagNumber(8)
+  set assistance($core.bool value) => $_setBool(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasAssistance() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearAssistance() => $_clearField(8);
 }
 
 const $core.bool _omitFieldNames =

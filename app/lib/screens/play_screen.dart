@@ -295,11 +295,12 @@ class _PlayScreenState extends State<PlayScreen> {
                       },
                     ),
                   ),
-                  GameActionsBar(
-                    onPlayForMe: table.isMyTurn ? _playForMe : null,
-                    thinking: _thinking,
-                    onPlayedCards: _openPlayedCards,
-                  ),
+                  if (table.assistance)
+                    GameActionsBar(
+                      onPlayForMe: table.isMyTurn ? _playForMe : null,
+                      thinking: _thinking,
+                      onPlayedCards: _openPlayedCards,
+                    ),
                 ],
               ),
               if (table.isPaused)

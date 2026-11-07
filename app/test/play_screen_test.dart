@@ -80,6 +80,7 @@ TableView tableOf(
   int seat = 0,
   List<int> recapFor = const [],
   List<int> meldChoiceFor = const [],
+  bool assistance = true,
 }) => TableView(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
@@ -96,6 +97,7 @@ TableView tableOf(
   trickHold: const Duration(milliseconds: 700),
   recapFor: recapFor,
   meldChoiceFor: meldChoiceFor,
+  assistance: assistance,
 );
 
 Future<void> pumpScreen(WidgetTester tester, FakeController controller) async {
@@ -401,5 +403,14 @@ void main() {
     expect(find.textContaining('Ana : 20 ('), findsOneWidget);
     expect(find.text('Pli 1'), findsOneWidget);
     expect(find.bySemanticsLabel(RegExp('as de pique')), findsOneWidget);
+  });
+
+  testWidgets('the assistance buttons are only shown when the host chose so', (
+    tester,
+  ) async {
+    final controller = FakeController(tableOf(newGame(), assistance: false));
+    await pumpScreen(tester, controller);
+    expect(find.text('Jouer pour moi'), findsNothing);
+    expect(find.text('Cartes jouées'), findsNothing);
   });
 }

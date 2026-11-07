@@ -2,6 +2,7 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
+import '../game/advanced_settings.dart';
 import '../services/app_services.dart';
 import '../widgets/host_actions_bar.dart';
 import 'advanced_settings_screen.dart';
@@ -22,7 +23,7 @@ class _HostScreenState extends State<HostScreen> {
   final _target = TextEditingController(text: '${_defaults.targetScore}');
   var _obenUnde = _defaults.obenUndeAllowed;
   var _multipliers = _defaults.multipliersEnabled;
-  var _trickHold = HostConfig.defaultTrickHold;
+  var _advanced = const AdvancedSettings();
   var _starting = false;
 
   @override
@@ -40,11 +41,16 @@ class _HostScreenState extends State<HostScreen> {
     _target.text = '${_defaults.targetScore}';
     _obenUnde = _defaults.obenUndeAllowed;
     _multipliers = _defaults.multipliersEnabled;
-    _trickHold = HostConfig.defaultTrickHold;
+    _advanced = const AdvancedSettings();
   });
 
   void _openAdvanced() => Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => const AdvancedSettingsScreen()),
+    MaterialPageRoute<void>(
+      builder: (_) => AdvancedSettingsScreen(
+        settings: _advanced,
+        onChanged: (settings) => setState(() => _advanced = settings),
+      ),
+    ),
   );
 
   int? get _targetScore {
@@ -65,7 +71,8 @@ class _HostScreenState extends State<HostScreen> {
           obenUndeAllowed: _obenUnde,
           multipliersEnabled: _multipliers,
         ),
-        trickHold: _trickHold,
+        trickHold: _advanced.trickHold,
+        assistance: _advanced.assistance,
       ),
     );
     if (!mounted) return;
@@ -117,23 +124,7 @@ class _HostScreenState extends State<HostScreen> {
           value: _multipliers,
           onChanged: (value) => setState(() => _multipliers = value),
         ),
-        const SizedBox(height: 16),
-        Text('Pause avant de ramasser un pli : ${_seconds(_trickHold)}'),
-        Slider(
-          value: _trickHold.inMilliseconds / 1000,
-          min: 0.5,
-          max: 5,
-          divisions: 9,
-          label: _seconds(_trickHold),
-          onChanged: (value) => setState(
-            () => _trickHold = Duration(milliseconds: (value * 1000).round()),
-          ),
-        ),
       ],
     ),
   );
 }
-
-/// "1,5 s": French decimal comma.
-String _seconds(Duration duration) =>
-    '${(duration.inMilliseconds / 1000).toStringAsFixed(1).replaceAll('.', ',')} s';

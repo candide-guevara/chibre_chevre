@@ -42,6 +42,7 @@ class TableView {
     this.trickHold = HostConfig.defaultTrickHold,
     this.recapFor = const [],
     this.meldChoiceFor = const [],
+    this.assistance = false,
   });
 
   final int seat;
@@ -87,6 +88,10 @@ class TableView {
   /// The humans still choosing their melds; the computer players wait.
   final List<int> meldChoiceFor;
 
+  /// Whether the play screen shows the "Jouer pour moi" and "Cartes jouées"
+  /// buttons.
+  final bool assistance;
+
   /// Whether this player should see the recap of the announcements.
   bool get showsRecap => recapFor.contains(seat);
 
@@ -115,5 +120,6 @@ class TableView {
         trickHold: trickHold,
         recapFor: recapFor,
         meldChoiceFor: meldChoiceFor,
+        assistance: assistance,
       );
 }

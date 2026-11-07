@@ -213,6 +213,9 @@ message TableSnapshot {
   repeated uint32 recap_for = 23;
   // Humans still choosing their melds; the bots wait for them.
   repeated uint32 meld_choice_for = 24;
+  // Whether the play screen shows the "Jouer pour moi" and "Cartes jouées"
+  // buttons.
+  bool assistance = 25;
 }
 
 message ActionRejected {
@@ -254,4 +257,5 @@ message SavedGame {
   CardStyle card_style = 5;
   GameRecord record = 6;
   uint32 trick_hold_ms = 7;
+  bool assistance = 8;
 }

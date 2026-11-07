@@ -130,13 +130,19 @@ Allows to configure different options:
 * number of points (default 1000)
 * trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
 * multipliers: off (default) / on
-* pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 
 A bar of three buttons at the bottom of the screen:
 
 * "Par défaut" puts every option back to its default value.
-* "Avancé" opens the advanced settings screen (empty for now; advanced options will go there).
+* "Avancé" opens the advanced settings screen (see below).
 * "Lancer la partie" (start game), a filled button brighter than the two others so the eye goes to it first, opens the waiting for player screen and starts advertising the game on the network.
+
+## Advanced settings screen
+
+Opened from the host game screen; its options are part of the game the host creates, shared with the joiner and kept when resuming a saved game. "Par défaut" on the host screen resets them too.
+
+* pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
+* "Aide de jeu": a toggle (default off) showing the button bar of the play game screen ("Jouer pour moi" and "Cartes jouées") on both phones.
 
 ## Waiting for player screen
 
@@ -157,7 +163,7 @@ As soon as a player joins, both phones open the play game screen. The host picks
 * **Stöck**: when the player can play the second card of King+Queen of trump, a "Stöck" button appears right above that card in the hand. Tapping it plays the card and announces Stöck; tapping the card itself plays it without announcing. The hand always keeps room for the button so nothing moves when it appears.
 * Once the first trick has been collected, a pop-up in the style of the round summary shows every player's meld calls with their cards, and the points the winning team scores. Each human closes it with a tap ("Touchez pour continuer"); it closes by itself after 10 s. Nobody plays from the end of the first trick until both humans have closed it or it timed out; meanwhile a player who closed it sees "<nickname> lit les annonces…". The host drives it (it tells each phone who still has it open; closing it sends a message to the host). Melds and Stöck are not recalled elsewhere on the table: as in real games, players must memorize them.
 * Likewise, once the trick in which a player announced Stöck has been collected, the same pop-up says who announced it and the points it brings, with the same 10 s timeout and tap to close, and the game waits for it the same way. Stöck announced during the first trick is shown in the same pop-up as the melds. Stöck announced in the last trick of a round is not recapped: the round summary follows.
-* **Button bar** at the bottom of the screen (fixed height, always present):
+* **Button bar** at the bottom of the screen, when the host turned on "Aide de jeu" (fixed height, present for the whole game):
   * "Jouer pour moi": plays the move the expert computer player would make in the player's place (trump choice, or card with melds and Stöck), computed from the player's own view only, with the same budget as the bots; on the joiner's phone it runs locally in a background isolate. Melds the player already validated, or chose not to announce, are kept. Enabled only on the player's turn; shows a spinner while computing.
   * "Cartes jouées": opens a screen, updated live, listing the melds and Stöck announced this round (meld cards once shown, only values before) and every trick of the round in play order with who played each card, the winner's card highlighted.
 * At the end of each round, a short summary (points per team for the round) is shown before the next deal.
