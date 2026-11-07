@@ -181,4 +181,30 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(opacity(), 0);
   });
+
+  testWidgets('the melds are shown once the first trick is collected', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final sequence = Meld.fromCards(CardSet.parse('H6 H7 H8'))!;
+    game.apply(PlayCard(0, Card.parse('SA'), melds: [sequence]));
+    for (var i = 0; i < 2; i++) {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
+    }
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    expect(find.textContaining('20'), findsNothing);
+
+    final last = game.seatToAct;
+    game.apply(PlayCard(last, game.viewFor(last).legalCards.cards.first));
+    controller.show(tableOf(game));
+    await tester.pump();
+    expect(find.text('Annonces'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 1100));
+    expect(find.text('Annonces'), findsOneWidget);
+    expect(find.textContaining('Ana : 20'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(find.text('Annonces'), findsNothing);
+  });
 }

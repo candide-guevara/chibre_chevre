@@ -6,11 +6,11 @@ import 'package:flutter/material.dart' hide Card;
 
 import '../game/game_controller.dart';
 import '../game/hand_order.dart';
-import '../labels.dart';
 import '../theme/chibre_theme.dart';
 import '../widgets/card_back.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
+import '../widgets/meld_summary.dart';
 import '../widgets/pause_overlay.dart';
 import '../widgets/round_summary.dart';
 import '../widgets/score_board.dart';
@@ -41,6 +41,10 @@ class _PlayScreenState extends State<PlayScreen> {
   var _melds = <Meld>[];
   var _stoeck = false;
 
+  // The meld calls, shown once the first trick has been collected.
+  var _showMelds = false;
+  Timer? _meldTimer;
+
   GameController get _controller => widget.controller;
 
   @override
@@ -63,6 +67,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void dispose() {
     _subscription.cancel();
     _lifecycle.dispose();
+    _meldTimer?.cancel();
     super.dispose();
   }
 
@@ -73,9 +78,31 @@ class _PlayScreenState extends State<PlayScreen> {
       _table = table;
       if (!(table.player?.mayAnnounceMelds ?? false)) _resetMelds();
     });
+    if (_meldsJustRevealed(previous, table)) _scheduleMelds(table.trickHold);
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
+  }
+
+  bool _meldsJustRevealed(TableView? previous, TableView table) {
+    final player = table.player;
+    return (previous?.player?.isFirstTrick ?? false) &&
+        player != null &&
+        player.completedTricks.length == 1 &&
+        player.announcedMeldValues.any((values) => values.isNotEmpty);
+  }
+
+  /// Shows the melds after the first trick has slid away, for as long as a
+  /// complete trick stays on the table.
+  void _scheduleMelds(Duration hold) {
+    _meldTimer?.cancel();
+    _meldTimer = Timer(hold + const SessionTiming().trickSlide, () {
+      if (!mounted) return;
+      setState(() => _showMelds = true);
+      _meldTimer = Timer(hold, () {
+        if (mounted) setState(() => _showMelds = false);
+      });
+    });
   }
 
   void _resetMelds() {
@@ -133,6 +160,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void _onCardTap(Card card) {
     final table = _table!;
     final player = table.player!;
+    if (_showMelds) return;
     if (_selectingMeld) {
       setState(
         () => _selection = _selection.contains(card)
@@ -305,6 +333,14 @@ class _PlayScreenState extends State<PlayScreen> {
                       : null,
                 ),
               ),
+            if (_showMelds)
+              Center(
+                child: MeldSummary(
+                  player: player,
+                  nicknames: table.nicknames,
+                  multiplier: table.options.multiplierFor(player.mode!),
+                ),
+              ),
             if (table.phase == TablePhase.roundOver)
               Center(
                 child: RoundSummary(
@@ -318,16 +354,10 @@ class _PlayScreenState extends State<PlayScreen> {
     );
   }
 
-  String? _announcement(PlayerView player, int seat) {
-    final parts = <String>[
-      if (player.revealedMelds[seat].isNotEmpty && !player.isFirstTrick)
-        ...player.revealedMelds[seat].map(meldName)
-      else
-        ...player.announcedMeldValues[seat].map((value) => 'Annonce $value'),
-      if (player.stoeckSeat == seat) 'Stöck',
-    ];
-    return parts.isEmpty ? null : parts.join(' · ');
-  }
+  /// Melds are not recalled under the names: players must remember them,
+  /// as at a real table.
+  String? _announcement(PlayerView player, int seat) =>
+      player.stoeckSeat == seat ? 'Stöck' : null;
 
   Widget _actionArea(TableView table) {
     final player = table.player!;

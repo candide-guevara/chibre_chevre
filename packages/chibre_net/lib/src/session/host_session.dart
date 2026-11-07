@@ -300,13 +300,22 @@ class HostSession {
       case GamePhase.choosingTrump || GamePhase.playing:
         final seat = game.seatToAct;
         if (seat == hostSeat || seat == joinerSeat) return;
-        final round = game.round;
-        final trickJustEnded = round.currentTrick?.isEmpty == true &&
-            round.completedTricks.isNotEmpty;
         _timer = Timer(
-            trickJustEnded ? _trickHold + timing.trickSlide : Duration.zero,
-            () => _playBot(game, seat, version));
+            _pauseBeforeBot(game.round), () => _playBot(game, seat, version));
     }
+  }
+
+  /// After a trick, the humans watch it stay on the table and slide to its
+  /// winner; after the first one, they also read the melds for as long.
+  Duration _pauseBeforeBot(RoundState round) {
+    final trickJustEnded =
+        round.currentTrick?.isEmpty == true && round.completedTricks.isNotEmpty;
+    if (!trickJustEnded) return Duration.zero;
+    final collect = _trickHold + timing.trickSlide;
+    final meldsShown = round.completedTricks.length == 1 &&
+        [for (var seat = 0; seat < seatCount; seat++) ...round.meldsOf(seat)]
+            .isNotEmpty;
+    return meldsShown ? collect + _trickHold : collect;
   }
 
   Future<void> _playBot(GameState game, int seat, int version) async {
