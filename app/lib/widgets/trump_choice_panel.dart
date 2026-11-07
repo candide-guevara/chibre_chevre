@@ -2,6 +2,7 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
 import '../labels.dart';
+import 'suit_icon.dart';
 
 /// The choices of the player who must make trump.
 class TrumpChoicePanel extends StatelessWidget {
@@ -28,9 +29,12 @@ class TrumpChoicePanel extends StatelessWidget {
         FilledButton(
           style: FilledButton.styleFrom(minimumSize: const Size(64, 48)),
           onPressed: () => onChoose(mode),
-          child: Text(
-            mode.trumpSuit == null ? modeName(mode) : modeSymbol(mode),
-            semanticsLabel: modeName(mode),
+          child: Semantics(
+            label: modeName(mode),
+            excludeSemantics: true,
+            child: mode.trumpSuit == null
+                ? Text(modeName(mode))
+                : SuitIcon(mode.trumpSuit!, size: 26),
           ),
         ),
       if (canChibrer)

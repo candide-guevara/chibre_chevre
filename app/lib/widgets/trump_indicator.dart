@@ -1,9 +1,9 @@
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
-import '../card_art/suit_symbol.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
+import 'suit_icon.dart';
 
 /// "Atout :" followed by the trump suit (or Obenabe / Undenufe) on an ivory
 /// badge, and the multiplier when there is one.
@@ -42,10 +42,7 @@ class TrumpIndicator extends StatelessWidget {
                       color: ChibreColors.feltDark,
                     ),
                   )
-                : CustomPaint(
-                    size: const Size.square(_size * 0.6),
-                    painter: _SuitPainter(suit),
-                  ),
+                : SuitIcon(suit, size: _size * 0.6),
           ),
           if (multiplier > 1) ...[
             const SizedBox(width: 6),
@@ -58,17 +55,4 @@ class TrumpIndicator extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SuitPainter extends CustomPainter {
-  const _SuitPainter(this.suit);
-
-  final Suit suit;
-
-  @override
-  void paint(Canvas canvas, Size size) =>
-      paintSuit(canvas, suit, Offset.zero & size);
-
-  @override
-  bool shouldRepaint(_SuitPainter old) => old.suit != suit;
 }
