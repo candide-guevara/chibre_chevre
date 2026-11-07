@@ -25,6 +25,7 @@ pb.TableSnapshot encodeTable(TableView table) {
     meldChoiceFor: table.meldChoiceFor,
     assistance: table.assistance,
     sortByTrump: table.sortByTrump,
+    autoAnnounce: table.autoAnnounce,
   );
   if (player != null) {
     snapshot
@@ -75,6 +76,7 @@ TableView decodeTable(pb.TableSnapshot snapshot) {
     meldChoiceFor: List.unmodifiable(snapshot.meldChoiceFor),
     assistance: snapshot.assistance,
     sortByTrump: snapshot.sortByTrump,
+    autoAnnounce: snapshot.autoAnnounce,
     phase: phase,
     roundIndex: snapshot.roundIndex,
     scores: scores,

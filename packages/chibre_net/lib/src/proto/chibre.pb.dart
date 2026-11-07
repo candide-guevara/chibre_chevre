@@ -1685,6 +1685,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.Iterable<$core.int>? meldChoiceFor,
     $core.bool? assistance,
     $core.bool? sortByTrump,
+    $core.bool? autoAnnounce,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1713,6 +1714,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (meldChoiceFor != null) result.meldChoiceFor.addAll(meldChoiceFor);
     if (assistance != null) result.assistance = assistance;
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
+    if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
     return result;
   }
 
@@ -1768,6 +1770,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
         24, _omitFieldNames ? '' : 'meldChoiceFor', $pb.PbFieldType.KU3)
     ..aOB(25, _omitFieldNames ? '' : 'assistance')
     ..aOB(26, _omitFieldNames ? '' : 'sortByTrump')
+    ..aOB(27, _omitFieldNames ? '' : 'autoAnnounce')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2000,6 +2003,17 @@ class TableSnapshot extends $pb.GeneratedMessage {
   $core.bool hasSortByTrump() => $_has(25);
   @$pb.TagNumber(26)
   void clearSortByTrump() => $_clearField(26);
+
+  /// Whether Stöck is announced automatically and the melds are offered in a
+  /// pop-up rather than selected card by card.
+  @$pb.TagNumber(27)
+  $core.bool get autoAnnounce => $_getBF(26);
+  @$pb.TagNumber(27)
+  set autoAnnounce($core.bool value) => $_setBool(26, value);
+  @$pb.TagNumber(27)
+  $core.bool hasAutoAnnounce() => $_has(26);
+  @$pb.TagNumber(27)
+  void clearAutoAnnounce() => $_clearField(27);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
@@ -2396,6 +2410,7 @@ class SavedGame extends $pb.GeneratedMessage {
     $core.int? trickHoldMs,
     $core.bool? assistance,
     $core.bool? sortByTrump,
+    $core.bool? autoAnnounce,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2408,6 +2423,7 @@ class SavedGame extends $pb.GeneratedMessage {
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     if (assistance != null) result.assistance = assistance;
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
+    if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
     return result;
   }
 
@@ -2436,6 +2452,7 @@ class SavedGame extends $pb.GeneratedMessage {
         fieldType: $pb.PbFieldType.OU3)
     ..aOB(8, _omitFieldNames ? '' : 'assistance')
     ..aOB(9, _omitFieldNames ? '' : 'sortByTrump')
+    ..aOB(10, _omitFieldNames ? '' : 'autoAnnounce')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2534,6 +2551,15 @@ class SavedGame extends $pb.GeneratedMessage {
   $core.bool hasSortByTrump() => $_has(8);
   @$pb.TagNumber(9)
   void clearSortByTrump() => $_clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.bool get autoAnnounce => $_getBF(9);
+  @$pb.TagNumber(10)
+  set autoAnnounce($core.bool value) => $_setBool(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasAutoAnnounce() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearAutoAnnounce() => $_clearField(10);
 }
 
 const $core.bool _omitFieldNames =

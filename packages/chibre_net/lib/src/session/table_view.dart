@@ -44,6 +44,7 @@ class TableView {
     this.meldChoiceFor = const [],
     this.assistance = false,
     this.sortByTrump = false,
+    this.autoAnnounce = false,
   });
 
   final int seat;
@@ -96,6 +97,10 @@ class TableView {
   /// Whether hands are sorted by trump rather than in a fixed suit order.
   final bool sortByTrump;
 
+  /// Whether Stöck is announced automatically and the melds are offered in
+  /// a pop-up rather than selected card by card.
+  final bool autoAnnounce;
+
   /// Whether this player should see the recap of the announcements.
   bool get showsRecap => recapFor.contains(seat);
 
@@ -126,5 +131,6 @@ class TableView {
         meldChoiceFor: meldChoiceFor,
         assistance: assistance,
         sortByTrump: sortByTrump,
+        autoAnnounce: autoAnnounce,
       );
 }

@@ -62,8 +62,10 @@ class FakeController implements GameController {
 }
 
 /// Seat 0 holds the seven of diamonds, so it chooses trump, and a sequence.
-GameState newGame() {
-  final hand = CardSet.parse('D7 H6 H7 H8 S6 S9 SA C10 CK');
+GameState newGame() => gameWith(CardSet.parse('D7 H6 H7 H8 S6 S9 SA C10 CK'));
+
+/// Seat 0 holds [hand], which must contain the seven of diamonds.
+GameState gameWith(CardSet hand) {
   final rest = (CardSet.full - hand).cards;
   return GameState(
     options: const GameOptions(),
@@ -83,6 +85,7 @@ TableView tableOf(
   List<int> recapFor = const [],
   List<int> meldChoiceFor = const [],
   bool assistance = true,
+  bool autoAnnounce = false,
 }) => TableView(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
@@ -100,7 +103,30 @@ TableView tableOf(
   recapFor: recapFor,
   meldChoiceFor: meldChoiceFor,
   assistance: assistance,
+  autoAnnounce: autoAnnounce,
 );
+
+/// Hearts are trump; seat 0 played the queen of hearts and may now play
+/// the king, which completes Stöck.
+GameState stoeckGame() {
+  final game = gameWith(CardSet.parse('D7 H6 H7 H8 H9 H10 HJ HQ HK'))
+    ..apply(const ChooseTrump(0, TrumpMode.hearts));
+  game.apply(PlayCard(0, Card.parse('HQ')));
+  final king = Card.parse('HK');
+  while (game.seatToAct != 0 || game.round.currentTrick!.cards.isEmpty) {
+    final seat = game.seatToAct;
+    final legal = game.viewFor(seat).legalCards;
+    game.apply(
+      PlayCard(
+        seat,
+        seat == 0
+            ? (legal - CardSet.of([king])).cards.first
+            : legal.cards.first,
+      ),
+    );
+  }
+  return game;
+}
 
 Future<void> pumpScreen(WidgetTester tester, FakeController controller) async {
   tester.view.physicalSize = const Size(800, 1200);
@@ -320,32 +346,8 @@ void main() {
   testWidgets('the Stöck button above the card plays it with Stöck', (
     tester,
   ) async {
-    final hand = CardSet.parse('D7 H6 H7 H8 H9 H10 HJ HQ HK');
-    final rest = (CardSet.full - hand).cards;
-    final game = GameState(
-      options: const GameOptions(),
-      deals: ReplayDealSource([
-        [
-          hand,
-          for (var seat = 0; seat < 3; seat++)
-            CardSet.of(rest.sublist(seat * 9, seat * 9 + 9)),
-        ],
-      ]),
-    )..apply(const ChooseTrump(0, TrumpMode.hearts));
-    game.apply(PlayCard(0, Card.parse('HQ')));
+    final game = stoeckGame();
     final king = Card.parse('HK');
-    while (game.seatToAct != 0 || game.round.currentTrick!.cards.isEmpty) {
-      final seat = game.seatToAct;
-      final legal = game.viewFor(seat).legalCards;
-      game.apply(
-        PlayCard(
-          seat,
-          seat == 0
-              ? (legal - CardSet.of([king])).cards.first
-              : legal.cards.first,
-        ),
-      );
-    }
     expect(game.viewFor(0).legalCards.contains(king), isTrue);
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
@@ -370,6 +372,69 @@ void main() {
     expect(find.text('Ana : Stöck'), findsOneWidget);
     expect(find.text('Nous +20'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('automatic announcements offer the melds in a pop-up', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
+    final controller = FakeController(tableOf(game, autoAnnounce: true));
+    await pumpScreen(tester, controller);
+    expect(find.text('Vos annonces'), findsOneWidget);
+    expect(find.text('Ne pas annoncer, jouer'), findsNothing);
+
+    // Cards cannot be played before deciding.
+    await tester.tap(find.bySemanticsLabel('as de pique'));
+    expect(controller.actions, isEmpty);
+
+    await tester.tap(find.text('Annoncer'));
+    await tester.pump();
+    expect(find.text('Vos annonces'), findsNothing);
+    expect(controller.choseMelds, isTrue);
+    await tester.tap(find.bySemanticsLabel('as de pique'));
+    final play = controller.actions.single as PlayCard;
+    expect(play.melds.single.value, 20);
+  });
+
+  testWidgets('automatic announcements: melds can be kept secret', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
+    final controller = FakeController(tableOf(game, autoAnnounce: true));
+    await pumpScreen(tester, controller);
+    await tester.tap(find.text('Garder secret'));
+    await tester.pump();
+    expect(find.text('Vos annonces'), findsNothing);
+    expect(controller.choseMelds, isTrue);
+    await tester.tap(find.bySemanticsLabel('as de pique'));
+    expect((controller.actions.single as PlayCard).melds, isEmpty);
+  });
+
+  testWidgets('automatic announcements: nothing to decide without melds', (
+    tester,
+  ) async {
+    final game = gameWith(CardSet.parse('D7 H6 H8 H10 S6 S9 SA C10 CK'))
+      ..apply(const ChooseTrump(0, TrumpMode.clubs));
+    final controller = FakeController(tableOf(game, autoAnnounce: true));
+    await pumpScreen(tester, controller);
+    expect(find.text('Vos annonces'), findsNothing);
+    expect(controller.choseMelds, isTrue);
+    expect(find.text('À vous de jouer'), findsOneWidget);
+  });
+
+  testWidgets('automatic announcements: Stöck is announced with the card', (
+    tester,
+  ) async {
+    final controller = FakeController(
+      tableOf(stoeckGame(), autoAnnounce: true),
+    );
+    await pumpScreen(tester, controller);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Stöck'), findsNothing);
+    await tester.tap(find.bySemanticsLabel('roi de cœur'));
+    final play = controller.actions.single as PlayCard;
+    expect(play.card, Card.parse('HK'));
+    expect(play.stoeck, isTrue);
   });
 
   testWidgets('"Jouer pour moi" highlights a card, the player plays it', (

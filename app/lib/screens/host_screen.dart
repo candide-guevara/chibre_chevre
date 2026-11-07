@@ -74,6 +74,7 @@ class _HostScreenState extends State<HostScreen> {
         trickHold: _advanced.trickHold,
         assistance: _advanced.assistance,
         sortByTrump: _advanced.sortByTrump,
+        autoAnnounce: _advanced.autoAnnounce,
       ),
     );
     if (!mounted) return;

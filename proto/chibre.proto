@@ -219,6 +219,9 @@ message TableSnapshot {
   // Whether hands are sorted by trump (trump first, by strength) rather
   // than in the fixed order ♥ ♠ ♦ ♣.
   bool sort_by_trump = 26;
+  // Whether Stöck is announced automatically and the melds are offered in a
+  // pop-up rather than selected card by card.
+  bool auto_announce = 27;
 }
 
 message ActionRejected {
@@ -262,4 +265,5 @@ message SavedGame {
   uint32 trick_hold_ms = 7;
   bool assistance = 8;
   bool sort_by_trump = 9;
+  bool auto_announce = 10;
 }

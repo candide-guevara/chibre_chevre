@@ -86,7 +86,7 @@ Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
   * Sequences of the same suit: 3 cards 20, 4 cards 50, 5 cards 100, 6 cards 150, 7 cards 200, 8 cards 250, 9 cards 300.
   * Four of a kind: Jacks 200, Nines 150, Aces/Kings/Queens/Tens 100.
   * Melds are announced by each player during the first trick, before playing their first card. Only the team holding the single best meld scores melds (all of that team's melds count). Comparison follows the standard rules (higher value, then longer sequence, then higher card, then trump, then earlier announcer).
-  * Stöck (King + Queen of trump, 20 points): always counted regardless of the meld comparison. The player announces it when playing the second of the two cards (an "Stöck" button appears at that moment).
+  * Stöck (King + Queen of trump, 20 points): always counted regardless of the meld comparison. The player announces it when playing the second of the two cards (a "Stöck" button appears at that moment, or it is announced automatically when the host turned on "Annonces automatiques").
   * Not announcing a meld or Stöck means it does not count (and is a potential blunder in the insights).
 * **End of game**: the first team to reach the target score (default 1000) wins. Points are counted in the order Stöck, melds, tricks, so the game may end mid-round.
 
@@ -144,6 +144,7 @@ Opened from the host game screen; its options are part of the game the host crea
 * pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 * "Aide de jeu": a toggle (default off) showing the button bar of the play game screen ("Jouer pour moi" and "Cartes jouées") on both phones.
 * "Trier la main selon l'atout": a toggle (default off). Off, hands are always sorted ♥ ♠ ♦ ♣, from 6 to ace; on, trump comes first once chosen and each suit is sorted by strength in the round's trump mode. Applies to both phones (hand and insights).
+* "Annonces automatiques": a toggle (default off) streamlining the announcements on both phones: the meld selection is replaced by a pop-up offering the player's melds, and Stöck is announced automatically (see the play game screen).
 
 ## Waiting for player screen
 
@@ -158,6 +159,7 @@ As soon as a player joins, both phones open the play game screen. The host picks
 * **Trump choice**: when it is the player's turn to choose, a panel shows the allowed trump modes plus "Chibrer" (if allowed).
 * **Playing a card**: a single tap on a card plays it. Illegal cards are greyed out and cannot be tapped. Cards cannot be played when it's not the player's turn.
 * **Melds**: once trump is chosen and until they play their first card, each player starts in meld selection, even when it is not their turn: both humans choose their melds at the same time. Taps select/deselect cards. A single button below reads "Ne pas annoncer, jouer" while no card is selected, and "Valider l'annonce" as soon as one is. Validating checks that the selected cards form one or more valid melds (e.g. a sequence and four of a kind selected together) and shows an error otherwise. Once the player validates a meld or chooses not to announce, there is no going back: card taps play cards again, and the validated melds stay visible as chips until they are sent, and shown to the others, with the player's first card, as the rules require.
+* **Automatic announcements** (when the host turned on "Annonces automatiques"): there is no meld selection and no "Ne pas annoncer, jouer" button. If the player holds melds once trump is chosen, a pop-up on the table lists the best combination of them ("Vos annonces", each meld with its cards) with two buttons, "Garder secret" and "Annoncer"; the player cannot play until they choose. A player without melds is not asked anything. Announced melds are sent with the first card as above. There is no "Stöck" button: playing the second card of King+Queen of trump announces Stöck.
 * The computer players do not play a card until both humans have validated their melds or chosen not to announce (or played their first card): each choice is sent to the host right away. Meanwhile, a human who is done sees "<nickname> choisit son annonce…".
 * **Playing a card**, by anyone: the card slides from the player's side of the table to its place in the trick.
 * **Collecting a trick**: once a trick is complete it stays on the table for the host's chosen pause, then its cards slide towards the seat of the player who won it and fade out. The host waits for the pause and the slide before a bot leads the next trick.

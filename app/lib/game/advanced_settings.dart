@@ -6,6 +6,7 @@ class AdvancedSettings {
     this.trickHold = HostConfig.defaultTrickHold,
     this.assistance = false,
     this.sortByTrump = false,
+    this.autoAnnounce = false,
   });
 
   /// How long a complete trick stays before sliding to its winner.
@@ -17,13 +18,19 @@ class AdvancedSettings {
   /// Whether hands are sorted by trump rather than in a fixed suit order.
   final bool sortByTrump;
 
+  /// Whether Stöck is announced automatically and the melds are offered in
+  /// a pop-up rather than selected card by card.
+  final bool autoAnnounce;
+
   AdvancedSettings copyWith({
     Duration? trickHold,
     bool? assistance,
     bool? sortByTrump,
+    bool? autoAnnounce,
   }) => AdvancedSettings(
     trickHold: trickHold ?? this.trickHold,
     assistance: assistance ?? this.assistance,
     sortByTrump: sortByTrump ?? this.sortByTrump,
+    autoAnnounce: autoAnnounce ?? this.autoAnnounce,
   );
 }

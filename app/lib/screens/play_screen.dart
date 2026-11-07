@@ -12,6 +12,7 @@ import '../theme/chibre_theme.dart';
 import '../widgets/game_actions_bar.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
+import '../widgets/meld_offer.dart';
 import '../widgets/announcement_summary.dart';
 import '../widgets/pause_overlay.dart';
 import '../widgets/playing_card.dart';
@@ -69,6 +70,7 @@ class _PlayScreenState extends State<PlayScreen> {
         }
       },
     );
+    _skipMeldsIfNone();
   }
 
   @override
@@ -86,19 +88,37 @@ class _PlayScreenState extends State<PlayScreen> {
       if (!_sameMove(previous, table)) _suggestion = null;
       if (!(table.player?.mayAnnounceMelds ?? false)) _resetMelds();
     });
+    _skipMeldsIfNone();
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
   }
 
-  /// From the trump choice until the player validates a meld or chooses to
-  /// play without one: card taps select the cards of the meld.
-  bool get _choosingMelds {
+  /// From the trump choice until the player decides on the melds.
+  bool get _decidingMelds {
     final player = _table?.player;
     return player != null &&
         player.mayAnnounceMelds &&
         player.hand.length == handSize &&
         !_meldsDecided;
+  }
+
+  /// Card taps select the cards of the meld, until the player validates it
+  /// or chooses to play without one.
+  bool get _choosingMelds => _decidingMelds && !_table!.autoAnnounce;
+
+  /// With automatic announcements, the melds the player is asked to
+  /// announce or keep secret.
+  List<Meld> get _offeredMelds => _decidingMelds && _table!.autoAnnounce
+      ? findBestMelds(_table!.player!.hand)
+      : const [];
+
+  /// With automatic announcements, a player without melds has nothing to
+  /// decide.
+  void _skipMeldsIfNone() {
+    final table = _table;
+    if (table == null || !table.autoAnnounce || !_decidingMelds) return;
+    if (_offeredMelds.isEmpty) _skipMelds();
   }
 
   void _resetMelds() {
@@ -156,6 +176,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void _onCardTap(Card card) {
     final table = _table!;
     final player = table.player!;
+    if (_offeredMelds.isNotEmpty) return;
     if (_choosingMelds) {
       setState(
         () => _selection = _selection.contains(card)
@@ -168,10 +189,16 @@ class _PlayScreenState extends State<PlayScreen> {
     final suggestion = _suggestion;
     _play(
       card,
-      stoeck:
-          suggestion is PlayCard &&
-          suggestion.card == card &&
-          suggestion.stoeck,
+      stoeck: table.autoAnnounce
+          ? player.stoeckSeat == null &&
+                completesStoeck(
+                  card,
+                  player.playedBy(player.seat),
+                  player.mode!,
+                )
+          : suggestion is PlayCard &&
+                suggestion.card == card &&
+                suggestion.stoeck,
     );
   }
 
@@ -219,8 +246,17 @@ class _PlayScreenState extends State<PlayScreen> {
   );
 
   void _skipMelds() {
-    _controller.meldsChosen();
     setState(() => _meldsDecided = true);
+    _controller.meldsChosen();
+  }
+
+  void _announceOffered() {
+    final melds = _offeredMelds;
+    setState(() {
+      _melds = melds;
+      _meldsDecided = true;
+    });
+    _controller.meldsChosen();
   }
 
   /// Announces the selected cards; there is no going back once valid.
@@ -248,7 +284,8 @@ class _PlayScreenState extends State<PlayScreen> {
   /// the Stöck button above it plays it and announces Stöck.
   Card? _stoeckCard(TableView table) {
     final player = table.player!;
-    if (!table.isMyTurn ||
+    if (table.autoAnnounce ||
+        !table.isMyTurn ||
         table.phase != TablePhase.playing ||
         _choosingMelds ||
         player.stoeckSeat != null) {
@@ -320,7 +357,7 @@ class _PlayScreenState extends State<PlayScreen> {
                   ),
                   if (table.assistance)
                     GameActionsBar(
-                      onPlayForMe: table.isMyTurn && !_choosingMelds
+                      onPlayForMe: table.isMyTurn && !_decidingMelds
                           ? _suggest
                           : null,
                       thinking: _thinking,
@@ -395,6 +432,14 @@ class _PlayScreenState extends State<PlayScreen> {
                   winner: shownTrick.isComplete
                       ? shownTrick.winner(player.mode!)
                       : null,
+                ),
+              ),
+            if (_offeredMelds case final melds when melds.isNotEmpty)
+              Center(
+                child: MeldOffer(
+                  melds: melds,
+                  onAnnounce: _announceOffered,
+                  onKeepSecret: _skipMelds,
                 ),
               ),
             if (table.showsRecap)
@@ -491,7 +536,7 @@ class _PlayScreenState extends State<PlayScreen> {
 
   Widget _statusText(TableView table) {
     final style = Theme.of(context).textTheme.titleMedium;
-    if (_choosingMelds) return Text('Choisissez votre annonce', style: style);
+    if (_decidingMelds) return Text('Choisissez votre annonce', style: style);
     if (table.isMyTurn) return Text('À vous de jouer', style: style);
     final waiting = _waitingFor(table);
     if (waiting == null) return const SizedBox.shrink();

@@ -9,6 +9,7 @@ class HostConfig {
     this.trickHold = defaultTrickHold,
     this.assistance = false,
     this.sortByTrump = false,
+    this.autoAnnounce = false,
   });
 
   static const defaultTrickHold = Duration(milliseconds: 1500);
@@ -27,4 +28,8 @@ class HostConfig {
 
   /// Whether hands are sorted by trump rather than in a fixed suit order.
   final bool sortByTrump;
+
+  /// Whether Stöck is announced automatically and the melds are offered in
+  /// a pop-up rather than selected card by card.
+  final bool autoAnnounce;
 }

@@ -63,6 +63,16 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
           value: _settings.sortByTrump,
           onChanged: (value) => _update(_settings.copyWith(sortByTrump: value)),
         ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Annonces automatiques'),
+          subtitle: const Text(
+            'Stöck annoncé tout seul, annonces proposées en début de manche',
+          ),
+          value: _settings.autoAnnounce,
+          onChanged: (value) =>
+              _update(_settings.copyWith(autoAnnounce: value)),
+        ),
       ],
     ),
   );
