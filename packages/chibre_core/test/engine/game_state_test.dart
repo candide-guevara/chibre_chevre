@@ -41,6 +41,25 @@ void main() {
     expect(game.roundIndex, 1);
   });
 
+  test('the next round can be seen ahead, and is the one started', () {
+    final first = dealOf({2: 'D7 H6 H7 H8 H9 H10 HJ HQ HK'});
+    final second = dealOf({3: 'D7 S6 S7 S8 S9 S10 SJ SQ SK'});
+    final game = GameState(
+        options: const GameOptions(),
+        deals: ReplayDealSource([first, second]));
+    game.apply(const ChooseTrump(2, TrumpMode.hearts));
+    playFirstLegalCards(game.round);
+    expect(game.nextTrumpChooser, 3);
+    final ahead = game.nextRoundViewFor(3);
+    expect(ahead.hand, second[3]);
+    expect(game.nextRoundViewFor(0).hand, second[0]); // Dealt only once.
+    expect(game.phase, GamePhase.roundOver);
+
+    game.startNextRound();
+    expect(game.round.handOf(3), second[3]);
+    expect(game.record.rounds.last.deal, second);
+  });
+
   test('the game ends as soon as a team reaches the target, even mid-round',
       () {
     final game = GameState(

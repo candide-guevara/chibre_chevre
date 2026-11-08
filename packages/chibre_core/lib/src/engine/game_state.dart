@@ -1,5 +1,4 @@
 import 'card.dart';
-import 'card_set.dart';
 import 'deal.dart';
 import 'deal_source.dart';
 import 'game_action.dart';
@@ -21,7 +20,10 @@ class GameState {
       : _deals = deals ?? RandomDealSource(),
         record = GameRecord(options) {
     final deal = _deals.nextDeal();
-    _startRound(deal, holderOf(Card(Suit.diamonds, Rank.seven), deal));
+    _startRound(RoundState(
+        options: options,
+        deal: deal,
+        trumpChooser: holderOf(Card(Suit.diamonds, Rank.seven), deal)));
   }
 
   /// A new game dealt exactly like [record], ready to replay its actions.
@@ -37,6 +39,9 @@ class GameState {
   final _scores = [0, 0];
   late RoundState _round;
   int? _winningTeam;
+
+  /// The next round, once dealt ahead of time by [nextRoundViewFor].
+  RoundState? _nextRound;
 
   GamePhase get phase {
     if (_winningTeam != null) return GamePhase.gameOver;
@@ -81,17 +86,35 @@ class GameState {
     return counted;
   }
 
-  /// Deals the next round; the trump choice moves to the next seat.
-  void startNextRound() {
+  /// The seat choosing trump in the next round.
+  int get nextTrumpChooser => nextSeat(_round.trumpChooser);
+
+  /// What [seat] will see when the next round starts, so that a computer
+  /// player can think about it while the round summary is shown. Deals the
+  /// next round, which [startNextRound] then starts.
+  PlayerView nextRoundViewFor(int seat) =>
+      PlayerView.ofRound(_dealNextRound(), seat, scores: _scores);
+
+  /// Deals the next round, unless done already; the trump choice moves to
+  /// the next seat.
+  RoundState _dealNextRound() {
     if (phase != GamePhase.roundOver) {
       throw StateError('The current round is not over');
     }
-    _startRound(_deals.nextDeal(), nextSeat(_round.trumpChooser));
+    return _nextRound ??= RoundState(
+        options: options,
+        deal: _deals.nextDeal(),
+        trumpChooser: nextTrumpChooser);
   }
 
-  void _startRound(List<CardSet> deal, int trumpChooser) {
-    _round =
-        RoundState(options: options, deal: deal, trumpChooser: trumpChooser);
-    record.rounds.add(RoundRecord(deal: deal, trumpChooser: trumpChooser));
+  void startNextRound() {
+    _startRound(_dealNextRound());
+    _nextRound = null;
+  }
+
+  void _startRound(RoundState round) {
+    _round = round;
+    record.rounds.add(RoundRecord(
+        deal: round.initialHands, trumpChooser: round.trumpChooser));
   }
 }

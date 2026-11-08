@@ -232,6 +232,41 @@ void main() {
     await host.close();
   });
 
+  test('the bot choosing trump next thinks during the round summary', () async {
+    final network = InMemoryNetwork();
+    final bots = RecordingBotRunner();
+    final host = HostSession(
+      transport: InMemoryTransport(network),
+      bots: bots,
+      timing: const SessionTiming(
+          botDelay: Duration.zero,
+          trickSlide: Duration.zero,
+          roundSummary: Duration(milliseconds: 100),
+          recap: Duration.zero),
+      // The host chooses trump first, so Ordi 1 chooses it next.
+      newDeals: (random) =>
+          PresetHandDealSource({0: CardSet.parse('D7')}, random),
+    );
+    await host.create(const HostConfig(
+        gameName: 'g',
+        nickname: 'Ana',
+        options: options,
+        trickHold: Duration.zero));
+    final client = newClient(network);
+    await client.join(await findGame(network));
+    autoplay(host.tables, host.act, host.meldsChosen);
+    autoplay(client.tables, client.act, client.meldsChosen);
+    await pumpEventQueue();
+    host.act(HeuristicPlayer().decide(host.table!.player!));
+
+    await host.tables.firstWhere((t) => t.phase == TablePhase.roundOver);
+    expect(bots.decidedFor.last, 1);
+    final decisions = bots.decidedFor.length;
+    await host.tables.firstWhere((t) => t.roundIndex == 1);
+    expect(bots.decidedFor.length, decisions);
+    await host.close();
+  });
+
   group('the meld recap after the first trick', () {
     /// The host announces a sequence in the first trick; resolves once the
     /// recap is shown.

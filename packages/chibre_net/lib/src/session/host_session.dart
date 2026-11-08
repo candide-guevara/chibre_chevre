@@ -74,8 +74,9 @@ class HostSession {
   final _meldChoice = MeldChoice();
 
   /// The move of the computer player to act, computed as soon as the game
-  /// reaches its turn, keyed by the round and the number of actions in it.
-  ({(RoundRecord, int) position, Future<GameAction> move})? _botMove;
+  /// reaches its turn, keyed by the game, the round index and the number of
+  /// actions in that round.
+  ({(GameState, int, int) position, Future<GameAction> move})? _botMove;
   var _closed = false;
 
   /// The host's table, after every change.
@@ -316,6 +317,12 @@ class HostSession {
       case GamePhase.gameOver:
         if (_insights == null && !_analysing) _analyse(game);
       case GamePhase.roundOver:
+        // Thinks about the trump choice while the summary is shown.
+        final chooser = game.nextTrumpChooser;
+        if (_isBot(chooser)) {
+          _botDecision((game, game.roundIndex + 1, 0),
+              () => game.nextRoundViewFor(chooser));
+        }
         _timer = Timer(timing.roundSummary, () {
           if (version != _version) return;
           game.startNextRound();
@@ -324,10 +331,10 @@ class HostSession {
       case GamePhase.choosingTrump || GamePhase.playing:
         if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
         final seat = game.seatToAct;
-        final isBot = seat != hostSeat && seat != joinerSeat;
+        final isBot = _isBot(seat);
         // Thinks while the humans watch the last trick, read the recap or
         // choose their melds.
-        if (isBot) _botDecision(game, seat);
+        if (isBot) _currentBotDecision(game, seat);
         if (_scheduleRecap(game.round)) return;
         if (!isBot) return;
         if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
@@ -388,7 +395,7 @@ class HostSession {
 
   Future<void> _playBot(GameState game, int seat, int version) async {
     final results = await Future.wait([
-      _botDecision(game, seat),
+      _currentBotDecision(game, seat),
       Future<void>.delayed(timing.botDelay),
     ]);
     if (version != _version || _pausedFor != null || _isOver) return;
@@ -396,17 +403,20 @@ class HostSession {
     _changed();
   }
 
-  /// Starts computing the move of [seat] the first time it is asked for the
-  /// current position.
-  Future<GameAction> _botDecision(GameState game, int seat) {
-    final round = game.record.rounds.last;
-    final position = (round, round.actions.length);
+  static bool _isBot(int seat) => seat != hostSeat && seat != joinerSeat;
+
+  Future<GameAction> _currentBotDecision(GameState game, int seat) =>
+      _botDecision(
+          (game, game.roundIndex, game.record.rounds.last.actions.length),
+          () => game.viewFor(seat));
+
+  /// Starts computing the move of the computer player to act at [position]
+  /// the first time it is asked for.
+  Future<GameAction> _botDecision(
+      (GameState, int, int) position, PlayerView Function() view) {
     if (_botMove?.position != position) {
       // Errors reach [_playBot], and are dropped if the game moved on.
-      _botMove = (
-        position: position,
-        move: bots.decide(game.viewFor(seat))..ignore(),
-      );
+      _botMove = (position: position, move: bots.decide(view())..ignore());
     }
     return _botMove!.move;
   }
