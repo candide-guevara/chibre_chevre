@@ -76,3 +76,8 @@ Portrait composition is particularly important: show only the animal's head and 
 
 Finally, all 36 cards should share consistent proportions, typography, border thickness, illustration scale and spacing. The result should look like a coherent, professionally designed vintage playing-card deck rather than a collection of unrelated illustrations.
 
+### Ivoire and Minuit
+
+A flat Art Deco take on the same animals: thin gold double frames with fan ornaments in the corners, a large ace framed by stepped bars, and the face cards' busts under a gold arch with a sunburst. Ivoire is cream with black and deep red suits; Minuit is navy with ivory and coral suits.
+
+Both are rendered from the SVG drawings in `app/assets/sources/art_deco_svg/` (not shipped in the app) by `app/tool/render_svg_deck.py`: Ivoire as drawn, Minuit by swapping the palette of everything but the portraits for one based on navy `#0A377C`. To amend the decks, edit the SVGs and run the tool again.

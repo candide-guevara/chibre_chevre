@@ -10,6 +10,18 @@ const List<CardDesign> cardDesigns = [
     cornerRadius: 0.07,
     blank: Color(0xFFFBE6C4),
   ),
+  CardDesign(
+    id: 'ivory',
+    name: 'Ivoire',
+    cornerRadius: 0.056,
+    blank: Color(0xFFF3E8CF),
+  ),
+  CardDesign(
+    id: 'midnight',
+    name: 'Minuit',
+    cornerRadius: 0.056,
+    blank: Color(0xFF0A377C),
+  ),
 ];
 
 /// The design with [id], or the default one.
