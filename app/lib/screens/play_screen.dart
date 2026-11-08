@@ -26,6 +26,9 @@ import 'played_cards_screen.dart';
 
 /// The table: the player's hand at the bottom, partner on top, computer
 /// players on the sides. Shows the end screen once the game is over.
+/// The height taken by the names at the top and bottom of the table.
+const _nameRowHeight = 48.0;
+
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key, required this.controller});
 
@@ -404,7 +407,11 @@ class _PlayScreenState extends State<PlayScreen> {
     final left = (table.seat + 3) % seatCount;
     return LayoutBuilder(
       builder: (context, box) {
-        final cardWidth = (box.maxHeight / 5.2).clamp(36.0, 72.0);
+        // The trick fits between the top and bottom names; the side names
+        // sit above the side cards.
+        final cardWidth = TrickView.cardWidthIn(
+          Size(box.maxWidth - 16, box.maxHeight - 2 * _nameRowHeight),
+        );
         final sideNamesBottom =
             box.maxHeight / 2 + cardWidth * cardAspectRatio / 2 + 16;
         return Stack(

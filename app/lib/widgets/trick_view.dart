@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/foundation.dart';
@@ -18,6 +20,15 @@ class TrickView extends StatefulWidget {
     required this.hold,
     this.winner,
   });
+
+  /// The size of the trick, in card widths.
+  static const _widthInCards = 3.2, _heightInCards = 2.3 * cardAspectRatio;
+
+  /// The widest cards for a trick that fits in [space], up to the size of
+  /// the cards in the hand.
+  static double cardWidthIn(Size space) => math
+      .min(space.width / _widthInCards, space.height / _heightInCards)
+      .clamp(36.0, maxCardWidth);
 
   final Trick trick;
   final int viewer;
@@ -102,8 +113,8 @@ class _TrickViewState extends State<TrickView>
         ),
       ),
       child: SizedBox(
-        width: width * 3.2,
-        height: height * 2.3,
+        width: width * TrickView._widthInCards,
+        height: width * TrickView._heightInCards,
         child: Stack(
           children: [
             for (final (index, card) in widget.trick.cards.indexed)
