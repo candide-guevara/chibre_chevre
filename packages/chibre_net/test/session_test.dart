@@ -52,7 +52,8 @@ StreamSubscription<TableView> autoplay(Stream<TableView> tables,
     void Function(GameAction) act, void Function() chooseMelds) {
   final heuristic = HeuristicPlayer();
   return tables.listen((table) {
-    if (table.meldChoiceFor.contains(table.seat)) chooseMelds();
+    // Choosing melds publishes a new table, so this one is out of date.
+    if (table.meldChoiceFor.contains(table.seat)) return chooseMelds();
     if (table.isMyTurn) act(heuristic.decide(table.player!));
   });
 }
