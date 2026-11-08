@@ -34,6 +34,15 @@ class Playout {
     );
   }
 
+  /// A copy of this playout with [hands] for all seats.
+  Playout withHands(List<CardSet> hands) => Playout(
+        hands: List.of(hands),
+        mode: mode,
+        leader: leader,
+        trick: List.of(trick),
+        tricksWon: List.of(tricksWon),
+      );
+
   /// A round about to start, with [leader] playing first.
   factory Playout.newRound(List<CardSet> hands, TrumpMode mode, int leader) =>
       Playout(

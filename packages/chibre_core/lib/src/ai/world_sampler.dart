@@ -35,6 +35,9 @@ class WorldSampler {
   final _forbidden = List.filled(seatCount, CardSet.empty);
   late final List<Card> _unknown;
 
+  /// The cards known to be in each seat's hand.
+  List<CardSet> get hands => List.unmodifiable(_hands);
+
   /// The four hands of a random deal compatible with the observations.
   List<CardSet> sample(Random random) {
     for (var attempt = 0; attempt < 20; attempt++) {
@@ -79,10 +82,8 @@ class WorldSampler {
   List<CardSet>? _tryDeal(Random random, {required bool respectVoids}) {
     final hands = List.of(_hands);
     final capacity = List.of(_capacity);
-    final cards = List.of(_unknown)..shuffle(random);
-    if (respectVoids) {
-      cards.sort((a, b) => _eligibleCount(a) - _eligibleCount(b));
-    }
+    var cards = List.of(_unknown)..shuffle(random);
+    if (respectVoids && _mustSort) cards = _byEligibleCount(cards);
     final eligible = <int>[];
     for (final card in cards) {
       eligible.clear();
@@ -106,6 +107,21 @@ class WorldSampler {
     }
     return hands;
   }
+
+  /// For each card index, the number of seats it may be dealt to.
+  late final _eligible = [for (final card in Card.all) _eligibleCount(card)];
+
+  /// Whether some unknown cards may go to fewer seats than others.
+  late final _mustSort =
+      _unknown.map((card) => _eligible[card.index]).toSet().length > 1;
+
+  /// [cards] with those that may go to the fewest seats first, in a stable
+  /// order like [List.sort] on so few cards.
+  List<Card> _byEligibleCount(List<Card> cards) => [
+        for (var count = 0; count <= seatCount; count++)
+          for (final card in cards)
+            if (_eligible[card.index] == count) card,
+      ];
 
   int _eligibleCount(Card card) {
     var count = 0;

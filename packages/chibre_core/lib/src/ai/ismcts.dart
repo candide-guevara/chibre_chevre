@@ -35,12 +35,13 @@ class Ismcts {
   Card search(PlayerView view) {
     final sampler = WorldSampler(view);
     final root = _Node(null, view.seat);
+    final start = Playout.fromView(view, sampler.hands);
     final stopwatch = Stopwatch()..start();
     for (var i = 0; i < iterations; i++) {
       if (i > 0 && i % 32 == 0 && _timeIsUp(stopwatch)) {
         break;
       }
-      _iterate(root, Playout.fromView(view, sampler.sample(_random)));
+      _iterate(root, start.withHands(sampler.sample(_random)));
     }
     var best = root.children.first;
     for (final child in root.children) {

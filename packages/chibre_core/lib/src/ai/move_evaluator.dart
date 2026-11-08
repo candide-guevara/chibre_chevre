@@ -25,10 +25,11 @@ class MoveEvaluator {
     final sampler = WorldSampler(view);
     final legal = view.legalCards.cards;
     final totals = {for (final card in legal) card: 0.0};
+    final start = Playout.fromView(view, sampler.hands);
     for (var i = 0; i < samples; i++) {
       final hands = sampler.sample(_random);
       for (final card in legal) {
-        final playout = Playout.fromView(view, hands)..play(card);
+        final playout = start.withHands(hands)..play(card);
         while (!playout.isOver) {
           final seat = playout.seatToAct;
           playout.play(heuristicCard(playout.hands[seat], playout.trick,

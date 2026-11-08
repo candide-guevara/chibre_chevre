@@ -54,6 +54,12 @@ extension type const CardSet(int bits) {
 
   CardSet ofSuit(Suit suit) => this & CardSet.suit(suit);
 
+  /// The card with the lowest index; the set must not be empty.
+  Card get first => Card.fromIndex((bits & -bits).bitLength - 1);
+
+  /// The set without [first].
+  CardSet get withoutFirst => CardSet(bits & (bits - 1));
+
   /// The cards in index order: suit by suit, from six to ace.
   List<Card> get cards {
     final result = <Card>[];

@@ -27,14 +27,12 @@ CardSet legalMoves(CardSet hand, List<Card> trick, TrumpMode mode) {
 }
 
 CardSet _undertrumps(CardSet trumps, List<Card> trick, TrumpMode mode) {
-  var best = -1;
+  Card? best;
   for (final card in trick) {
-    if (card.suit == mode.trumpSuit) {
-      final strength = suitStrength(card, mode);
-      if (strength > best) best = strength;
+    if (card.suit == mode.trumpSuit &&
+        (best == null || suitStrength(card, mode) > suitStrength(best, mode))) {
+      best = card;
     }
   }
-  if (best < 0) return CardSet.empty;
-  return CardSet.of(
-      trumps.cards.where((card) => suitStrength(card, mode) < best));
+  return best == null ? CardSet.empty : weakerInSuit(best, trumps, mode);
 }
