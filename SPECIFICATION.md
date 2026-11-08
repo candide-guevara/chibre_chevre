@@ -2,6 +2,13 @@
 
 The goal of this project is to create a phone app to play the [chibre][0] card game.
 
+## Expected agent behavior
+
+* Every time a feature or other change is made, create a git commit. Commits must describe logical changes. Make sure test pass before commiting.
+* During our conversation, if a new feature is added or an important detail is discussed, this specification document must be updated.
+  * However be frugal, this specification should not become a bible, very niche details can always be found by reading the code.
+  * If this specification gets to large, do not hesitate to rewrite some sections to re-summarize and leave out details.
+
 ## Requirements
 
 * 2 human players, each with their own phone, play as partners against a team of 2 computer players.
