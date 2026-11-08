@@ -3,9 +3,9 @@ import 'package:chibre_core/chibre_core.dart';
 /// French names of game concepts shown in the UI.
 
 String rankIndex(Rank rank) => switch (rank) {
-  Rank.jack => 'V',
-  Rank.queen => 'D',
-  Rank.king => 'R',
+  Rank.jack => 'J',
+  Rank.queen => 'Q',
+  Rank.king => 'K',
   Rank.ace => 'A',
   _ => rank.label,
 };
