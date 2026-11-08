@@ -70,3 +70,18 @@ waiting screen into "Adresse (hôte:port)" on the join screen.
 cd packages/chibre_core
 dart run bin/simulate.dart --a expert --b heuristic --deals 40
 ```
+
+## Measuring the AI's speed and strength
+
+```bash
+cd packages/chibre_core
+# Times a fixed amount of AI work; the fingerprints must not change when
+# a change is only meant to make the AI faster.
+dart compile exe bin/speed_bench.dart -o /tmp/speed_bench && /tmp/speed_bench
+# Expert teams with different thinking budgets (seconds on a phone) play
+# whole games against each other.
+dart compile exe bin/budget_match.dart -o /tmp/budget_match && /tmp/budget_match --pairs 50
+```
+
+Compile them (phones run compiled code too): `dart run` is slower and
+less representative.
