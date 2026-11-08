@@ -67,5 +67,5 @@ An art deco night:
 * **Index**: the Limelight typeface, baked into the code as glyph outlines, in crimson (`#D42C45`) for the red suits and ivory (`#F2E8D0`) for the black ones.
 * **Pips**: gold-rimmed suit shapes, crimson or ivory (`#F2E8D0`).
 * **Aces**: a winged gold medallion holding the suit, centred on the card.
-* **Face cards**: the figure stands in a stepped arch window under a moonlit violet sky, in its landscape drawn in muted indigo with gold details. A soft gold glow rims the figure, and a vignette darkens the window edges.
+* **Face cards**: the figure stands in a stepped window, with no outline so it is not mistaken for a card edge when cards overlap, under a moonlit violet sky, in its landscape drawn in muted indigo with gold details. A soft gold glow rims the figure, and a vignette darkens the window edges.
 * **Costumes**: hearts crimson, diamonds burnt orange, spades navy, clubs teal, all with gold trim and ivory accents.

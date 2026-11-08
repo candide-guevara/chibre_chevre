@@ -278,13 +278,6 @@ class DarkDeco extends CardDesign {
       _sky(canvas, card);
       paintScene(canvas, animalOf(card.suit), _window, _scene, card.rank.index);
     });
-    strokePath(canvas, window, _gold, 3);
-    strokePath(
-      canvas,
-      _stepped(_window.inflate(6), 26),
-      alpha(_gold, 0.55),
-      1.2,
-    );
 
     final toon = castToon(card.rank, card.suit, _costumes[card.suit]!);
     final recorder = PictureRecorder();
