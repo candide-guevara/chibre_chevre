@@ -36,8 +36,13 @@ class FakeController implements GameController {
   /// What [suggestAction] answers.
   GameAction? suggestion;
 
+  var suggestionsAsked = 0;
+
   @override
-  Future<GameAction> suggestAction() async => suggestion!;
+  Future<GameAction> suggestAction() async {
+    suggestionsAsked++;
+    return suggestion!;
+  }
 
   @override
   void proposeRematch({required bool sameCards}) {}
@@ -475,6 +480,24 @@ void main() {
     await tester.pump();
     await tester.tap(find.bySemanticsLabel('6 de pique'));
     expect((controller.actions.single as PlayCard).card, Card.parse('S6'));
+  });
+
+  testWidgets('the suggestion is computed before "Jouer pour moi" is pressed', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    final controller = FakeController(tableOf(game))
+      ..suggestion = PlayCard(0, Card.parse('SA'));
+    await pumpScreen(tester, controller);
+    expect(controller.suggestionsAsked, 0); // Still choosing melds.
+
+    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.pump();
+    expect(controller.suggestionsAsked, 1);
+
+    await tester.tap(find.text('Jouer pour moi'));
+    await tester.pump();
+    expect(controller.suggestionsAsked, 1);
   });
 
   testWidgets('"Jouer pour moi" only outlines the suggested trump', (

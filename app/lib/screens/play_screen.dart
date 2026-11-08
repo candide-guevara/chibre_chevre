@@ -54,6 +54,10 @@ class _PlayScreenState extends State<PlayScreen> {
   /// The move it suggested, until the table changes.
   GameAction? _suggestion;
 
+  /// The suggestion for the current move, computed as soon as it is the
+  /// player's turn so that "Jouer pour moi" answers without waiting.
+  Future<GameAction>? _upcomingSuggestion;
+
   /// Fits the trump choice: a title and two rows of buttons.
   static const _actionAreaHeight = 136.0;
 
@@ -74,6 +78,7 @@ class _PlayScreenState extends State<PlayScreen> {
       },
     );
     _skipMeldsIfNone();
+    _prepareSuggestion();
   }
 
   @override
@@ -88,10 +93,14 @@ class _PlayScreenState extends State<PlayScreen> {
     final previous = _table;
     setState(() {
       _table = table;
-      if (!_sameMove(previous, table)) _suggestion = null;
+      if (!_sameMove(previous, table)) {
+        _suggestion = null;
+        _upcomingSuggestion = null;
+      }
       if (!(table.player?.mayAnnounceMelds ?? false)) _resetMelds();
     });
     _skipMeldsIfNone();
+    _prepareSuggestion();
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
@@ -211,22 +220,38 @@ class _PlayScreenState extends State<PlayScreen> {
     setState(() {
       _resetMelds();
       _suggestion = null;
+      _upcomingSuggestion = null;
     });
   }
 
   /// Asks the expert computer player for a move and highlights it: the card
   /// to play, or the trump to choose. The player still taps it to play it.
   Future<void> _suggest() async {
-    final asked = _table;
+    _prepareSuggestion();
+    final upcoming = _upcomingSuggestion!;
     setState(() => _thinking = true);
     try {
-      final action = await _controller.suggestAction();
-      if (mounted && _sameMove(asked, _table!)) {
+      final action = await upcoming;
+      if (mounted && identical(upcoming, _upcomingSuggestion)) {
         setState(() => _suggestion = action);
       }
     } finally {
       if (mounted) setState(() => _thinking = false);
     }
+  }
+
+  /// Starts computing the suggestion once "Jouer pour moi" may be pressed.
+  void _prepareSuggestion() {
+    final table = _table;
+    if (table == null ||
+        !table.assistance ||
+        !table.isMyTurn ||
+        _decidingMelds ||
+        _upcomingSuggestion != null) {
+      return;
+    }
+    // Errors reach "Jouer pour moi" if pressed, and are dropped otherwise.
+    _upcomingSuggestion = _controller.suggestAction()..ignore();
   }
 
   /// Whether [table] still asks this player for the same move as [before],
@@ -251,6 +276,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void _skipMelds() {
     setState(() => _meldsDecided = true);
     _controller.meldsChosen();
+    _prepareSuggestion();
   }
 
   void _announceOffered() {
@@ -260,6 +286,7 @@ class _PlayScreenState extends State<PlayScreen> {
       _meldsDecided = true;
     });
     _controller.meldsChosen();
+    _prepareSuggestion();
   }
 
   /// Announces the selected cards; there is no going back once valid.
@@ -281,6 +308,7 @@ class _PlayScreenState extends State<PlayScreen> {
       _meldsDecided = true;
       _selection = CardSet.empty;
     });
+    _prepareSuggestion();
   }
 
   /// The card that completes Stöck if the player can play it now: tapping
