@@ -150,7 +150,7 @@ Opened from the host game screen; its options are part of the game the host crea
 ## Waiting for player screen
 
 Mentions that it is waiting for a player, has a cancel button to go back to start screen (and stop advertising).
-As soon as a player joins, both phones open the play game screen. The host picks the animal card set at random and shares it with the joiner.
+As soon as a player joins, both phones open the play game screen.
 
 ## Play game screen
 
@@ -204,8 +204,11 @@ At the end of the screen:
 * Use Swiss-French cards (diamonds, hearts, spades, clubs)
 * For the cards design we will be original and design our own:
   * Use rubber hose cartoon style
-  * Instead of humans use monkeys, cows and zebras for face cards (do not mix them but generate different card sets per animal and select one set at random at the start of each game).
-  * The art is drawn by the implementing agents as vector graphics in code (SVG or Flutter `CustomPainter`), no external image assets. Share as much as possible between sets (card frame, suit symbols, pip layouts); only the face cards (Jack, Queen, King, and optionally Ace) differ per animal.
+  * Instead of humans use animals for face cards, one animal per suit: cows for hearts, dogs for spades, monkeys for diamonds, zebras for clubs.
+  * Slender 1930s figures (noodle limbs, pinched waists, big gloves and shoes) rather than chubby mascots. Heads are drawn in side view so the snout reads clearly. Queens have a bust to tell them apart from kings and jacks.
+  * Kings hold a scepter on the right of the card, jacks hold a halberd with a pennant on the left.
+  * The corner index uses the English letters K, Q and J for the face cards (A for the ace).
+  * The art is drawn by the implementing agents as vector graphics in code (SVG or Flutter `CustomPainter`), no external image assets. Share as much as possible between sets (card frame, suit symbols, pip layouts); only the face cards (Jack, Queen, King, and optionally Ace) differ per suit.
   * Cards must remain readable on small screens (rank and suit index in the corners).
 
 ## Testing
