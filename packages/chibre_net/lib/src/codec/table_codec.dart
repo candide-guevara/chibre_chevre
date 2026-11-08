@@ -1,7 +1,6 @@
 import 'package:chibre_core/chibre_core.dart';
 
 import '../proto/chibre.pb.dart' as pb;
-import '../session/card_style.dart';
 import '../session/table_view.dart';
 import 'basic_codec.dart';
 import 'blunder_codec.dart';
@@ -12,7 +11,6 @@ pb.TableSnapshot encodeTable(TableView table) {
     viewer: table.seat,
     nicknames: table.nicknames,
     options: encodeOptions(table.options),
-    cardStyle: pb.CardStyle.valueOf(table.cardStyle.index),
     phase: pb.TableSnapshot_Phase.valueOf(table.phase.index),
     roundIndex: table.roundIndex,
     seatToAct: encodeOptional(table.seatToAct),
@@ -70,7 +68,6 @@ TableView decodeTable(pb.TableSnapshot snapshot) {
     seat: snapshot.viewer,
     nicknames: List.unmodifiable(snapshot.nicknames),
     options: options,
-    cardStyle: CardStyle.values[snapshot.cardStyle.value],
     trickHold: Duration(milliseconds: snapshot.trickHoldMs),
     recapFor: List.unmodifiable(snapshot.recapFor),
     meldChoiceFor: List.unmodifiable(snapshot.meldChoiceFor),

@@ -22,12 +22,6 @@ enum TrumpMode {
   TRUMP_MODE_UNDENUFE = 6;
 }
 
-enum CardStyle {
-  CARD_STYLE_MONKEY = 0;
-  CARD_STYLE_COW = 1;
-  CARD_STYLE_ZEBRA = 2;
-}
-
 message GameOptions {
   uint32 target_score = 1;
   bool oben_unde_allowed = 2;
@@ -187,7 +181,7 @@ message TableSnapshot {
   uint32 viewer = 1;
   repeated string nicknames = 2;
   GameOptions options = 3;
-  CardStyle card_style = 4;
+  reserved 4;  // card_style
   Phase phase = 5;
   uint32 round_index = 6;
   uint64 hand = 7;
@@ -260,7 +254,7 @@ message SavedGame {
   string game_name = 2;
   repeated string nicknames = 3;
   string joiner_installation_id = 4;
-  CardStyle card_style = 5;
+  reserved 5;  // card_style
   GameRecord record = 6;
   uint32 trick_hold_ms = 7;
   bool assistance = 8;

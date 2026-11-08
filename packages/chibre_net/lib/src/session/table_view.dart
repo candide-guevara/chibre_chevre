@@ -1,6 +1,5 @@
 import 'package:chibre_core/chibre_core.dart';
 
-import 'card_style.dart';
 import 'host_config.dart';
 
 enum TablePhase {
@@ -27,7 +26,6 @@ class TableView {
     required this.seat,
     required this.nicknames,
     required this.options,
-    required this.cardStyle,
     required this.phase,
     required this.roundIndex,
     required this.scores,
@@ -52,7 +50,6 @@ class TableView {
   /// By seat.
   final List<String> nicknames;
   final GameOptions options;
-  final CardStyle cardStyle;
   final TablePhase phase;
   final int roundIndex;
 
@@ -114,7 +111,6 @@ class TableView {
         seat: seat,
         nicknames: nicknames,
         options: options,
-        cardStyle: cardStyle,
         phase: phase,
         roundIndex: roundIndex,
         scores: scores,

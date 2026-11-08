@@ -13,7 +13,6 @@ import '../transport/game_listing.dart';
 import '../transport/game_server.dart';
 import '../transport/transport.dart';
 import 'bot_runner.dart';
-import 'card_style.dart';
 import 'host_config.dart';
 import 'meld_choice.dart';
 import 'announcement_recap.dart';
@@ -53,7 +52,6 @@ class HostSession {
   late String _gameName;
   late GameOptions _options;
   late List<String> _nicknames;
-  late CardStyle _cardStyle;
   late Duration _trickHold;
   late bool _assistance;
   late bool _sortByTrump;
@@ -102,7 +100,6 @@ class HostSession {
     _sortByTrump = config.sortByTrump;
     _autoAnnounce = config.autoAnnounce;
     _nicknames = [config.nickname, 'Ordi 1', '', 'Ordi 2'];
-    _cardStyle = _randomStyle();
     await _open();
   }
 
@@ -115,7 +112,6 @@ class HostSession {
     _options = record.options;
     _nicknames = List.of(saved.nicknames);
     _joinerId = saved.joinerInstallationId;
-    _cardStyle = CardStyle.values[saved.cardStyle.value];
     _trickHold = Duration(milliseconds: saved.trickHoldMs);
     _assistance = saved.assistance;
     _sortByTrump = saved.sortByTrump;
@@ -170,12 +166,8 @@ class HostSession {
   DealSource _newDeals() =>
       newDeals?.call(_random) ?? RandomDealSource(_random);
 
-  CardStyle _randomStyle() =>
-      CardStyle.values[_random.nextInt(CardStyle.values.length)];
-
   void _startGame({DealSource? deals}) {
     _game = GameState(options: _options, deals: deals ?? _newDeals());
-    _cardStyle = _randomStyle();
     _insights = null;
     _analysing = false;
   }
@@ -211,7 +203,6 @@ class HostSession {
         seat: seat,
         nicknames: List.unmodifiable(_nicknames),
         options: _options,
-        cardStyle: _cardStyle,
         trickHold: _trickHold,
         assistance: _assistance,
         sortByTrump: _sortByTrump,
@@ -234,7 +225,6 @@ class HostSession {
       seat: seat,
       nicknames: List.unmodifiable(_nicknames),
       options: _options,
-      cardStyle: _cardStyle,
       trickHold: _trickHold,
       assistance: _assistance,
       sortByTrump: _sortByTrump,
@@ -300,7 +290,6 @@ class HostSession {
       gameName: _gameName,
       nicknames: _nicknames,
       joinerInstallationId: _joinerId,
-      cardStyle: pb.CardStyle.valueOf(_cardStyle.index),
       trickHoldMs: _trickHold.inMilliseconds,
       assistance: _assistance,
       sortByTrump: _sortByTrump,

@@ -4,7 +4,6 @@ library;
 export 'src/lan/lan_transport.dart';
 export 'src/memory/in_memory_transport.dart';
 export 'src/session/bot_runner.dart';
-export 'src/session/card_style.dart';
 export 'src/session/client_session.dart';
 export 'src/session/file_saved_game_store.dart';
 export 'src/session/host_config.dart';

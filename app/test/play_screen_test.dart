@@ -90,7 +90,6 @@ TableView tableOf(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
   options: game.options,
-  cardStyle: CardStyle.cow,
   phase: game.phase == GamePhase.choosingTrump
       ? TablePhase.choosingTrump
       : TablePhase.playing,

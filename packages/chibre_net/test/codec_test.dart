@@ -49,7 +49,6 @@ void main() {
       seat: 2,
       nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
       options: game.options,
-      cardStyle: CardStyle.zebra,
       phase: TablePhase.playing,
       roundIndex: 0,
       scores: game.scores,
@@ -64,7 +63,6 @@ void main() {
     final player = decoded.player!;
     expect(decoded.seat, 2);
     expect(decoded.nicknames, table.nicknames);
-    expect(decoded.cardStyle, CardStyle.zebra);
     expect(decoded.seatToAct, game.seatToAct);
     expect(decoded.pausedFor, 'Ana');
     expect(decoded.rematch!.sameCards, isTrue);

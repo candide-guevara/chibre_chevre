@@ -68,28 +68,6 @@ class TrumpMode extends $pb.ProtobufEnum {
   const TrumpMode._(super.value, super.name);
 }
 
-class CardStyle extends $pb.ProtobufEnum {
-  static const CardStyle CARD_STYLE_MONKEY =
-      CardStyle._(0, _omitEnumNames ? '' : 'CARD_STYLE_MONKEY');
-  static const CardStyle CARD_STYLE_COW =
-      CardStyle._(1, _omitEnumNames ? '' : 'CARD_STYLE_COW');
-  static const CardStyle CARD_STYLE_ZEBRA =
-      CardStyle._(2, _omitEnumNames ? '' : 'CARD_STYLE_ZEBRA');
-
-  static const $core.List<CardStyle> values = <CardStyle>[
-    CARD_STYLE_MONKEY,
-    CARD_STYLE_COW,
-    CARD_STYLE_ZEBRA,
-  ];
-
-  static final $core.List<CardStyle?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 2);
-  static CardStyle? valueOf($core.int value) =>
-      value < 0 || value >= _byValue.length ? null : _byValue[value];
-
-  const CardStyle._(super.value, super.name);
-}
-
 class Rejected_Reason extends $pb.ProtobufEnum {
   static const Rejected_Reason REASON_UNSPECIFIED =
       Rejected_Reason._(0, _omitEnumNames ? '' : 'REASON_UNSPECIFIED');

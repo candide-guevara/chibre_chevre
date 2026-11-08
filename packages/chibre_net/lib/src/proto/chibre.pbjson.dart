@@ -50,21 +50,6 @@ final $typed_data.Uint8List trumpModeDescriptor = $convert.base64Decode(
     'UF9NT0RFX0NMVUJTEAQSFgoSVFJVTVBfTU9ERV9PQkVOQUJFEAUSFwoTVFJVTVBfTU9ERV9VTk'
     'RFTlVGRRAG');
 
-@$core.Deprecated('Use cardStyleDescriptor instead')
-const CardStyle$json = {
-  '1': 'CardStyle',
-  '2': [
-    {'1': 'CARD_STYLE_MONKEY', '2': 0},
-    {'1': 'CARD_STYLE_COW', '2': 1},
-    {'1': 'CARD_STYLE_ZEBRA', '2': 2},
-  ],
-};
-
-/// Descriptor for `CardStyle`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List cardStyleDescriptor = $convert.base64Decode(
-    'CglDYXJkU3R5bGUSFQoRQ0FSRF9TVFlMRV9NT05LRVkQABISCg5DQVJEX1NUWUxFX0NPVxABEh'
-    'QKEENBUkRfU1RZTEVfWkVCUkEQAg==');
-
 @$core.Deprecated('Use gameOptionsDescriptor instead')
 const GameOptions$json = {
   '1': 'GameOptions',
@@ -562,14 +547,6 @@ const TableSnapshot$json = {
       '10': 'options'
     },
     {
-      '1': 'card_style',
-      '3': 4,
-      '4': 1,
-      '5': 14,
-      '6': '.chibre.CardStyle',
-      '10': 'cardStyle'
-    },
-    {
       '1': 'phase',
       '3': 5,
       '4': 1,
@@ -643,6 +620,9 @@ const TableSnapshot$json = {
     {'1': 'auto_announce', '3': 27, '4': 1, '5': 8, '10': 'autoAnnounce'},
   ],
   '4': [TableSnapshot_Phase$json],
+  '9': [
+    {'1': 4, '2': 5},
+  ],
 };
 
 @$core.Deprecated('Use tableSnapshotDescriptor instead')
@@ -661,25 +641,24 @@ const TableSnapshot_Phase$json = {
 final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'Cg1UYWJsZVNuYXBzaG90EhYKBnZpZXdlchgBIAEoDVIGdmlld2VyEhwKCW5pY2tuYW1lcxgCIA'
     'MoCVIJbmlja25hbWVzEi0KB29wdGlvbnMYAyABKAsyEy5jaGlicmUuR2FtZU9wdGlvbnNSB29w'
-    'dGlvbnMSMAoKY2FyZF9zdHlsZRgEIAEoDjIRLmNoaWJyZS5DYXJkU3R5bGVSCWNhcmRTdHlsZR'
-    'IxCgVwaGFzZRgFIAEoDjIbLmNoaWJyZS5UYWJsZVNuYXBzaG90LlBoYXNlUgVwaGFzZRIfCgty'
-    'b3VuZF9pbmRleBgGIAEoDVIKcm91bmRJbmRleBISCgRoYW5kGAcgASgEUgRoYW5kEiUKBG1vZG'
-    'UYCCABKA4yES5jaGlicmUuVHJ1bXBNb2RlUgRtb2RlEiMKDXRydW1wX2Nob29zZXIYCSABKA1S'
-    'DHRydW1wQ2hvb3NlchIYCgdjaGlicmVkGAogASgIUgdjaGlicmVkEh4KC3NlYXRfdG9fYWN0GA'
-    'sgASgFUglzZWF0VG9BY3QSOAoQY29tcGxldGVkX3RyaWNrcxgMIAMoCzINLmNoaWJyZS5Ucmlj'
-    'a1IPY29tcGxldGVkVHJpY2tzEjIKDWN1cnJlbnRfdHJpY2sYDSABKAsyDS5jaGlicmUuVHJpY2'
-    'tSDGN1cnJlbnRUcmljaxInCgVtZWxkcxgOIAMoCzIRLmNoaWJyZS5TZWF0TWVsZHNSBW1lbGRz'
-    'Eh8KC3N0b2Vja19zZWF0GA8gASgFUgpzdG9lY2tTZWF0EhYKBnNjb3JlcxgQIAMoBVIGc2Nvcm'
-    'VzEiEKDHJvdW5kX3BvaW50cxgRIAMoBVILcm91bmRQb2ludHMSIQoMd2lubmluZ190ZWFtGBIg'
-    'ASgFUgt3aW5uaW5nVGVhbRIdCgpwYXVzZWRfZm9yGBMgASgJUglwYXVzZWRGb3ISMQoHcmVtYX'
-    'RjaBgUIAEoCzIXLmNoaWJyZS5SZW1hdGNoUHJvcG9zYWxSB3JlbWF0Y2gSLAoIaW5zaWdodHMY'
-    'FSABKAsyEC5jaGlicmUuSW5zaWdodHNSCGluc2lnaHRzEiIKDXRyaWNrX2hvbGRfbXMYFiABKA'
-    '1SC3RyaWNrSG9sZE1zEhsKCXJlY2FwX2ZvchgXIAMoDVIIcmVjYXBGb3ISJgoPbWVsZF9jaG9p'
-    'Y2VfZm9yGBggAygNUg1tZWxkQ2hvaWNlRm9yEh4KCmFzc2lzdGFuY2UYGSABKAhSCmFzc2lzdG'
-    'FuY2USIgoNc29ydF9ieV90cnVtcBgaIAEoCFILc29ydEJ5VHJ1bXASIwoNYXV0b19hbm5vdW5j'
-    'ZRgbIAEoCFIMYXV0b0Fubm91bmNlIn0KBVBoYXNlEhwKGFBIQVNFX1dBSVRJTkdfRk9SX1BMQV'
-    'lFUhAAEhgKFFBIQVNFX0NIT09TSU5HX1RSVU1QEAESEQoNUEhBU0VfUExBWUlORxACEhQKEFBI'
-    'QVNFX1JPVU5EX09WRVIQAxITCg9QSEFTRV9HQU1FX09WRVIQBA==');
+    'dGlvbnMSMQoFcGhhc2UYBSABKA4yGy5jaGlicmUuVGFibGVTbmFwc2hvdC5QaGFzZVIFcGhhc2'
+    'USHwoLcm91bmRfaW5kZXgYBiABKA1SCnJvdW5kSW5kZXgSEgoEaGFuZBgHIAEoBFIEaGFuZBIl'
+    'CgRtb2RlGAggASgOMhEuY2hpYnJlLlRydW1wTW9kZVIEbW9kZRIjCg10cnVtcF9jaG9vc2VyGA'
+    'kgASgNUgx0cnVtcENob29zZXISGAoHY2hpYnJlZBgKIAEoCFIHY2hpYnJlZBIeCgtzZWF0X3Rv'
+    'X2FjdBgLIAEoBVIJc2VhdFRvQWN0EjgKEGNvbXBsZXRlZF90cmlja3MYDCADKAsyDS5jaGlicm'
+    'UuVHJpY2tSD2NvbXBsZXRlZFRyaWNrcxIyCg1jdXJyZW50X3RyaWNrGA0gASgLMg0uY2hpYnJl'
+    'LlRyaWNrUgxjdXJyZW50VHJpY2sSJwoFbWVsZHMYDiADKAsyES5jaGlicmUuU2VhdE1lbGRzUg'
+    'VtZWxkcxIfCgtzdG9lY2tfc2VhdBgPIAEoBVIKc3RvZWNrU2VhdBIWCgZzY29yZXMYECADKAVS'
+    'BnNjb3JlcxIhCgxyb3VuZF9wb2ludHMYESADKAVSC3JvdW5kUG9pbnRzEiEKDHdpbm5pbmdfdG'
+    'VhbRgSIAEoBVILd2lubmluZ1RlYW0SHQoKcGF1c2VkX2ZvchgTIAEoCVIJcGF1c2VkRm9yEjEK'
+    'B3JlbWF0Y2gYFCABKAsyFy5jaGlicmUuUmVtYXRjaFByb3Bvc2FsUgdyZW1hdGNoEiwKCGluc2'
+    'lnaHRzGBUgASgLMhAuY2hpYnJlLkluc2lnaHRzUghpbnNpZ2h0cxIiCg10cmlja19ob2xkX21z'
+    'GBYgASgNUgt0cmlja0hvbGRNcxIbCglyZWNhcF9mb3IYFyADKA1SCHJlY2FwRm9yEiYKD21lbG'
+    'RfY2hvaWNlX2ZvchgYIAMoDVINbWVsZENob2ljZUZvchIeCgphc3Npc3RhbmNlGBkgASgIUgph'
+    'c3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bXAYGiABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW'
+    '5ub3VuY2UYGyABKAhSDGF1dG9Bbm5vdW5jZSJ9CgVQaGFzZRIcChhQSEFTRV9XQUlUSU5HX0ZP'
+    'Ul9QTEFZRVIQABIYChRQSEFTRV9DSE9PU0lOR19UUlVNUBABEhEKDVBIQVNFX1BMQVlJTkcQAh'
+    'IUChBQSEFTRV9ST1VORF9PVkVSEAMSEwoPUEhBU0VfR0FNRV9PVkVSEARKBAgEEAU=');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {
@@ -830,14 +809,6 @@ const SavedGame$json = {
       '10': 'joinerInstallationId'
     },
     {
-      '1': 'card_style',
-      '3': 5,
-      '4': 1,
-      '5': 14,
-      '6': '.chibre.CardStyle',
-      '10': 'cardStyle'
-    },
-    {
       '1': 'record',
       '3': 6,
       '4': 1,
@@ -850,14 +821,17 @@ const SavedGame$json = {
     {'1': 'sort_by_trump', '3': 9, '4': 1, '5': 8, '10': 'sortByTrump'},
     {'1': 'auto_announce', '3': 10, '4': 1, '5': 8, '10': 'autoAnnounce'},
   ],
+  '9': [
+    {'1': 5, '2': 6},
+  ],
 };
 
 /// Descriptor for `SavedGame`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List savedGameDescriptor = $convert.base64Decode(
     'CglTYXZlZEdhbWUSFwoHZ2FtZV9pZBgBIAEoCVIGZ2FtZUlkEhsKCWdhbWVfbmFtZRgCIAEoCV'
     'IIZ2FtZU5hbWUSHAoJbmlja25hbWVzGAMgAygJUgluaWNrbmFtZXMSNAoWam9pbmVyX2luc3Rh'
-    'bGxhdGlvbl9pZBgEIAEoCVIUam9pbmVySW5zdGFsbGF0aW9uSWQSMAoKY2FyZF9zdHlsZRgFIA'
-    'EoDjIRLmNoaWJyZS5DYXJkU3R5bGVSCWNhcmRTdHlsZRIqCgZyZWNvcmQYBiABKAsyEi5jaGli'
-    'cmUuR2FtZVJlY29yZFIGcmVjb3JkEiIKDXRyaWNrX2hvbGRfbXMYByABKA1SC3RyaWNrSG9sZE'
-    '1zEh4KCmFzc2lzdGFuY2UYCCABKAhSCmFzc2lzdGFuY2USIgoNc29ydF9ieV90cnVtcBgJIAEo'
-    'CFILc29ydEJ5VHJ1bXASIwoNYXV0b19hbm5vdW5jZRgKIAEoCFIMYXV0b0Fubm91bmNl');
+    'bGxhdGlvbl9pZBgEIAEoCVIUam9pbmVySW5zdGFsbGF0aW9uSWQSKgoGcmVjb3JkGAYgASgLMh'
+    'IuY2hpYnJlLkdhbWVSZWNvcmRSBnJlY29yZBIiCg10cmlja19ob2xkX21zGAcgASgNUgt0cmlj'
+    'a0hvbGRNcxIeCgphc3Npc3RhbmNlGAggASgIUgphc3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bX'
+    'AYCSABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW5ub3VuY2UYCiABKAhSDGF1dG9Bbm5vdW5j'
+    'ZUoECAUQBg==');

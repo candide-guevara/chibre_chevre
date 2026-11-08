@@ -1662,7 +1662,6 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.int? viewer,
     $core.Iterable<$core.String>? nicknames,
     GameOptions? options,
-    CardStyle? cardStyle,
     TableSnapshot_Phase? phase,
     $core.int? roundIndex,
     $fixnum.Int64? hand,
@@ -1691,7 +1690,6 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (viewer != null) result.viewer = viewer;
     if (nicknames != null) result.nicknames.addAll(nicknames);
     if (options != null) result.options = options;
-    if (cardStyle != null) result.cardStyle = cardStyle;
     if (phase != null) result.phase = phase;
     if (roundIndex != null) result.roundIndex = roundIndex;
     if (hand != null) result.hand = hand;
@@ -1735,8 +1733,6 @@ class TableSnapshot extends $pb.GeneratedMessage {
     ..pPS(2, _omitFieldNames ? '' : 'nicknames')
     ..aOM<GameOptions>(3, _omitFieldNames ? '' : 'options',
         subBuilder: GameOptions.$_createMessage)
-    ..aE<CardStyle>(4, _omitFieldNames ? '' : 'cardStyle',
-        enumValues: CardStyle.values)
     ..aE<TableSnapshot_Phase>(5, _omitFieldNames ? '' : 'phase',
         enumValues: TableSnapshot_Phase.values)
     ..aI(6, _omitFieldNames ? '' : 'roundIndex', fieldType: $pb.PbFieldType.OU3)
@@ -1818,200 +1814,191 @@ class TableSnapshot extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   GameOptions ensureOptions() => $_ensure(2);
 
-  @$pb.TagNumber(4)
-  CardStyle get cardStyle => $_getN(3);
-  @$pb.TagNumber(4)
-  set cardStyle(CardStyle value) => $_setField(4, value);
-  @$pb.TagNumber(4)
-  $core.bool hasCardStyle() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearCardStyle() => $_clearField(4);
-
   @$pb.TagNumber(5)
-  TableSnapshot_Phase get phase => $_getN(4);
+  TableSnapshot_Phase get phase => $_getN(3);
   @$pb.TagNumber(5)
   set phase(TableSnapshot_Phase value) => $_setField(5, value);
   @$pb.TagNumber(5)
-  $core.bool hasPhase() => $_has(4);
+  $core.bool hasPhase() => $_has(3);
   @$pb.TagNumber(5)
   void clearPhase() => $_clearField(5);
 
   @$pb.TagNumber(6)
-  $core.int get roundIndex => $_getIZ(5);
+  $core.int get roundIndex => $_getIZ(4);
   @$pb.TagNumber(6)
-  set roundIndex($core.int value) => $_setUnsignedInt32(5, value);
+  set roundIndex($core.int value) => $_setUnsignedInt32(4, value);
   @$pb.TagNumber(6)
-  $core.bool hasRoundIndex() => $_has(5);
+  $core.bool hasRoundIndex() => $_has(4);
   @$pb.TagNumber(6)
   void clearRoundIndex() => $_clearField(6);
 
   @$pb.TagNumber(7)
-  $fixnum.Int64 get hand => $_getI64(6);
+  $fixnum.Int64 get hand => $_getI64(5);
   @$pb.TagNumber(7)
-  set hand($fixnum.Int64 value) => $_setInt64(6, value);
+  set hand($fixnum.Int64 value) => $_setInt64(5, value);
   @$pb.TagNumber(7)
-  $core.bool hasHand() => $_has(6);
+  $core.bool hasHand() => $_has(5);
   @$pb.TagNumber(7)
   void clearHand() => $_clearField(7);
 
   @$pb.TagNumber(8)
-  TrumpMode get mode => $_getN(7);
+  TrumpMode get mode => $_getN(6);
   @$pb.TagNumber(8)
   set mode(TrumpMode value) => $_setField(8, value);
   @$pb.TagNumber(8)
-  $core.bool hasMode() => $_has(7);
+  $core.bool hasMode() => $_has(6);
   @$pb.TagNumber(8)
   void clearMode() => $_clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get trumpChooser => $_getIZ(8);
+  $core.int get trumpChooser => $_getIZ(7);
   @$pb.TagNumber(9)
-  set trumpChooser($core.int value) => $_setUnsignedInt32(8, value);
+  set trumpChooser($core.int value) => $_setUnsignedInt32(7, value);
   @$pb.TagNumber(9)
-  $core.bool hasTrumpChooser() => $_has(8);
+  $core.bool hasTrumpChooser() => $_has(7);
   @$pb.TagNumber(9)
   void clearTrumpChooser() => $_clearField(9);
 
   @$pb.TagNumber(10)
-  $core.bool get chibred => $_getBF(9);
+  $core.bool get chibred => $_getBF(8);
   @$pb.TagNumber(10)
-  set chibred($core.bool value) => $_setBool(9, value);
+  set chibred($core.bool value) => $_setBool(8, value);
   @$pb.TagNumber(10)
-  $core.bool hasChibred() => $_has(9);
+  $core.bool hasChibred() => $_has(8);
   @$pb.TagNumber(10)
   void clearChibred() => $_clearField(10);
 
   @$pb.TagNumber(11)
-  $core.int get seatToAct => $_getIZ(10);
+  $core.int get seatToAct => $_getIZ(9);
   @$pb.TagNumber(11)
-  set seatToAct($core.int value) => $_setSignedInt32(10, value);
+  set seatToAct($core.int value) => $_setSignedInt32(9, value);
   @$pb.TagNumber(11)
-  $core.bool hasSeatToAct() => $_has(10);
+  $core.bool hasSeatToAct() => $_has(9);
   @$pb.TagNumber(11)
   void clearSeatToAct() => $_clearField(11);
 
   @$pb.TagNumber(12)
-  $pb.PbList<Trick> get completedTricks => $_getList(11);
+  $pb.PbList<Trick> get completedTricks => $_getList(10);
 
   @$pb.TagNumber(13)
-  Trick get currentTrick => $_getN(12);
+  Trick get currentTrick => $_getN(11);
   @$pb.TagNumber(13)
   set currentTrick(Trick value) => $_setField(13, value);
   @$pb.TagNumber(13)
-  $core.bool hasCurrentTrick() => $_has(12);
+  $core.bool hasCurrentTrick() => $_has(11);
   @$pb.TagNumber(13)
   void clearCurrentTrick() => $_clearField(13);
   @$pb.TagNumber(13)
-  Trick ensureCurrentTrick() => $_ensure(12);
+  Trick ensureCurrentTrick() => $_ensure(11);
 
   @$pb.TagNumber(14)
-  $pb.PbList<SeatMelds> get melds => $_getList(13);
+  $pb.PbList<SeatMelds> get melds => $_getList(12);
 
   @$pb.TagNumber(15)
-  $core.int get stoeckSeat => $_getIZ(14);
+  $core.int get stoeckSeat => $_getIZ(13);
   @$pb.TagNumber(15)
-  set stoeckSeat($core.int value) => $_setSignedInt32(14, value);
+  set stoeckSeat($core.int value) => $_setSignedInt32(13, value);
   @$pb.TagNumber(15)
-  $core.bool hasStoeckSeat() => $_has(14);
+  $core.bool hasStoeckSeat() => $_has(13);
   @$pb.TagNumber(15)
   void clearStoeckSeat() => $_clearField(15);
 
   @$pb.TagNumber(16)
-  $pb.PbList<$core.int> get scores => $_getList(15);
+  $pb.PbList<$core.int> get scores => $_getList(14);
 
   @$pb.TagNumber(17)
-  $pb.PbList<$core.int> get roundPoints => $_getList(16);
+  $pb.PbList<$core.int> get roundPoints => $_getList(15);
 
   @$pb.TagNumber(18)
-  $core.int get winningTeam => $_getIZ(17);
+  $core.int get winningTeam => $_getIZ(16);
   @$pb.TagNumber(18)
-  set winningTeam($core.int value) => $_setSignedInt32(17, value);
+  set winningTeam($core.int value) => $_setSignedInt32(16, value);
   @$pb.TagNumber(18)
-  $core.bool hasWinningTeam() => $_has(17);
+  $core.bool hasWinningTeam() => $_has(16);
   @$pb.TagNumber(18)
   void clearWinningTeam() => $_clearField(18);
 
   /// Nickname of the player the game waits for; empty when not paused.
   @$pb.TagNumber(19)
-  $core.String get pausedFor => $_getSZ(18);
+  $core.String get pausedFor => $_getSZ(17);
   @$pb.TagNumber(19)
-  set pausedFor($core.String value) => $_setString(18, value);
+  set pausedFor($core.String value) => $_setString(17, value);
   @$pb.TagNumber(19)
-  $core.bool hasPausedFor() => $_has(18);
+  $core.bool hasPausedFor() => $_has(17);
   @$pb.TagNumber(19)
   void clearPausedFor() => $_clearField(19);
 
   @$pb.TagNumber(20)
-  RematchProposal get rematch => $_getN(19);
+  RematchProposal get rematch => $_getN(18);
   @$pb.TagNumber(20)
   set rematch(RematchProposal value) => $_setField(20, value);
   @$pb.TagNumber(20)
-  $core.bool hasRematch() => $_has(19);
+  $core.bool hasRematch() => $_has(18);
   @$pb.TagNumber(20)
   void clearRematch() => $_clearField(20);
   @$pb.TagNumber(20)
-  RematchProposal ensureRematch() => $_ensure(19);
+  RematchProposal ensureRematch() => $_ensure(18);
 
   @$pb.TagNumber(21)
-  Insights get insights => $_getN(20);
+  Insights get insights => $_getN(19);
   @$pb.TagNumber(21)
   set insights(Insights value) => $_setField(21, value);
   @$pb.TagNumber(21)
-  $core.bool hasInsights() => $_has(20);
+  $core.bool hasInsights() => $_has(19);
   @$pb.TagNumber(21)
   void clearInsights() => $_clearField(21);
   @$pb.TagNumber(21)
-  Insights ensureInsights() => $_ensure(20);
+  Insights ensureInsights() => $_ensure(19);
 
   /// How long a complete trick stays before sliding to its winner.
   @$pb.TagNumber(22)
-  $core.int get trickHoldMs => $_getIZ(21);
+  $core.int get trickHoldMs => $_getIZ(20);
   @$pb.TagNumber(22)
-  set trickHoldMs($core.int value) => $_setUnsignedInt32(21, value);
+  set trickHoldMs($core.int value) => $_setUnsignedInt32(20, value);
   @$pb.TagNumber(22)
-  $core.bool hasTrickHoldMs() => $_has(21);
+  $core.bool hasTrickHoldMs() => $_has(20);
   @$pb.TagNumber(22)
   void clearTrickHoldMs() => $_clearField(22);
 
   /// Seats still reading the recap of the announcements; nobody plays until
   /// it is empty.
   @$pb.TagNumber(23)
-  $pb.PbList<$core.int> get recapFor => $_getList(22);
+  $pb.PbList<$core.int> get recapFor => $_getList(21);
 
   /// Humans still choosing their melds; the bots wait for them.
   @$pb.TagNumber(24)
-  $pb.PbList<$core.int> get meldChoiceFor => $_getList(23);
+  $pb.PbList<$core.int> get meldChoiceFor => $_getList(22);
 
   /// Whether the play screen shows the "Jouer pour moi" and "Cartes jouées"
   /// buttons.
   @$pb.TagNumber(25)
-  $core.bool get assistance => $_getBF(24);
+  $core.bool get assistance => $_getBF(23);
   @$pb.TagNumber(25)
-  set assistance($core.bool value) => $_setBool(24, value);
+  set assistance($core.bool value) => $_setBool(23, value);
   @$pb.TagNumber(25)
-  $core.bool hasAssistance() => $_has(24);
+  $core.bool hasAssistance() => $_has(23);
   @$pb.TagNumber(25)
   void clearAssistance() => $_clearField(25);
 
   /// Whether hands are sorted by trump (trump first, by strength) rather
   /// than in the fixed order ♥ ♠ ♦ ♣.
   @$pb.TagNumber(26)
-  $core.bool get sortByTrump => $_getBF(25);
+  $core.bool get sortByTrump => $_getBF(24);
   @$pb.TagNumber(26)
-  set sortByTrump($core.bool value) => $_setBool(25, value);
+  set sortByTrump($core.bool value) => $_setBool(24, value);
   @$pb.TagNumber(26)
-  $core.bool hasSortByTrump() => $_has(25);
+  $core.bool hasSortByTrump() => $_has(24);
   @$pb.TagNumber(26)
   void clearSortByTrump() => $_clearField(26);
 
   /// Whether Stöck is announced automatically and the melds are offered in a
   /// pop-up rather than selected card by card.
   @$pb.TagNumber(27)
-  $core.bool get autoAnnounce => $_getBF(26);
+  $core.bool get autoAnnounce => $_getBF(25);
   @$pb.TagNumber(27)
-  set autoAnnounce($core.bool value) => $_setBool(26, value);
+  set autoAnnounce($core.bool value) => $_setBool(25, value);
   @$pb.TagNumber(27)
-  $core.bool hasAutoAnnounce() => $_has(26);
+  $core.bool hasAutoAnnounce() => $_has(25);
   @$pb.TagNumber(27)
   void clearAutoAnnounce() => $_clearField(27);
 }
@@ -2405,7 +2392,6 @@ class SavedGame extends $pb.GeneratedMessage {
     $core.String? gameName,
     $core.Iterable<$core.String>? nicknames,
     $core.String? joinerInstallationId,
-    CardStyle? cardStyle,
     GameRecord? record,
     $core.int? trickHoldMs,
     $core.bool? assistance,
@@ -2418,7 +2404,6 @@ class SavedGame extends $pb.GeneratedMessage {
     if (nicknames != null) result.nicknames.addAll(nicknames);
     if (joinerInstallationId != null)
       result.joinerInstallationId = joinerInstallationId;
-    if (cardStyle != null) result.cardStyle = cardStyle;
     if (record != null) result.record = record;
     if (trickHoldMs != null) result.trickHoldMs = trickHoldMs;
     if (assistance != null) result.assistance = assistance;
@@ -2444,8 +2429,6 @@ class SavedGame extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'gameName')
     ..pPS(3, _omitFieldNames ? '' : 'nicknames')
     ..aOS(4, _omitFieldNames ? '' : 'joinerInstallationId')
-    ..aE<CardStyle>(5, _omitFieldNames ? '' : 'cardStyle',
-        enumValues: CardStyle.values)
     ..aOM<GameRecord>(6, _omitFieldNames ? '' : 'record',
         subBuilder: GameRecord.$_createMessage)
     ..aI(7, _omitFieldNames ? '' : 'trickHoldMs',
@@ -2505,59 +2488,50 @@ class SavedGame extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearJoinerInstallationId() => $_clearField(4);
 
-  @$pb.TagNumber(5)
-  CardStyle get cardStyle => $_getN(4);
-  @$pb.TagNumber(5)
-  set cardStyle(CardStyle value) => $_setField(5, value);
-  @$pb.TagNumber(5)
-  $core.bool hasCardStyle() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearCardStyle() => $_clearField(5);
-
   @$pb.TagNumber(6)
-  GameRecord get record => $_getN(5);
+  GameRecord get record => $_getN(4);
   @$pb.TagNumber(6)
   set record(GameRecord value) => $_setField(6, value);
   @$pb.TagNumber(6)
-  $core.bool hasRecord() => $_has(5);
+  $core.bool hasRecord() => $_has(4);
   @$pb.TagNumber(6)
   void clearRecord() => $_clearField(6);
   @$pb.TagNumber(6)
-  GameRecord ensureRecord() => $_ensure(5);
+  GameRecord ensureRecord() => $_ensure(4);
 
   @$pb.TagNumber(7)
-  $core.int get trickHoldMs => $_getIZ(6);
+  $core.int get trickHoldMs => $_getIZ(5);
   @$pb.TagNumber(7)
-  set trickHoldMs($core.int value) => $_setUnsignedInt32(6, value);
+  set trickHoldMs($core.int value) => $_setUnsignedInt32(5, value);
   @$pb.TagNumber(7)
-  $core.bool hasTrickHoldMs() => $_has(6);
+  $core.bool hasTrickHoldMs() => $_has(5);
   @$pb.TagNumber(7)
   void clearTrickHoldMs() => $_clearField(7);
 
   @$pb.TagNumber(8)
-  $core.bool get assistance => $_getBF(7);
+  $core.bool get assistance => $_getBF(6);
   @$pb.TagNumber(8)
-  set assistance($core.bool value) => $_setBool(7, value);
+  set assistance($core.bool value) => $_setBool(6, value);
   @$pb.TagNumber(8)
-  $core.bool hasAssistance() => $_has(7);
+  $core.bool hasAssistance() => $_has(6);
   @$pb.TagNumber(8)
   void clearAssistance() => $_clearField(8);
 
   @$pb.TagNumber(9)
-  $core.bool get sortByTrump => $_getBF(8);
+  $core.bool get sortByTrump => $_getBF(7);
   @$pb.TagNumber(9)
-  set sortByTrump($core.bool value) => $_setBool(8, value);
+  set sortByTrump($core.bool value) => $_setBool(7, value);
   @$pb.TagNumber(9)
-  $core.bool hasSortByTrump() => $_has(8);
+  $core.bool hasSortByTrump() => $_has(7);
   @$pb.TagNumber(9)
   void clearSortByTrump() => $_clearField(9);
 
   @$pb.TagNumber(10)
-  $core.bool get autoAnnounce => $_getBF(9);
+  $core.bool get autoAnnounce => $_getBF(8);
   @$pb.TagNumber(10)
-  set autoAnnounce($core.bool value) => $_setBool(9, value);
+  set autoAnnounce($core.bool value) => $_setBool(8, value);
   @$pb.TagNumber(10)
-  $core.bool hasAutoAnnounce() => $_has(9);
+  $core.bool hasAutoAnnounce() => $_has(8);
   @$pb.TagNumber(10)
   void clearAutoAnnounce() => $_clearField(10);
 }
