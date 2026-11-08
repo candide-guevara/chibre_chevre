@@ -51,7 +51,13 @@ The Material theme is dark, seeded from `felt`, with ivory as primary and brass 
 
 ### Card designs are pluggable
 
-A design is a subclass of `CardDesign` (`app/lib/card_art/card_design.dart`) drawn in a 400×600 box. It fills in the ground, frame, index, pips, ace and face cards; the card layout (corner index, pip positions) is shared. Designs are registered in `cardDesigns` (`card_designs.dart`), the first one being the default, and chosen with `CardDesignScope`. Each card is drawn once into a cached picture and replayed at any size.
+A design is a subclass of `CardDesign` (`app/lib/card_art/card_design.dart`) drawn in a 400×600 box. It fills in the ground, frame, index, pips, ace and face cards; the card layout (corner index, pip positions) is shared. Designs are registered in `cardDesigns` (`card_designs.dart`), the first one being the default, and chosen with `CardDesignScope`.
+
+Cards are shown as bitmaps so that animations stay smooth on older phones:
+
+* At startup, in the background, `CardImageLoader` gets each card of the design at the size of the largest card on this screen (hand cards × pixel ratio): from PNGs shipped in the app at `assets/cards/<design id>/<card>.png` (e.g. `HJ.png`) if there are any, else from the images saved on the phone, else by rendering the vector art, which it then saves for the next starts.
+* The saved images are kept per design `version` and width; others are deleted. **Bump the design's `version` whenever its art changes.**
+* Until a card's bitmap is ready, it is drawn from its vector art.
 
 Reusable building blocks:
 

@@ -23,6 +23,10 @@ abstract class CardDesign {
   /// The name shown to players.
   String get name;
 
+  /// Bump whenever the art changes, so the images saved on the phones are
+  /// rendered again.
+  int get version;
+
   /// Corner radius, as a fraction of the card width.
   double get cornerRadius;
 

@@ -3,10 +3,14 @@ import 'package:flutter/material.dart' hide Card;
 
 import '../card_art/card_designs.dart';
 import '../card_art/card_face_painter.dart';
+import '../card_art/card_images.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
 
 const cardAspectRatio = 1.5;
+
+/// The width of the largest cards, those in the hand.
+const maxCardWidth = 90.0;
 
 /// The front of a card. Disabled cards are dimmed; selected ones are raised
 /// and outlined.
@@ -32,7 +36,7 @@ class PlayingCard extends StatelessWidget {
     Widget face = RepaintBoundary(
       child: CustomPaint(
         size: Size(width, width * cardAspectRatio),
-        painter: CardFacePainter(card, design),
+        painter: CardFacePainter(card, CardImages.of(design)),
       ),
     );
     if (!enabled) {

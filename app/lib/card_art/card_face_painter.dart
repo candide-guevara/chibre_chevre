@@ -1,41 +1,41 @@
-import 'dart:ui';
-
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/rendering.dart';
 
 import 'card_design.dart';
+import 'card_images.dart';
 
-/// Paints the front of [card] in [design], scaled to the canvas.
-///
-/// Each card is recorded once per design and replayed afterwards, so the art
-/// is only computed the first time a card is shown.
+/// Paints the front of [card] from [deck], scaled to the canvas: its bitmap
+/// when loaded, else its vector drawing. Repaints when the bitmap arrives.
 class CardFacePainter extends CustomPainter {
-  const CardFacePainter(this.card, this.design);
+  CardFacePainter(this.card, this.deck) : super(repaint: deck);
 
   final Card card;
-  final CardDesign design;
+  final CardImages deck;
 
-  static final _pictures = <(String, int), Picture>{};
-
-  static Picture _record(CardDesign design, Card card) =>
-      _pictures.putIfAbsent((design.id, card.index), () {
-        final recorder = PictureRecorder();
-        design.paint(Canvas(recorder), card);
-        return recorder.endRecording();
-      });
+  static final _imagePaint = Paint()..filterQuality = FilterQuality.medium;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final image = deck.image(card);
+    if (image != null) {
+      canvas.drawImageRect(
+        image,
+        Offset.zero & Size(image.width.toDouble(), image.height.toDouble()),
+        Offset.zero & size,
+        _imagePaint,
+      );
+      return;
+    }
     canvas.save();
     canvas.scale(
       size.width / cardDesignSize.width,
       size.height / cardDesignSize.height,
     );
-    canvas.drawPicture(_record(design, card));
+    canvas.drawPicture(deck.picture(card));
     canvas.restore();
   }
 
   @override
   bool shouldRepaint(CardFacePainter oldDelegate) =>
-      oldDelegate.card != card || oldDelegate.design != design;
+      oldDelegate.card != card || oldDelegate.deck != deck;
 }

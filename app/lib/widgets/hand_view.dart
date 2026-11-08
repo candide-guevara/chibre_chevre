@@ -31,7 +31,7 @@ class HandView extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, box) {
       if (cards.isEmpty) return const SizedBox.shrink();
-      final cardWidth = min(90.0, box.maxWidth / 4.2);
+      final cardWidth = min(maxCardWidth, box.maxWidth / 4.2);
       final step = cards.length == 1
           ? 0.0
           : min(

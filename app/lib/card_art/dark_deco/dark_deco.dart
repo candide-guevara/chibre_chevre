@@ -34,6 +34,9 @@ class DarkDeco extends CardDesign {
   String get name => 'Dark Deco';
 
   @override
+  int get version => 1;
+
+  @override
   double get cornerRadius => 26 / 400;
 
   @override

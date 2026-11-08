@@ -1,10 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../card_art/card_designs.dart';
+import '../card_art/card_image_loader.dart';
+import '../card_art/card_image_sources.dart';
+import '../card_art/card_images.dart';
+import '../widgets/playing_card.dart';
 import 'compute_budget_loader.dart';
 import 'network_lock.dart';
 import 'profile_store.dart';
@@ -36,6 +43,7 @@ class AppServices {
     final directory = await getApplicationSupportDirectory();
     final suffix = _profileName.isEmpty ? '' : '-$_profileName';
     await acquireMulticastLock();
+    unawaited(_loadCardImages(directory));
     return AppServices._(
       profile: profile,
       transport: LanTransport(),
@@ -45,6 +53,36 @@ class AppServices {
       budget: loadComputeBudget(profile),
       testDeal: testDeal,
     );
+  }
+
+  /// Turns the cards into bitmaps sized for this screen, in the background,
+  /// keeping them for the next starts.
+  static Future<void> _loadCardImages(Directory directory) {
+    final pixelRatio =
+        WidgetsBinding
+            .instance
+            .platformDispatcher
+            .implicitView
+            ?.devicePixelRatio ??
+        3;
+    final loader = CardImageLoader(
+      bundle: BundledCardImages(rootBundle),
+      store: CardImageStore(Directory('${directory.path}/card-images')),
+    );
+    return loader
+        .load(
+          CardImages.of(cardDesigns.first),
+          (maxCardWidth * pixelRatio).ceil(),
+        )
+        .onError(
+          (error, stack) => FlutterError.reportError(
+            FlutterErrorDetails(
+              exception: error!,
+              stack: stack,
+              library: 'card images',
+            ),
+          ),
+        );
   }
 
   final ProfileStore profile;
