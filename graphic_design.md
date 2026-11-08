@@ -6,7 +6,7 @@ The look and feel of the app and of its cards. [SPECIFICATION.md](SPECIFICATION.
 
 * Overall sober, no tacky decorations on buttons.
 * A dark, calm table so the cards are the only colourful thing on screen.
-* Everything is drawn in code (Flutter `CustomPainter`), no external image or font assets. Even the back arrow and the card lettering are vector paths.
+* Everything is drawn in code (Flutter `CustomPainter`), no external image or font assets, except the card images of bundled designs. Even the back arrow and the card lettering are vector paths.
 * Readable on small, ~5 year old phones: large touch targets, high contrast, short animations.
 
 ## App palette
@@ -51,13 +51,26 @@ The Material theme is dark, seeded from `felt`, with ivory as primary and brass 
 
 ### Card designs are pluggable
 
-A design is a subclass of `CardDesign` (`app/lib/card_art/card_design.dart`) drawn in a 400×600 box. It fills in the ground, frame, index, pips, ace and face cards; the card layout (corner index, pip positions) is shared. Designs are registered in `cardDesigns` (`card_designs.dart`), the first one being the default, and chosen with `CardDesignScope`.
+A design is a `CardDesign` (`app/lib/card_art/card_design.dart`) with an id, a name, a `version` and a corner radius. There are two kinds:
+
+* `DrawnCardDesign`: drawn in code in a 400×600 box. It fills in the ground, frame, index, pips, ace and face cards; the card layout (corner index, pip positions) is shared.
+* `BundledCardDesign`: images shipped in the app (see below).
+
+Designs are registered in `cardDesigns` (`card_designs.dart`), the first one being the default. Each player picks theirs on the player details screen; it is a preference of the phone, not of the game, so partners can play with different decks.
+
+#### Adding a bundled design
+
+* One image per card in `app/assets/cards/<design id>/`, named `<suit><rank>.webp`: suit `H`, `S`, `D` or `C`, rank `6` to `10`, `J`, `Q`, `K` or `A` (e.g. `S10.webp`, `DQ.webp`). All 36 cards, no back.
+* Portrait **2:3**, ideally 300×450, lossless WebP, with transparent rounded corners matching the design's `cornerRadius`.
+* Declare the folder in `app/pubspec.yaml` and add a `BundledCardDesign` to `cardDesigns`.
+
+`app/tool/slice_card_sheet.py` cuts a generated sheet of cards (one row per suit, A to 6) into such files.
 
 Cards are shown as bitmaps so that animations stay smooth on older phones:
 
-* At startup, in the background, `CardImageLoader` gets each card of the design at the size of the largest card on this screen (hand cards × pixel ratio): from PNGs shipped in the app at `assets/cards/<design id>/<card>.png` (e.g. `HJ.png`) if there are any, else from the images saved on the phone, else by rendering the vector art, which it then saves for the next starts.
+* At startup, in the background, `CardImageLoader` gets each card of the chosen design at the size of the largest card on this screen (hand cards × pixel ratio): from the images shipped in the app if there are any, else from the images saved on the phone, else by rendering the vector art, which it then saves for the next starts. Other designs are loaded when the player details screen shows them.
 * The saved images are kept per design `version` and width; others are deleted. **Bump the design's `version` whenever its art changes.**
-* Until a card's bitmap is ready, it is drawn from its vector art.
+* Until a card's bitmap is ready, it is drawn from its vector art, or as a blank card for bundled designs.
 
 Reusable building blocks:
 
@@ -76,11 +89,17 @@ An art deco night:
 * **Face cards**: the figure stands in a stepped window, with no outline so it is not mistaken for a card edge when cards overlap, under a moonlit violet sky, in its landscape drawn in muted indigo with gold details. A soft gold glow rims the figure, and a vignette darkens the window edges.
 * **Costumes**: hearts crimson, diamonds burnt orange, spades navy, clubs teal, all with gold trim and ivory accents.
 
-## Prompt for image generator
+### Vintage
 
-The goal is to create a 36-card Swiss Jass deck in a vintage Art Deco style, with a consistent visual identity across all four suits. The cards should have warm ivory backgrounds, elegant gold-and-black geometric borders, decorative Art Deco corner details, and a restrained palette of deep red, black, cream and gold. Each card should have clearly readable rank and suit markings in its upper-left and lower-right corners.
+Generated from the prompt below, then retouched by hand: warm ivory cards with thin gold borders and corner flourishes, large central numerals on the number cards, and head-and-shoulders portraits of the animals on the face cards (crowned kings in ermine, queens in feathered hats, jacks in hats and bow ties).
 
-Each suit has its own animal: hearts are cows, spades are dogs, diamonds are monkeys, and clubs are zebras. The deck contains A, 10, K, Q, J, 9, 8, 7 and 6 in each suit. Numbered cards (10–6) should use a large central numeral instead of multiple suit symbols. The suit symbol should remain visible in the corners.
+#### Prompt for image generator
+
+Create a 36-card Swiss Jass deck in a vintage Art Deco style, with a consistent visual identity across all four suits. The cards should have warm ivory backgrounds, elegant gold-and-black geometric borders, decorative Art Deco corner details, and a restrained palette of deep red, black, cream and gold. Each card should have clearly readable rank and suit markings in its upper-left and lower-right corners.
+
+Each suit has its own animal: hearts are cows, spades are dogs, diamonds are monkeys, and clubs are zebras. The deck contains A, 10, K, Q, J, 9, 8, 7 and 6 in each suit. Draw 4 rows of 9 cards each, 1 row for each suit.
+
+Numbered cards (10–6) should use a large central numeral instead of multiple suit symbols. The suit symbol should remain visible in the corners.
 
 The King, Queen and Jack cards should feature individual animal portraits in a playful 1930s rubber-hose cartoon style, with expressive faces, exaggerated features and elegant costumes. The artistic direction should combine the charm of classic Disney rubber-hose characters, such as Clarabelle Cow, with the theatrical personality and stylization of Peacock from Skullgirls. Each portrait must be upright and feature only one character, never a mirrored or upside-down second portrait.
 

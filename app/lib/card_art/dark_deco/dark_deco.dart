@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:chibre_core/chibre_core.dart';
 
 import '../card_design.dart';
+import '../drawn_card_design.dart';
 import '../toolkit/geometry.dart';
 import '../toolkit/ink.dart';
 import '../toolkit/lettering.dart';
@@ -24,7 +25,7 @@ const _ivory = Color(0xFFF2E8D0);
 /// Midnight cards with stepped gold art deco frames. The face cards are
 /// slender rubber hose animals, one species per suit, rim lit in gold under
 /// a moonlit arch.
-class DarkDeco extends CardDesign {
+class DarkDeco extends DrawnCardDesign {
   const DarkDeco();
 
   @override

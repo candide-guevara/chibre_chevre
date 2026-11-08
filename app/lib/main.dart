@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'card_art/card_designs.dart';
 import 'screens/start_screen.dart';
 import 'services/app_services.dart';
 import 'services/test_deal.dart';
@@ -20,11 +21,16 @@ class ChibreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Services(
     services: services,
-    child: MaterialApp(
-      title: 'Chibre',
-      debugShowCheckedModeBanner: false,
-      theme: chibreTheme(),
-      home: const StartScreen(),
+    child: ValueListenableBuilder(
+      valueListenable: services.cardDecks,
+      builder: (context, design, child) =>
+          CardDesignScope(design: design, child: child!),
+      child: MaterialApp(
+        title: 'Chibre',
+        debugShowCheckedModeBanner: false,
+        theme: chibreTheme(),
+        home: const StartScreen(),
+      ),
     ),
   );
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:chibre/card_art/bundled_card_design.dart';
 import 'package:chibre/card_art/card_design.dart';
 import 'package:chibre/card_art/card_designs.dart';
 import 'package:chibre/card_art/card_image_loader.dart';
@@ -44,7 +45,7 @@ class _FakeBundle extends CachingAssetBundle {
       Card.fromIndex(0),
       8,
     );
-    return (await image.toByteData(format: ImageByteFormat.png))!;
+    return (await image!.toByteData(format: ImageByteFormat.png))!;
   }
 }
 
@@ -116,5 +117,28 @@ void main() {
           .where((f) => f.path.endsWith('.png')),
       hasLength(Card.count),
     );
+  });
+
+  test('every bundled design ships all its cards', () async {
+    final bundled = cardDesigns.whereType<BundledCardDesign>();
+    expect(bundled, isNotEmpty);
+    for (final design in bundled) {
+      final deck = CardImages(design);
+      await CardImageLoader(
+        bundle: BundledCardImages(rootBundle),
+        store: CardImageStore(directory),
+      ).load(deck, _width);
+      expect(deck.isComplete, isTrue, reason: design.id);
+      expect(directory.listSync(), isEmpty, reason: 'nothing to store');
+    }
+  });
+
+  test('reports the cards it has no image for', () async {
+    final deck = CardImages(cardDesignById('vintage'));
+    await expectLater(
+      CardImageLoader(bundle: BundledCardImages(_FakeBundle([]))).load(deck, 8),
+      throwsStateError,
+    );
+    expect(deck.isComplete, isFalse);
   });
 }

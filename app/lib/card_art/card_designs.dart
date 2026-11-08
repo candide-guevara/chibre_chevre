@@ -1,10 +1,24 @@
 import 'package:flutter/widgets.dart';
 
+import 'bundled_card_design.dart';
 import 'card_design.dart';
 import 'dark_deco/dark_deco.dart';
 
-/// The card designs players can get; the first is the default.
-const List<CardDesign> cardDesigns = [DarkDeco()];
+/// The card designs players can choose from; the first is the default.
+const List<CardDesign> cardDesigns = [
+  DarkDeco(),
+  BundledCardDesign(
+    id: 'vintage',
+    name: 'Vintage',
+    version: 1,
+    cornerRadius: 0.07,
+    blank: Color(0xFFFBE6C4),
+  ),
+];
+
+/// The design with [id], or the default one.
+CardDesign cardDesignById(String? id) =>
+    cardDesigns.firstWhere((d) => d.id == id, orElse: () => cardDesigns.first);
 
 /// Provides the card design to the cards below it.
 class CardDesignScope extends InheritedWidget {

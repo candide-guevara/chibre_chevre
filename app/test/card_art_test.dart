@@ -2,10 +2,14 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:chibre/card_art/card_designs.dart';
+import 'package:chibre/card_art/card_image_loader.dart';
+import 'package:chibre/card_art/card_image_sources.dart';
+import 'package:chibre/card_art/card_images.dart';
 import 'package:chibre/widgets/playing_card.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Set CARD_SHEET_DIR to also save a picture of every card, to review the art.
@@ -13,7 +17,9 @@ const _sheetDirectory = String.fromEnvironment('CARD_SHEET_DIR');
 
 void main() {
   for (final design in cardDesigns) {
-    testWidgets('paints all ${design.name} cards', (tester) async {
+    testWidgets('paints all ${design.name} cards, then their images', (
+      tester,
+    ) async {
       final boundary = GlobalKey();
       tester.view.physicalSize = const Size(9 * 92, 4 * 137);
       tester.view.devicePixelRatio = 1;
@@ -40,6 +46,16 @@ void main() {
           ),
         ),
       );
+      expect(tester.takeException(), isNull);
+
+      final deck = CardImages.of(design);
+      await tester.runAsync(
+        () =>
+            CardImageLoader(bundle: BundledCardImages(rootBundle))
+                .load(deck, 90),
+      );
+      await tester.pump();
+      expect(deck.isComplete, isTrue);
       expect(tester.takeException(), isNull);
       if (_sheetDirectory.isEmpty) return;
       await tester.runAsync(() async {

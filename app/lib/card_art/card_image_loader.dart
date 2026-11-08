@@ -17,10 +17,12 @@ class CardImageLoader {
   final CardImageStore? store;
   final CardImageSource renderer;
 
-  /// Loads every card of [deck], [width] pixels wide.
+  /// Loads every card of [deck], [width] pixels wide. Throws when some cards
+  /// have no image, e.g. images missing from the app bundle.
   Future<void> load(CardImages deck, int width) async {
     final design = deck.design;
     await store?.deleteStale(design, width);
+    final missing = <Card>[];
     for (final card in Card.all) {
       final known =
           await bundle?.load(design, card, width) ??
@@ -30,9 +32,16 @@ class CardImageLoader {
         continue;
       }
       final rendered = await renderer.load(design, card, width);
-      if (rendered == null) continue;
+      if (rendered == null) {
+        missing.add(card);
+        continue;
+      }
       deck.add(card, rendered);
       await store?.save(design, card, width, rendered);
+    }
+
+    if (missing.isNotEmpty) {
+      throw StateError('No image for the ${design.id} cards $missing');
     }
   }
 }

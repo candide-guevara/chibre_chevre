@@ -109,10 +109,11 @@ Until the player details are input, the join and host buttons must be greyed out
 
 ## Player details screen
 
-A text input field for their nickname, and a "Paramètres par défaut" button opening the host game screen in a mode that edits the player's game defaults: no game name (it is each game's own), the title "Paramètres par défaut", and "Enregistrer" in place of "Lancer la partie", which saves the options (including the advanced settings) and goes back. There, "Par défaut" puts the app's own defaults back.
-The nickname is saved with an "Enregistrer" button in a bar at the bottom of the screen, as on the host game screen.
+A text input field for their nickname, a "Jeu de cartes" choice of card design (each design shown by a few of its cards, the chosen one outlined; see [graphic_design.md](graphic_design.md)), and a "Paramètres par défaut" button opening the host game screen in a mode that edits the player's game defaults: no game name (it is each game's own), the title "Paramètres par défaut", and "Enregistrer" in place of "Lancer la partie", which saves the options (including the advanced settings) and goes back. There, "Par défaut" puts the app's own defaults back.
+The nickname and the card design are saved with an "Enregistrer" button in a bar at the bottom of the screen, as on the host game screen.
 The players details and game defaults will be stored locally on the phone, never sent to any server.
 It is however allowed to communicate those details to the other player when joining a game.
+The card design is never sent: each phone shows the cards in its own player's design, even within the same game.
 
 ## Join game screen
 

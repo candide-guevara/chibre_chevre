@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../game/game_defaults.dart';
 
-/// What the app remembers on the phone: the nickname, the game defaults, a
+/// What the app remembers on the phone: the nickname, the game defaults, the
+/// card design, a
 /// random installation id (to recognise a reconnecting player, never tied to
 /// a person) and the result of the speed benchmark. Nothing leaves the phone
 /// except the nickname, shared with the other player of a game.
@@ -27,6 +28,12 @@ class ProfileStore {
 
   Future<void> setNickname(String nickname) =>
       _preferences.setString(_key('nickname'), nickname.trim());
+
+  /// The id of the card design chosen on this phone.
+  String? get cardDesign => _preferences.getString(_key('cardDesign'));
+
+  Future<void> setCardDesign(String id) =>
+      _preferences.setString(_key('cardDesign'), id);
 
   /// The options the host screen starts with.
   GameDefaults get gameDefaults {

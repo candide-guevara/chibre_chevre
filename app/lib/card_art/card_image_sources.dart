@@ -5,9 +5,10 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/services.dart';
 
 import 'card_design.dart';
+import 'drawn_card_design.dart';
 import 'card_images.dart';
 
-/// Somewhere card bitmaps [width] pixels wide can come from.
+/// Somewhere card bitmaps can come from, for cards [width] pixels wide.
 abstract interface class CardImageSource {
   /// The image of [card], or null when this source has none.
   Future<Image?> load(CardDesign design, Card card, int width);
@@ -29,32 +30,34 @@ Future<Image> _decode(Uint8List bytes, int width) async {
   return frame.image;
 }
 
-/// Draws the cards from their vector art.
+/// Draws the cards of designs drawn in code.
 class CardRenderer implements CardImageSource {
   const CardRenderer();
 
   @override
-  Future<Image> load(CardDesign design, Card card, int width) {
+  Future<Image?> load(CardDesign design, Card card, int width) async {
+    if (design is! DrawnCardDesign) return null;
     final picture = recordCard(design, card, width / cardDesignSize.width);
     return picture.toImage(width, _height(width)).whenComplete(picture.dispose);
   }
 }
 
-/// Images shipped in the app, at `<root>/<design id>/<card>.png`, e.g.
-/// `assets/cards/dark_deco/HJ.png`. They are scaled to the requested width.
+/// Images shipped in the app, at `<root>/<design id>/<card>.<format>`, e.g.
+/// `assets/cards/vintage/HJ.webp`. They are scaled to the requested width.
 class BundledCardImages implements CardImageSource {
   BundledCardImages(this.bundle, {this.root = 'assets/cards'});
 
   final AssetBundle bundle;
   final String root;
-  late final Future<Set<String>> _assets = AssetManifest.loadFromAssetBundle(
+  late final Future<List<String>> _assets = AssetManifest.loadFromAssetBundle(
     bundle,
-  ).then((manifest) => manifest.listAssets().toSet());
+  ).then((manifest) => manifest.listAssets());
 
   @override
   Future<Image?> load(CardDesign design, Card card, int width) async {
-    final key = '$root/${design.id}/${_fileName(card)}';
-    if (!(await _assets).contains(key)) return null;
+    final prefix = '$root/${design.id}/$card.';
+    final key = (await _assets).where((a) => a.startsWith(prefix)).firstOrNull;
+    if (key == null) return null;
     final data = await bundle.load(key);
     return _decode(data.buffer.asUint8List(), width);
   }

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:chibre_core/chibre_core.dart';
@@ -7,11 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../card_art/card_designs.dart';
 import '../card_art/card_image_loader.dart';
 import '../card_art/card_image_sources.dart';
-import '../card_art/card_images.dart';
 import '../widgets/playing_card.dart';
+import 'card_decks.dart';
 import 'compute_budget_loader.dart';
 import 'network_lock.dart';
 import 'profile_store.dart';
@@ -25,6 +23,7 @@ const _profileName = String.fromEnvironment('CHIBRE_PROFILE');
 class AppServices {
   AppServices._({
     required this.profile,
+    required this.cardDecks,
     required this.transport,
     required this.savedGames,
     required this.budget,
@@ -34,7 +33,8 @@ class AppServices {
   /// Services without network or files, for widget tests.
   @visibleForTesting
   AppServices.forTesting({required this.profile, required this.savedGames})
-    : transport = InMemoryTransport(InMemoryNetwork()),
+    : cardDecks = CardDecks(profile),
+      transport = InMemoryTransport(InMemoryNetwork()),
       budget = Future.value(ComputeBudget.standard),
       testDeal = null;
 
@@ -43,9 +43,23 @@ class AppServices {
     final directory = await getApplicationSupportDirectory();
     final suffix = _profileName.isEmpty ? '' : '-$_profileName';
     await acquireMulticastLock();
-    unawaited(_loadCardImages(directory));
+    final pixelRatio =
+        WidgetsBinding
+            .instance
+            .platformDispatcher
+            .implicitView
+            ?.devicePixelRatio ??
+        3;
     return AppServices._(
       profile: profile,
+      cardDecks: CardDecks(
+        profile,
+        loader: CardImageLoader(
+          bundle: BundledCardImages(rootBundle),
+          store: CardImageStore(Directory('${directory.path}/card-images')),
+        ),
+        pixelWidth: (maxCardWidth * pixelRatio).ceil(),
+      ),
       transport: LanTransport(),
       savedGames: FileSavedGameStore(
         File('${directory.path}/saved-game$suffix.bin'),
@@ -55,37 +69,11 @@ class AppServices {
     );
   }
 
-  /// Turns the cards into bitmaps sized for this screen, in the background,
-  /// keeping them for the next starts.
-  static Future<void> _loadCardImages(Directory directory) {
-    final pixelRatio =
-        WidgetsBinding
-            .instance
-            .platformDispatcher
-            .implicitView
-            ?.devicePixelRatio ??
-        3;
-    final loader = CardImageLoader(
-      bundle: BundledCardImages(rootBundle),
-      store: CardImageStore(Directory('${directory.path}/card-images')),
-    );
-    return loader
-        .load(
-          CardImages.of(cardDesigns.first),
-          (maxCardWidth * pixelRatio).ceil(),
-        )
-        .onError(
-          (error, stack) => FlutterError.reportError(
-            FlutterErrorDetails(
-              exception: error!,
-              stack: stack,
-              library: 'card images',
-            ),
-          ),
-        );
-  }
-
   final ProfileStore profile;
+
+  /// The card design chosen on this phone; card images load in the
+  /// background.
+  final CardDecks cardDecks;
   final Transport transport;
   final SavedGameStore savedGames;
 
