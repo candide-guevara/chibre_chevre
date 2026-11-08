@@ -23,6 +23,22 @@ class MemoryStore implements SavedGameStore {
   Future<void> clear() async => saved = null;
 }
 
+/// Records the seats it decides for.
+class RecordingBotRunner implements BotRunner {
+  final _inner = InlineBotRunner(budget: budget, random: Random(1));
+  final decidedFor = <int>[];
+
+  @override
+  Future<GameAction> decide(PlayerView view) {
+    decidedFor.add(view.seat);
+    return _inner.decide(view);
+  }
+
+  @override
+  Future<Map<int, List<Blunder>>> analyse(GameRecord record) =>
+      _inner.analyse(record);
+}
+
 HostSession newHost(InMemoryNetwork network, {SavedGameStore? store}) =>
     HostSession(
       transport: InMemoryTransport(network),
@@ -185,6 +201,34 @@ void main() {
     client.meldsChosen();
     await host.tables.firstWhere((t) => t.seatToAct == 2);
     expect(host.table!.meldChoiceFor, isEmpty);
+    await host.close();
+  });
+
+  test('a bot thinks while the humans are busy, and only once', () async {
+    final network = InMemoryNetwork();
+    final bots = RecordingBotRunner();
+    final host = HostSession(
+      transport: InMemoryTransport(network),
+      bots: bots,
+      timing: SessionTiming.instant,
+      newDeals: (random) =>
+          PresetHandDealSource({0: CardSet.parse('D7')}, random),
+    );
+    await host.create(const HostConfig(
+        gameName: 'g', nickname: 'Ana', trickHold: Duration.zero));
+    final client = newClient(network);
+    await client.join(await findGame(network));
+    await pumpEventQueue();
+    host.act(const ChooseTrump(0, TrumpMode.hearts));
+    host.meldsChosen();
+    host.act(PlayCard(0, Card.parse('D7')));
+    await pumpEventQueue(times: 50);
+    expect(host.table!.meldChoiceFor, [2]); // The joiner is still choosing.
+    expect(bots.decidedFor, [1]);
+
+    client.meldsChosen();
+    await host.tables.firstWhere((t) => t.seatToAct == 2);
+    expect(bots.decidedFor, [1]);
     await host.close();
   });
 

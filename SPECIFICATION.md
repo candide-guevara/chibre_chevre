@@ -102,6 +102,7 @@ Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
 * Expert level. Suggested approach: determinized Monte-Carlo tree search (ISMCTS / perfect-information sampling) over the engine, plus heuristics for trump choice, chibrer and meld decisions. Bots must reason only from information their seat can see (no peeking at other hands).
 * Bots run on the host phone, in a background isolate so the UI never freezes.
 * **Adaptive compute budget**: on first launch (and when the app version changes) the app runs a short benchmark to measure the phone's simulation speed and stores the result locally. The search budget (number of iterations / time per decision) is derived from it to get the strongest play while keeping the game snappy: target ≤ ~1.5 s per bot decision, including a minimum delay of ~0.5 s so humans can follow what happened.
+* To hide latency, a bot starts searching as soon as it is its turn, even while the game waits for the humans (trick pause, recap, meld choice); it plays once both the wait and the minimum delay are over.
 * Bots announce melds and Stöck correctly.
 
 ## Start screen

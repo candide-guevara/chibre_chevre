@@ -72,6 +72,10 @@ class HostSession {
   Timer? _timer;
   final _recap = AnnouncementRecap();
   final _meldChoice = MeldChoice();
+
+  /// The move of the computer player to act, computed as soon as the game
+  /// reaches its turn, keyed by the round and the number of actions in it.
+  ({(RoundRecord, int) position, Future<GameAction> move})? _botMove;
   var _closed = false;
 
   /// The host's table, after every change.
@@ -319,9 +323,13 @@ class HostSession {
         });
       case GamePhase.choosingTrump || GamePhase.playing:
         if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
-        if (_scheduleRecap(game.round)) return;
         final seat = game.seatToAct;
-        if (seat == hostSeat || seat == joinerSeat) return;
+        final isBot = seat != hostSeat && seat != joinerSeat;
+        // Thinks while the humans watch the last trick, read the recap or
+        // choose their melds.
+        if (isBot) _botDecision(game, seat);
+        if (_scheduleRecap(game.round)) return;
+        if (!isBot) return;
         if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
         _timer = Timer(
             _pauseBeforeBot(game.round), () => _playBot(game, seat, version));
@@ -380,12 +388,27 @@ class HostSession {
 
   Future<void> _playBot(GameState game, int seat, int version) async {
     final results = await Future.wait([
-      bots.decide(game.viewFor(seat)),
+      _botDecision(game, seat),
       Future<void>.delayed(timing.botDelay),
     ]);
     if (version != _version || _pausedFor != null || _isOver) return;
     game.apply(results.first as GameAction);
     _changed();
+  }
+
+  /// Starts computing the move of [seat] the first time it is asked for the
+  /// current position.
+  Future<GameAction> _botDecision(GameState game, int seat) {
+    final round = game.record.rounds.last;
+    final position = (round, round.actions.length);
+    if (_botMove?.position != position) {
+      // Errors reach [_playBot], and are dropped if the game moved on.
+      _botMove = (
+        position: position,
+        move: bots.decide(game.viewFor(seat))..ignore(),
+      );
+    }
+    return _botMove!.move;
   }
 
   Future<void> _analyse(GameState game) async {
