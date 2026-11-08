@@ -75,3 +75,16 @@ An art deco night:
 * **Aces**: a winged gold medallion holding the suit, centred on the card.
 * **Face cards**: the figure stands in a stepped window, with no outline so it is not mistaken for a card edge when cards overlap, under a moonlit violet sky, in its landscape drawn in muted indigo with gold details. A soft gold glow rims the figure, and a vignette darkens the window edges.
 * **Costumes**: hearts crimson, diamonds burnt orange, spades navy, clubs teal, all with gold trim and ivory accents.
+
+## Prompt for image generator
+
+The goal is to create a 36-card Swiss Jass deck in a vintage Art Deco style, with a consistent visual identity across all four suits. The cards should have warm ivory backgrounds, elegant gold-and-black geometric borders, decorative Art Deco corner details, and a restrained palette of deep red, black, cream and gold. Each card should have clearly readable rank and suit markings in its upper-left and lower-right corners.
+
+Each suit has its own animal: hearts are cows, spades are dogs, diamonds are monkeys, and clubs are zebras. The deck contains A, 10, K, Q, J, 9, 8, 7 and 6 in each suit. Numbered cards (10–6) should use a large central numeral instead of multiple suit symbols. The suit symbol should remain visible in the corners.
+
+The King, Queen and Jack cards should feature individual animal portraits in a playful 1930s rubber-hose cartoon style, with expressive faces, exaggerated features and elegant costumes. The artistic direction should combine the charm of classic Disney rubber-hose characters, such as Clarabelle Cow, with the theatrical personality and stylization of Peacock from Skullgirls. Each portrait must be upright and feature only one character, never a mirrored or upside-down second portrait.
+
+Portrait composition is particularly important: show only the animal's head and neck, cropping cleanly at the lower neck. Do not include half-body or bust-length illustrations, and do not let shoulders or torsos occupy the card. Accessories must nevertheless remain visible, including bow ties, necklaces, earrings and collars. Kings should wear crowns, Jacks should have distinctive hats, and every Queen must wear a hat decorated with feathers, maintaining consistency across all four suits.
+
+Finally, all 36 cards should share consistent proportions, typography, border thickness, illustration scale and spacing. The result should look like a coherent, professionally designed vintage playing-card deck rather than a collection of unrelated illustrations.
+
