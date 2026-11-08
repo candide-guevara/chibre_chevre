@@ -28,8 +28,8 @@ enum Rank {
   final String label;
 }
 
-/// A playing card. There is exactly one instance per card, so cards can be
-/// compared with `==` and used as map keys.
+/// A playing card. There is one instance per card, but cards copied from
+/// another isolate are new instances, so cards compare by [index].
 final class Card {
   Card._(this.suit, this.rank)
       : index = suit.index * Rank.values.length + rank.index;
@@ -64,6 +64,12 @@ final class Card {
 
   /// Position of the card in [all], from 0 to 35.
   final int index;
+
+  @override
+  bool operator ==(Object other) => other is Card && other.index == index;
+
+  @override
+  int get hashCode => index;
 
   @override
   String toString() => '${suit.letter}${rank.label}';

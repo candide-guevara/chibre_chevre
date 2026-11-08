@@ -21,8 +21,8 @@ void main() {
       seed: 0,
     );
     final moves = [for (var i = 0; i < 5; i++) await runner.decide(view)];
-    // Cards copied back from an isolate are not identical: compare names.
-    final cards = moves.map((move) => '${(move as PlayCard).card}').toSet();
+    final cards = moves.map((move) => (move as PlayCard).card).toSet();
     expect(cards, hasLength(1));
+    expect(view.hand.cards, contains(cards.single));
   });
 }
