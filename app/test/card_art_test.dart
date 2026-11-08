@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:chibre/card_art/card_designs.dart';
 import 'package:chibre/card_art/card_image_loader.dart';
-import 'package:chibre/card_art/card_image_sources.dart';
 import 'package:chibre/card_art/card_images.dart';
 import 'package:chibre/widgets/playing_card.dart';
 import 'package:chibre_core/chibre_core.dart';
@@ -51,8 +50,7 @@ void main() {
       final deck = CardImages.of(design);
       await tester.runAsync(
         () =>
-            CardImageLoader(bundle: BundledCardImages(rootBundle))
-                .load(deck, 90),
+            CardImageLoader(rootBundle).load(deck, 90),
       );
       await tester.pump();
       expect(deck.isComplete, isTrue);

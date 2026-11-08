@@ -1,16 +1,12 @@
 import 'package:flutter/widgets.dart';
 
-import 'bundled_card_design.dart';
 import 'card_design.dart';
-import 'dark_deco/dark_deco.dart';
 
 /// The card designs players can choose from; the first is the default.
 const List<CardDesign> cardDesigns = [
-  DarkDeco(),
-  BundledCardDesign(
+  CardDesign(
     id: 'vintage',
     name: 'Vintage',
-    version: 1,
     cornerRadius: 0.07,
     blank: Color(0xFFFBE6C4),
   ),

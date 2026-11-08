@@ -12,13 +12,16 @@ void main() {
   testWidgets('the card design is chosen on the profile screen', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({'nickname': 'Bea'});
+    SharedPreferences.setMockInitialValues({
+      'nickname': 'Bea',
+      'cardDesign': 'retired',
+    });
     final profile = await ProfileStore.open();
     final services = AppServices.forTesting(
       profile: profile,
       savedGames: NoSavedGame(),
     );
-    expect(services.cardDecks.value.id, 'dark_deco');
+    expect(services.cardDecks.value.id, 'vintage', reason: 'the default');
     await tester.pumpWidget(
       Services(
         services: services,
@@ -28,7 +31,7 @@ void main() {
 
     await tester.tap(find.bySemanticsLabel('Vintage'));
     await tester.pump();
-    expect(services.cardDecks.value.id, 'dark_deco', reason: 'not saved yet');
+    expect(profile.cardDesign, 'retired', reason: 'not saved yet');
     await tester.tap(find.text('Enregistrer'));
     await tester.pumpAndSettle();
 

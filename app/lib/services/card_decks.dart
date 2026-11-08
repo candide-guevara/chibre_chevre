@@ -16,7 +16,7 @@ class CardDecks extends ValueNotifier<CardDesign> {
 
   final ProfileStore _profile;
 
-  /// Without a loader, cards are drawn from their vector art.
+  /// Without a loader, as in widget tests, cards stay blank.
   final CardImageLoader? loader;
 
   /// The width of the largest cards on this screen, in pixels.

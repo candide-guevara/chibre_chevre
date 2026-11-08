@@ -1,47 +1,45 @@
-import 'package:chibre_core/chibre_core.dart';
+import 'dart:ui';
 
-import 'card_image_sources.dart';
+import 'package:chibre_core/chibre_core.dart';
+import 'package:flutter/services.dart';
+
 import 'card_images.dart';
 
-/// Fills [CardImages] with bitmaps, card by card: from the app bundle when it
-/// ships them, else from the phone's storage, else rendered and stored for
-/// the next start.
+/// Loads the card images shipped in the app, at
+/// `<root>/<design id>/<card>.<format>`, e.g. `assets/cards/vintage/HJ.webp`.
 class CardImageLoader {
-  CardImageLoader({
-    this.bundle,
-    this.store,
-    this.renderer = const CardRenderer(),
-  });
+  CardImageLoader(this.bundle, {this.root = 'assets/cards'});
 
-  final CardImageSource? bundle;
-  final CardImageStore? store;
-  final CardImageSource renderer;
+  final AssetBundle bundle;
+  final String root;
+  late final Future<List<String>> _assets = AssetManifest.loadFromAssetBundle(
+    bundle,
+  ).then((manifest) => manifest.listAssets());
 
-  /// Loads every card of [deck], [width] pixels wide. Throws when some cards
-  /// have no image, e.g. images missing from the app bundle.
+  /// Loads every card of [deck], scaled to [width] pixels. Throws when some
+  /// cards have no image.
   Future<void> load(CardImages deck, int width) async {
-    final design = deck.design;
-    await store?.deleteStale(design, width);
+    final assets = await _assets;
     final missing = <Card>[];
     for (final card in Card.all) {
-      final known =
-          await bundle?.load(design, card, width) ??
-          await store?.load(design, card, width);
-      if (known != null) {
-        deck.add(card, known);
-        continue;
-      }
-      final rendered = await renderer.load(design, card, width);
-      if (rendered == null) {
+      final prefix = '$root/${deck.design.id}/$card.';
+      final key = assets.where((a) => a.startsWith(prefix)).firstOrNull;
+      if (key == null) {
         missing.add(card);
         continue;
       }
-      deck.add(card, rendered);
-      await store?.save(design, card, width, rendered);
+      final data = await bundle.load(key);
+      deck.add(card, await _decode(data.buffer.asUint8List(), width));
     }
-
     if (missing.isNotEmpty) {
-      throw StateError('No image for the ${design.id} cards $missing');
+      throw StateError('No image for the ${deck.design.id} cards $missing');
     }
+  }
+
+  Future<Image> _decode(Uint8List bytes, int width) async {
+    final codec = await instantiateImageCodec(bytes, targetWidth: width);
+    final frame = await codec.getNextFrame();
+    codec.dispose();
+    return frame.image;
   }
 }

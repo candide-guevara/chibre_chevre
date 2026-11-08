@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../card_art/card_image_loader.dart';
-import '../card_art/card_image_sources.dart';
 import '../widgets/playing_card.dart';
 import 'card_decks.dart';
 import 'compute_budget_loader.dart';
@@ -54,10 +53,7 @@ class AppServices {
       profile: profile,
       cardDecks: CardDecks(
         profile,
-        loader: CardImageLoader(
-          bundle: BundledCardImages(rootBundle),
-          store: CardImageStore(Directory('${directory.path}/card-images')),
-        ),
+        loader: CardImageLoader(rootBundle),
         pixelWidth: (maxCardWidth * pixelRatio).ceil(),
       ),
       transport: LanTransport(),

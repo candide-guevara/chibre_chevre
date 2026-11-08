@@ -6,7 +6,7 @@ The look and feel of the app and of its cards. [SPECIFICATION.md](SPECIFICATION.
 
 * Overall sober, no tacky decorations on buttons.
 * A dark, calm table so the cards are the only colourful thing on screen.
-* Everything is drawn in code (Flutter `CustomPainter`), no external image or font assets, except the card images of bundled designs. Even the back arrow and the card lettering are vector paths.
+* The app's own visuals are drawn in code (Flutter `CustomPainter`), with no image or font assets: even the back arrow and the suit symbols are vector paths. Only the cards are images.
 * Readable on small, ~5 year old phones: large touch targets, high contrast, short animations.
 
 ## App palette
@@ -36,58 +36,26 @@ The Material theme is dark, seeded from `felt`, with ivory as primary and brass 
 
 ## Cards
 
-### Common to every design
+### Common to every deck
 
 * 36 Swiss-French cards: ♦ ♥ ♠ ♣, 6 to Ace.
 * Our own original design, in the 1930s rubber hose cartoon style: animals instead of humans on the face cards, one per suit:
   * cows for hearts, dogs for spades, monkeys for diamonds, zebras for clubs.
-* Slender figures (noodle limbs, pinched waists, big four-fingered gloves and shoes) rather than chubby mascots.
-  * Heads are drawn in side view so the snout reads clearly.
-  * Queens have a bust to tell them apart from kings and jacks.
-  * Kings hold a scepter on the right of the card. Jacks hold a halberd on the left, all at the same length and angle, the pennant pointing outwards.
-  * Each animal stands in its home landscape: Alps for the cows, an old town for the dogs, jungle for the monkeys, savanna for the zebras.
 * Corner indices: the rank above the suit, in the top-left corner and again rotated 180° in the bottom-right. The face cards use the English letters K, Q and J, the ace A. The index must stay readable at the smallest card size.
-* Number cards use the classic pip layouts inside a central block narrow enough to leave room for the indices, even on the 10. Aces have a single large emblem and no "AS" label.
 
-### Card designs are pluggable
+### Decks
 
-A design is a `CardDesign` (`app/lib/card_art/card_design.dart`) with an id, a name, a `version` and a corner radius. There are two kinds:
+A deck is a `CardDesign` (`app/lib/card_art/card_design.dart`): images shipped in the app, listed in `cardDesigns` (`card_designs.dart`), the first one being the default. Each player picks theirs on the player details screen; it is a preference of the phone, not of the game, so partners can play with different decks.
 
-* `DrawnCardDesign`: drawn in code in a 400×600 box. It fills in the ground, frame, index, pips, ace and face cards; the card layout (corner index, pip positions) is shared.
-* `BundledCardDesign`: images shipped in the app (see below).
-
-Designs are registered in `cardDesigns` (`card_designs.dart`), the first one being the default. Each player picks theirs on the player details screen; it is a preference of the phone, not of the game, so partners can play with different decks.
-
-#### Adding a bundled design
+To add a deck:
 
 * One image per card in `app/assets/cards/<design id>/`, named `<suit><rank>.webp`: suit `H`, `S`, `D` or `C`, rank `6` to `10`, `J`, `Q`, `K` or `A` (e.g. `S10.webp`, `DQ.webp`). All 36 cards, no back.
 * Portrait **2:3**, ideally 300×450, lossless WebP, with transparent rounded corners matching the design's `cornerRadius`.
-* Declare the folder in `app/pubspec.yaml` and add a `BundledCardDesign` to `cardDesigns`.
+* Declare the folder in `app/pubspec.yaml` and add a `CardDesign` to `cardDesigns`.
 
 `app/tool/slice_card_sheet.py` cuts a generated sheet of cards (one row per suit, A to 6) into such files.
 
-Cards are shown as bitmaps so that animations stay smooth on older phones:
-
-* At startup, in the background, `CardImageLoader` gets each card of the chosen design at the size of the largest card on this screen (hand cards × pixel ratio): from the images shipped in the app if there are any, else from the images saved on the phone, else by rendering the vector art, which it then saves for the next starts. Other designs are loaded when the player details screen shows them.
-* The saved images are kept per design `version` and width; others are deleted. **Bump the design's `version` whenever its art changes.**
-* Until a card's bitmap is ready, it is drawn from its vector art, or as a blank card for bundled designs.
-
-Reusable building blocks:
-
-* `toolkit/`: geometry, inking (outline heavier on the shadow side, cel shadow crescent, highlight), suit shapes, glyph lettering.
-* `toon/`: the rubber hose figures (heads, hands, shoes, costumes, poses per rank and suit) and the landscapes, coloured by each design.
-
-### Dark Deco (default)
-
-An art deco night:
-
-* **Ground**: midnight blue (`#121624` to `#1D2238`).
-* **Frame**: a double stepped gold art deco frame (`#D9B45A`, light gold `#F3DC93`) with small gold fans in the middle of the long sides.
-* **Index**: the Limelight typeface, baked into the code as glyph outlines, in crimson (`#D42C45`) for the red suits and ivory (`#F2E8D0`) for the black ones.
-* **Pips**: gold-rimmed suit shapes, crimson or ivory (`#F2E8D0`).
-* **Aces**: a winged gold medallion holding the suit, centred on the card.
-* **Face cards**: the figure stands in a stepped window, with no outline so it is not mistaken for a card edge when cards overlap, under a moonlit violet sky, in its landscape drawn in muted indigo with gold details. A soft gold glow rims the figure, and a vignette darkens the window edges.
-* **Costumes**: hearts crimson, diamonds burnt orange, spades navy, clubs teal, all with gold trim and ivory accents.
+At startup, in the background, `CardImageLoader` decodes each card of the chosen deck at the size of the largest card on this screen (hand cards × pixel ratio), so that animations stay smooth on older phones. Other decks are loaded when the player details screen shows them. Until a card's image is ready, it is drawn as a blank card.
 
 ### Vintage
 

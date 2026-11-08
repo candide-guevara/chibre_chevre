@@ -5,16 +5,8 @@ import 'package:flutter/foundation.dart';
 
 import 'card_design.dart';
 
-/// Records [card] in [design], scaled from the 400×600 design box by [scale].
-Picture recordCard(CardDesign design, Card card, [double scale = 1]) {
-  final recorder = PictureRecorder();
-  final canvas = Canvas(recorder)..scale(scale);
-  design.paint(canvas, card);
-  return recorder.endRecording();
-}
-
-/// The faces of a deck. Each card is a bitmap once one has been loaded (see
-/// `CardImageLoader`), and a replayed vector drawing until then.
+/// The faces of a deck, as bitmaps once they are loaded (see
+/// `CardImageLoader`).
 class CardImages extends ChangeNotifier {
   CardImages(this.design);
 
@@ -26,19 +18,14 @@ class CardImages extends ChangeNotifier {
 
   final CardDesign design;
   final _images = <Card, Image>{};
-  final _pictures = <Card, Picture>{};
 
   Image? image(Card card) => _images[card];
-
-  Picture picture(Card card) =>
-      _pictures.putIfAbsent(card, () => recordCard(design, card));
 
   bool get isComplete => _images.length == Card.count;
 
   void add(Card card, Image image) {
     _images[card]?.dispose();
     _images[card] = image;
-    _pictures.remove(card)?.dispose();
     notifyListeners();
   }
 }

@@ -1,30 +1,26 @@
 import 'dart:ui';
 
-import 'package:chibre_core/chibre_core.dart';
+/// The look of a whole deck: one image per card shipped in the app, at
+/// `assets/cards/<id>/<card>.webp`, e.g. `assets/cards/vintage/HJ.webp`.
+/// To add a design, list it in `cardDesigns`.
+class CardDesign {
+  const CardDesign({
+    required this.id,
+    required this.name,
+    required this.cornerRadius,
+    required this.blank,
+  });
 
-/// Every design paints its cards in this box; the painter scales it to the
-/// card on screen.
-const cardDesignSize = Size(400, 600);
-
-/// The look of a whole deck. To add a design, extend [DrawnCardDesign] (art
-/// drawn in code) or use a [BundledCardDesign] (images shipped in the app),
-/// and list it in `cardDesigns`.
-abstract class CardDesign {
-  const CardDesign();
-
-  /// A stable identifier, saved in the player's preferences.
-  String get id;
+  /// A stable identifier, saved in the player's preferences; also the folder
+  /// of its images.
+  final String id;
 
   /// The name shown to players.
-  String get name;
-
-  /// Bump whenever the art changes, so the images saved on the phones are
-  /// rendered again.
-  int get version;
+  final String name;
 
   /// Corner radius, as a fraction of the card width.
-  double get cornerRadius;
+  final double cornerRadius;
 
-  /// Paints [card] in the 400×600 box.
-  void paint(Canvas canvas, Card card);
+  /// The colour of a card whose image is not loaded yet.
+  final Color blank;
 }
