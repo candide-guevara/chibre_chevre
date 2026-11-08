@@ -339,7 +339,6 @@ class _PlayScreenState extends State<PlayScreen> {
                         table.player!.mode,
                         byTrump: table.sortByTrump,
                       ),
-                      style: table.cardStyle,
                       enabled: _enabledCards(table),
                       selected: _choosingMelds ? _selection : _suggestedCards,
                       onTap: _onCardTap,
@@ -426,7 +425,6 @@ class _PlayScreenState extends State<PlayScreen> {
                 child: TrickView(
                   trick: shownTrick,
                   viewer: table.seat,
-                  style: table.cardStyle,
                   cardWidth: cardWidth,
                   hold: table.trickHold,
                   winner: shownTrick.isComplete

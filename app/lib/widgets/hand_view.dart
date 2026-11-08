@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:chibre_core/chibre_core.dart';
-import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/widgets.dart';
 
 import 'playing_card.dart';
@@ -13,7 +12,6 @@ class HandView extends StatelessWidget {
   const HandView({
     super.key,
     required this.cards,
-    required this.style,
     required this.enabled,
     this.selected = CardSet.empty,
     required this.onTap,
@@ -24,7 +22,6 @@ class HandView extends StatelessWidget {
   static const badgeHeight = 40.0;
 
   final List<Card> cards;
-  final CardStyle style;
   final CardSet enabled;
   final CardSet selected;
   final void Function(Card card) onTap;
@@ -56,7 +53,6 @@ class HandView extends StatelessWidget {
                 bottom: 0,
                 child: PlayingCard(
                   card: card,
-                  style: style,
                   width: cardWidth,
                   enabled: enabled.contains(card),
                   selected: selected.contains(card),

@@ -14,7 +14,6 @@ class TrickView extends StatefulWidget {
     super.key,
     required this.trick,
     required this.viewer,
-    required this.style,
     required this.cardWidth,
     required this.hold,
     this.winner,
@@ -22,7 +21,6 @@ class TrickView extends StatefulWidget {
 
   final Trick trick;
   final int viewer;
-  final CardStyle style;
   final double cardWidth;
 
   /// How long the complete trick stays before sliding to its winner.
@@ -125,7 +123,6 @@ class _TrickViewState extends State<TrickView>
       // Keyed so that only newly played cards slide in.
       key: ValueKey(card),
       card: card,
-      style: widget.style,
       width: widget.cardWidth,
       from: position,
     ),

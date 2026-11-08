@@ -1,7 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
-import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart' hide Card;
 
+import '../card_art/card_designs.dart';
 import '../card_art/card_face_painter.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
@@ -14,7 +14,6 @@ class PlayingCard extends StatelessWidget {
   const PlayingCard({
     super.key,
     required this.card,
-    required this.style,
     required this.width,
     this.enabled = true,
     this.selected = false,
@@ -22,7 +21,6 @@ class PlayingCard extends StatelessWidget {
   });
 
   final Card card;
-  final CardStyle style;
   final double width;
   final bool enabled;
   final bool selected;
@@ -30,10 +28,11 @@ class PlayingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final design = CardDesignScope.of(context);
     Widget face = RepaintBoundary(
       child: CustomPaint(
         size: Size(width, width * cardAspectRatio),
-        painter: CardFacePainter(card, style),
+        painter: CardFacePainter(card, design),
       ),
     );
     if (!enabled) {
@@ -50,7 +49,7 @@ class PlayingCard extends StatelessWidget {
         position: DecorationPosition.foreground,
         decoration: BoxDecoration(
           border: Border.all(color: ChibreColors.brass, width: 3),
-          borderRadius: BorderRadius.circular(width * 0.08),
+          borderRadius: BorderRadius.circular(width * design.cornerRadius),
         ),
         child: face,
       );

@@ -46,7 +46,6 @@ class PlayedCardsScreen extends StatelessWidget {
                     child: SuitColumn(
                       suit: suit,
                       cards: played.ofSuit(suit).cards,
-                      style: table.cardStyle,
                     ),
                   ),
               ],

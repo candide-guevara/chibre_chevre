@@ -1,6 +1,5 @@
 import 'package:chibre_core/chibre_core.dart' as core;
 import 'package:chibre_core/chibre_core.dart' hide Card;
-import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/hand_order.dart';
@@ -14,12 +13,10 @@ class BlunderTile extends StatelessWidget {
   const BlunderTile({
     super.key,
     required this.blunder,
-    required this.style,
     required this.sortByTrump,
   });
 
   final Blunder blunder;
-  final CardStyle style;
   final bool sortByTrump;
 
   @override
@@ -74,8 +71,7 @@ class BlunderTile extends StatelessWidget {
             spacing: 2,
             runSpacing: 2,
             children: [
-              for (final card in cards)
-                PlayingCard(card: card, style: style, width: 26),
+              for (final card in cards) PlayingCard(card: card, width: 26),
             ],
           ),
         ),

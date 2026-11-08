@@ -1,5 +1,4 @@
 import 'package:chibre_core/chibre_core.dart';
-import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/widgets.dart';
 
 import 'playing_card.dart';
@@ -11,13 +10,11 @@ class PlayedCard extends StatelessWidget {
   const PlayedCard({
     super.key,
     required this.card,
-    required this.style,
     required this.width,
     required this.from,
   });
 
   final Card card;
-  final CardStyle style;
   final double width;
   final TablePosition from;
 
@@ -39,7 +36,7 @@ class PlayedCard extends StatelessWidget {
             remaining,
         child: child,
       ),
-      child: PlayingCard(card: card, style: style, width: width),
+      child: PlayingCard(card: card, width: width),
     );
   }
 }
