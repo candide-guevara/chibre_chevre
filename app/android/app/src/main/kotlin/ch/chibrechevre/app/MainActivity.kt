@@ -1,4 +1,4 @@
-package ch.chibrecandide.chibre
+package ch.chibrechevre.app
 
 import android.content.Context
 import android.net.wifi.WifiManager

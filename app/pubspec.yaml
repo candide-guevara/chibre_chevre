@@ -1,7 +1,7 @@
 name: chibre
 description: "Chibre Chèvre: the Chibre card game, with a friend or alone, against expert computer players."
 publish_to: 'none'
-version: 0.2.0+2
+version: 1.0.0+1
 
 environment:
   sdk: ^3.13.7

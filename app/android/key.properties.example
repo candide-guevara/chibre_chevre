@@ -1,0 +1,6 @@
+# Copy to key.properties (ignored by git) to sign release builds with the
+# upload key. storeFile is relative to android/app, or absolute.
+storeFile=/home/you/keys/chibre-chevre-upload.jks
+storePassword=
+keyAlias=upload
+keyPassword=
