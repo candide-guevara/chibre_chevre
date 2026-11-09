@@ -62,4 +62,11 @@ class ProfileStore {
     _preferences.setString(_key('installationId'), id);
     return id;
   }
+
+  /// The benchmark result measured by [appVersion], if any.
+  double? playoutsPerSecond(String appVersion) =>
+      _preferences.getDouble(_key('playoutsPerSecond.$appVersion'));
+
+  Future<void> setPlayoutsPerSecond(String appVersion, double value) =>
+      _preferences.setDouble(_key('playoutsPerSecond.$appVersion'), value);
 }

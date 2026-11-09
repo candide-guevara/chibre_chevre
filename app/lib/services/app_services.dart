@@ -18,6 +18,10 @@ import 'test_deal.dart';
 /// `flutter run -d linux --dart-define=CHIBRE_PROFILE=bea`.
 const _profileName = String.fromEnvironment('CHIBRE_PROFILE');
 
+/// Keep in sync with `version` in pubspec.yaml: a new version measures the
+/// phone's speed again, as the AI may have become faster or slower.
+const appVersion = '0.2.0';
+
 /// Long-lived objects shared by the screens.
 class AppServices {
   AppServices._({
@@ -74,17 +78,24 @@ class AppServices {
   /// Measures this phone's search iterations per second.
   final Future<double> Function() _measure;
 
-  /// The measure started by [measureSpeed], for the next game.
+  /// This phone's speed, once [measureSpeed] was called.
   Future<double>? _speed;
 
   static Future<double> _measureInBackground() =>
       Isolate.run(() => measurePlayoutsPerSecond());
 
-  /// Measures the phone's speed for the next game, in the background. The
-  /// host and join screens call it as they open, so that the result is
-  /// ready when the game starts and reflects how fast the phone is at that
-  /// moment (once the app has started, in battery saver mode...).
-  void measureSpeed() => _speed = _measure();
+  /// Measures the phone's speed in the background, once per app version.
+  /// The host and join screens call it as they open: the app has finished
+  /// starting up, and the result is ready when the game starts.
+  void measureSpeed() => _speed ??= _savedOrMeasuredSpeed();
+
+  Future<double> _savedOrMeasuredSpeed() async {
+    final saved = profile.playoutsPerSecond(appVersion);
+    if (saved != null) return saved;
+    final measured = await _measure();
+    await profile.setPlayoutsPerSecond(appVersion, measured);
+    return measured;
+  }
 
   /// Cards dealt to the host in every round, for testing.
   final TestDeal? testDeal;
@@ -104,9 +115,8 @@ class AppServices {
 
   /// Computer players thinking for a given time on this phone.
   Future<BotRunner Function(Duration thinkingTime)> _newBots() async {
-    final measuring = _speed ?? _measure();
-    _speed = null; // The next game measures again.
-    final speed = await measuring;
+    measureSpeed();
+    final speed = await _speed!;
     return (thinkingTime) => IsolateBotRunner(
       budget: ComputeBudget.forSpeed(speed, target: thinkingTime),
       seed: _seed,
