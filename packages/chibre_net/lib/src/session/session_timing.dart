@@ -3,16 +3,14 @@ class SessionTiming {
   const SessionTiming({
     this.botDelay = const Duration(milliseconds: 200),
     this.trickSlide = const Duration(milliseconds: 400),
-    this.roundSummary = const Duration(seconds: 4),
-    this.recap = const Duration(seconds: 10),
+    this.popup = const Duration(seconds: 10),
   });
 
   /// No waiting at all, for tests.
   static const instant = SessionTiming(
     botDelay: Duration.zero,
     trickSlide: Duration.zero,
-    roundSummary: Duration.zero,
-    recap: Duration.zero,
+    popup: Duration.zero,
   );
 
   /// Minimum time a computer player takes to act.
@@ -22,10 +20,7 @@ class SessionTiming {
   /// host's chosen hold and before a computer player leads the next one.
   final Duration trickSlide;
 
-  /// How long the round summary stays at most, if the humans don't close
-  /// it.
-  final Duration roundSummary;
-
-  /// How long the recap of the announcements stays at most, if the humans don't close it.
-  final Duration recap;
+  /// How long the recap of the announcements and the round summary stay at
+  /// most, if the humans don't close them.
+  final Duration popup;
 }

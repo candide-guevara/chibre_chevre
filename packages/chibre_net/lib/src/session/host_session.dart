@@ -385,7 +385,7 @@ class HostSession {
     }
     if (_recap.isDue(round)) {
       _timer = Timer(_trickHold + timing.trickSlide, () {
-        _recap.start(round, [hostSeat, joinerSeat], timing.recap);
+        _recap.start(round, [hostSeat, joinerSeat], timing.popup);
         _changed();
       });
       return true;
@@ -404,7 +404,7 @@ class HostSession {
       });
     } else if (!summary.wasShownFor(game.roundIndex)) {
       _timer = Timer(_trickHold + timing.trickSlide, () {
-        summary.start(game.roundIndex, _humans, timing.roundSummary);
+        summary.start(game.roundIndex, _humans, timing.popup);
         _changed();
       });
     } else {

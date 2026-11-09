@@ -297,8 +297,7 @@ void main() {
       timing: const SessionTiming(
           botDelay: Duration.zero,
           trickSlide: Duration.zero,
-          roundSummary: Duration(milliseconds: 100),
-          recap: Duration.zero),
+          popup: Duration(milliseconds: 100)),
       // The host chooses trump first, so Ordi 1 chooses it next.
       newDeals: (random) =>
           PresetHandDealSource({0: CardSet.parse('D7')}, random),
@@ -333,10 +332,7 @@ void main() {
         transport: InMemoryTransport(network),
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
-            botDelay: Duration.zero,
-            trickSlide: Duration.zero,
-            roundSummary: Duration.zero,
-            recap: recap),
+            botDelay: Duration.zero, trickSlide: Duration.zero, popup: recap),
         newDeals: (random) =>
             PresetHandDealSource({0: CardSet.parse('D7 H7 H8 H9 H10')}, random),
       );
@@ -392,8 +388,7 @@ void main() {
         timing: SessionTiming(
             botDelay: Duration.zero,
             trickSlide: const Duration(milliseconds: 20),
-            roundSummary: summary,
-            recap: Duration.zero),
+            popup: summary),
       );
       await host.create(const HostConfig(
           gameName: 'g',
@@ -449,8 +444,7 @@ void main() {
       timing: const SessionTiming(
           botDelay: Duration.zero,
           trickSlide: Duration.zero,
-          roundSummary: Duration.zero,
-          recap: Duration(minutes: 1)),
+          popup: Duration(minutes: 1)),
       newDeals: (random) => PresetHandDealSource(
           {0: CardSet.parse('D7 S6 S7 S8 S9 S10 SJ SQ SK')}, random),
     );
