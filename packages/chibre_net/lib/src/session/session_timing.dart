@@ -1,7 +1,7 @@
 /// Pauses that let the humans follow what the computer players do.
 class SessionTiming {
   const SessionTiming({
-    this.botDelay = const Duration(milliseconds: 600),
+    this.botDelay = const Duration(milliseconds: 200),
     this.trickSlide = const Duration(milliseconds: 400),
     this.roundSummary = const Duration(seconds: 4),
     this.recap = const Duration(seconds: 10),
