@@ -86,6 +86,11 @@ dart compile exe bin/budget_match.dart -o /tmp/budget_match && /tmp/budget_match
 dart compile exe bin/predict_bench.dart -o /tmp/predict_bench
 /tmp/predict_bench record /tmp/games.txt --games 28
 /tmp/predict_bench evaluate /tmp/games.txt
+
+# How long the insights take per round and per game, a 0.2 s team
+# against a 0.6 s one; also how much weaker the 0.2 s team is.
+dart compile exe bin/insights_bench.dart -o /tmp/insights_bench
+/tmp/insights_bench --pairs 12
 ```
 
 Compile them (phones run compiled code too): `dart run` is slower and
