@@ -59,6 +59,11 @@ class FakeController implements GameController {
   @override
   void dismissRecap() => dismissedRecap = true;
 
+  var dismissedRoundSummary = false;
+
+  @override
+  void dismissRoundSummary() => dismissedRoundSummary = true;
+
   @override
   void setAway(bool away) {}
 
@@ -88,6 +93,7 @@ TableView tableOf(
   GameState game, {
   int seat = 0,
   List<int> recapFor = const [],
+  List<int> roundSummaryFor = const [],
   List<int> meldChoiceFor = const [],
   bool assistance = true,
   bool autoAnnounce = false,
@@ -95,16 +101,19 @@ TableView tableOf(
   seat: seat,
   nicknames: const ['Ana', 'Ordi 1', 'Bea', 'Ordi 2'],
   options: game.options,
-  phase: game.phase == GamePhase.choosingTrump
-      ? TablePhase.choosingTrump
-      : TablePhase.playing,
+  phase: switch (game.phase) {
+    GamePhase.choosingTrump => TablePhase.choosingTrump,
+    GamePhase.roundOver => TablePhase.roundOver,
+    _ => TablePhase.playing,
+  },
   roundIndex: 0,
   scores: game.scores,
   player: game.viewFor(seat),
-  seatToAct: game.seatToAct,
+  seatToAct: game.phase == GamePhase.roundOver ? null : game.seatToAct,
   roundPoints: game.round.points,
   trickHold: const Duration(milliseconds: 700),
   recapFor: recapFor,
+  roundSummaryFor: roundSummaryFor,
   meldChoiceFor: meldChoiceFor,
   assistance: assistance,
   autoAnnounce: autoAnnounce,
@@ -280,6 +289,29 @@ void main() {
     await tester.pump();
     expect(find.text('Annonces'), findsNothing);
     expect(find.text('Bea lit les annonces…'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('the round summary waits for the last trick, then closes on '
+      'a tap', (tester) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    while (game.phase == GamePhase.playing) {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
+    }
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    expect(find.text('Manche terminée'), findsNothing);
+
+    controller.show(tableOf(game, roundSummaryFor: [0, 2]));
+    await tester.pump();
+    await tester.tap(find.text('Manche terminée'));
+    expect(controller.dismissedRoundSummary, isTrue);
+
+    controller.show(tableOf(game, roundSummaryFor: [2]));
+    await tester.pump();
+    expect(find.text('Manche terminée'), findsNothing);
+    expect(find.text('Bea lit le résumé de la manche…'), findsOneWidget);
     await tester.pump(const Duration(seconds: 2));
   });
 

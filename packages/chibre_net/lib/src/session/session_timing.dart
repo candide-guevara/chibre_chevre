@@ -22,7 +22,8 @@ class SessionTiming {
   /// host's chosen hold and before a computer player leads the next one.
   final Duration trickSlide;
 
-  /// How long the round summary is shown before the next deal.
+  /// How long the round summary stays at most, if the humans don't close
+  /// it.
   final Duration roundSummary;
 
   /// How long the recap of the announcements stays at most, if the humans don't close it.

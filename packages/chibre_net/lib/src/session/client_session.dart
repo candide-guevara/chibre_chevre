@@ -71,6 +71,10 @@ class ClientSession {
   void dismissRecap() =>
       _send(pb.ClientMessage(dismissRecap: pb.DismissRecap()));
 
+  /// The player closed the summary of the round.
+  void dismissRoundSummary() =>
+      _send(pb.ClientMessage(dismissRoundSummary: pb.DismissRoundSummary()));
+
   /// Leaves the game for good.
   Future<void> leave() async {
     _send(pb.ClientMessage(leave: pb.Leave()));

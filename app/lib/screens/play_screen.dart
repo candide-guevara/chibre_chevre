@@ -484,11 +484,12 @@ class _PlayScreenState extends State<PlayScreen> {
                   onDismiss: _controller.dismissRecap,
                 ),
               ),
-            if (table.phase == TablePhase.roundOver)
+            if (table.showsRoundSummary)
               Center(
                 child: RoundSummary(
                   roundPoints: table.roundPoints,
                   team: teamOf(table.seat),
+                  onDismiss: _controller.dismissRoundSummary,
                 ),
               ),
           ],
@@ -546,7 +547,7 @@ class _PlayScreenState extends State<PlayScreen> {
           ],
         ],
       );
-    } else if (table.seatToAct != null) {
+    } else if (table.seatToAct != null || table.roundSummaryFor.isNotEmpty) {
       content = _statusText(table);
     } else {
       content = const SizedBox.shrink();
@@ -584,6 +585,10 @@ class _PlayScreenState extends State<PlayScreen> {
     String name(int seat) => table.nicknames[seat];
     final reading = table.recapFor.where((seat) => seat != table.seat);
     if (reading.isNotEmpty) return '${name(reading.first)} lit les annonces…';
+    final summary = table.roundSummaryFor.where((seat) => seat != table.seat);
+    if (summary.isNotEmpty) {
+      return '${name(summary.first)} lit le résumé de la manche…';
+    }
     final choosing = table.meldChoiceFor.where((seat) => seat != table.seat);
     if (choosing.isNotEmpty) {
       return '${name(choosing.first)} choisit son annonce…';

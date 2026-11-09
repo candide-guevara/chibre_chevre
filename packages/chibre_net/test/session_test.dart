@@ -381,6 +381,66 @@ void main() {
     });
   });
 
+  group('the round summary', () {
+    /// Plays the first round; resolves once its summary is shown.
+    Future<(HostSession, ClientSession, List<TableView>)> playRound(
+        Duration summary) async {
+      final network = InMemoryNetwork();
+      final host = HostSession(
+        transport: InMemoryTransport(network),
+        newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
+        timing: SessionTiming(
+            botDelay: Duration.zero,
+            trickSlide: const Duration(milliseconds: 20),
+            roundSummary: summary,
+            recap: Duration.zero),
+      );
+      await host.create(const HostConfig(
+          gameName: 'g',
+          nickname: 'Ana',
+          options: options,
+          trickHold: Duration.zero));
+      final client = newClient(network);
+      await client.join(await findGame(network));
+      final tables = <TableView>[];
+      host.tables.listen(tables.add);
+      autoplay(host.tables, host.act, host.meldsChosen);
+      autoplay(client.tables, client.act, client.meldsChosen);
+      await pumpEventQueue();
+      if (host.table!.isMyTurn) {
+        host.act(HeuristicPlayer().decide(host.table!.player!));
+      }
+      final table =
+          await host.tables.firstWhere((t) => t.roundSummaryFor.isNotEmpty);
+      expect(table.roundSummaryFor, [0, 2]);
+      expect(table.showsRoundSummary, isTrue);
+      expect(table.phase, TablePhase.roundOver);
+      // Not shown while the last trick slides to its winner.
+      final roundOver =
+          tables.firstWhere((t) => t.phase == TablePhase.roundOver);
+      expect(roundOver.roundSummaryFor, isEmpty);
+      return (host, client, tables);
+    }
+
+    test('the next round starts once both humans closed it', () async {
+      final (host, client, _) = await playRound(const Duration(minutes: 1));
+      client.dismissRoundSummary();
+      await host.tables.firstWhere((t) => t.roundSummaryFor.length == 1);
+      expect(host.table!.phase, TablePhase.roundOver);
+      expect(host.table!.showsRoundSummary, isTrue);
+      final next = host.tables.firstWhere((t) => t.roundIndex == 1);
+      host.dismissRoundSummary();
+      expect((await next).roundSummaryFor, isEmpty);
+      await host.close();
+    });
+
+    test('ends by itself after its duration', () async {
+      final (host, _, _) = await playRound(const Duration(milliseconds: 50));
+      await host.tables.firstWhere((t) => t.roundIndex == 1);
+      await host.close();
+    });
+  });
+
   test('Stöck is recapped after the trick in which it was announced', () async {
     final network = InMemoryNetwork();
     final host = HostSession(

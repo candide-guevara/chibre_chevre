@@ -25,6 +25,9 @@ abstract interface class GameController {
   /// The player closed the meld recap.
   void dismissRecap();
 
+  /// The player closed the summary of the round.
+  void dismissRoundSummary();
+
   /// The app went to the background (or came back).
   void setAway(bool away);
 

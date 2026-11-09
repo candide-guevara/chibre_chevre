@@ -251,6 +251,15 @@ const DismissRecap$json = {
 final $typed_data.Uint8List dismissRecapDescriptor =
     $convert.base64Decode('CgxEaXNtaXNzUmVjYXA=');
 
+@$core.Deprecated('Use dismissRoundSummaryDescriptor instead')
+const DismissRoundSummary$json = {
+  '1': 'DismissRoundSummary',
+};
+
+/// Descriptor for `DismissRoundSummary`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dismissRoundSummaryDescriptor =
+    $convert.base64Decode('ChNEaXNtaXNzUm91bmRTdW1tYXJ5');
+
 @$core.Deprecated('Use meldsChosenDescriptor instead')
 const MeldsChosen$json = {
   '1': 'MeldsChosen',
@@ -336,6 +345,15 @@ const ClientMessage$json = {
       '9': 0,
       '10': 'meldsChosen'
     },
+    {
+      '1': 'dismiss_round_summary',
+      '3': 9,
+      '4': 1,
+      '5': 11,
+      '6': '.chibre.DismissRoundSummary',
+      '9': 0,
+      '10': 'dismissRoundSummary'
+    },
   ],
   '8': [
     {'1': 'body'},
@@ -351,7 +369,9 @@ final $typed_data.Uint8List clientMessageDescriptor = $convert.base64Decode(
     'bWF0Y2gSLgoIcHJlc2VuY2UYBSABKAsyEC5jaGlicmUuUHJlc2VuY2VIAFIIcHJlc2VuY2USJQ'
     'oFbGVhdmUYBiABKAsyDS5jaGlicmUuTGVhdmVIAFIFbGVhdmUSOwoNZGlzbWlzc19yZWNhcBgH'
     'IAEoCzIULmNoaWJyZS5EaXNtaXNzUmVjYXBIAFIMZGlzbWlzc1JlY2FwEjgKDG1lbGRzX2Nob3'
-    'NlbhgIIAEoCzITLmNoaWJyZS5NZWxkc0Nob3NlbkgAUgttZWxkc0Nob3NlbkIGCgRib2R5');
+    'NlbhgIIAEoCzITLmNoaWJyZS5NZWxkc0Nob3NlbkgAUgttZWxkc0Nob3NlbhJRChVkaXNtaXNz'
+    'X3JvdW5kX3N1bW1hcnkYCSABKAsyGy5jaGlicmUuRGlzbWlzc1JvdW5kU3VtbWFyeUgAUhNkaX'
+    'NtaXNzUm91bmRTdW1tYXJ5QgYKBGJvZHk=');
 
 @$core.Deprecated('Use welcomeDescriptor instead')
 const Welcome$json = {
@@ -619,6 +639,13 @@ const TableSnapshot$json = {
     {'1': 'sort_by_trump', '3': 26, '4': 1, '5': 8, '10': 'sortByTrump'},
     {'1': 'auto_announce', '3': 27, '4': 1, '5': 8, '10': 'autoAnnounce'},
     {'1': 'thinking_time_ms', '3': 28, '4': 1, '5': 13, '10': 'thinkingTimeMs'},
+    {
+      '1': 'round_summary_for',
+      '3': 29,
+      '4': 3,
+      '5': 13,
+      '10': 'roundSummaryFor'
+    },
   ],
   '4': [TableSnapshot_Phase$json],
   '9': [
@@ -658,9 +685,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'RfY2hvaWNlX2ZvchgYIAMoDVINbWVsZENob2ljZUZvchIeCgphc3Npc3RhbmNlGBkgASgIUgph'
     'c3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bXAYGiABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW'
     '5ub3VuY2UYGyABKAhSDGF1dG9Bbm5vdW5jZRIoChB0aGlua2luZ190aW1lX21zGBwgASgNUg50'
-    'aGlua2luZ1RpbWVNcyJ9CgVQaGFzZRIcChhQSEFTRV9XQUlUSU5HX0ZPUl9QTEFZRVIQABIYCh'
-    'RQSEFTRV9DSE9PU0lOR19UUlVNUBABEhEKDVBIQVNFX1BMQVlJTkcQAhIUChBQSEFTRV9ST1VO'
-    'RF9PVkVSEAMSEwoPUEhBU0VfR0FNRV9PVkVSEARKBAgEEAU=');
+    'aGlua2luZ1RpbWVNcxIqChFyb3VuZF9zdW1tYXJ5X2ZvchgdIAMoDVIPcm91bmRTdW1tYXJ5Rm'
+    '9yIn0KBVBoYXNlEhwKGFBIQVNFX1dBSVRJTkdfRk9SX1BMQVlFUhAAEhgKFFBIQVNFX0NIT09T'
+    'SU5HX1RSVU1QEAESEQoNUEhBU0VfUExBWUlORxACEhQKEFBIQVNFX1JPVU5EX09WRVIQAxITCg'
+    '9QSEFTRV9HQU1FX09WRVIQBEoECAQQBQ==');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {

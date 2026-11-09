@@ -16,6 +16,7 @@ import 'bot_runner.dart';
 import 'host_config.dart';
 import 'meld_choice.dart';
 import 'announcement_recap.dart';
+import 'round_summary_popup.dart';
 import 'saved_game_store.dart';
 import 'session_timing.dart';
 import 'table_view.dart';
@@ -84,6 +85,7 @@ class HostSession {
   var _version = 0;
   Timer? _timer;
   final _recap = AnnouncementRecap();
+  final _roundSummary = RoundSummaryPopup();
   final _meldChoice = MeldChoice();
 
   /// The move of the computer player to act, computed as soon as the game
@@ -161,6 +163,9 @@ class HostSession {
 
   /// The host closed the recap of the announcements.
   void dismissRecap() => _dismissRecap(hostSeat);
+
+  /// The host closed the summary of the round.
+  void dismissRoundSummary() => _dismissRoundSummary(hostSeat);
 
   /// The host app went to the background (or came back): pause the game.
   void setAway(bool away) {
@@ -268,6 +273,7 @@ class HostSession {
       insights: _insights,
       leftBy: _leftBy,
       recapFor: _recap.waitingFor,
+      roundSummaryFor: _roundSummary.waitingFor,
       meldChoiceFor: _meldChoice.pending(game.round, _humans),
     );
   }
@@ -350,11 +356,7 @@ class HostSession {
             .analyseRound(game.record, game.roundIndex,
                 timeLimit: roundAnalysisTime)
             .onError((_, __) => null);
-        _timer = Timer(timing.roundSummary, () {
-          if (version != _version) return;
-          game.startNextRound();
-          _changed();
-        });
+        _scheduleRoundSummary(game);
       case GamePhase.choosingTrump || GamePhase.playing:
         if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
         final seat = game.seatToAct;
@@ -389,6 +391,32 @@ class HostSession {
       return true;
     }
     return false;
+  }
+
+  /// Opens the summary of the round once its last trick slid to its
+  /// winner, closes it when it times out, then starts the next round.
+  void _scheduleRoundSummary(GameState game) {
+    final summary = _roundSummary;
+    if (summary.isActive) {
+      _timer = Timer(summary.remaining, () {
+        summary.end();
+        _changed();
+      });
+    } else if (!summary.wasShownFor(game.roundIndex)) {
+      _timer = Timer(_trickHold + timing.trickSlide, () {
+        summary.start(game.roundIndex, _humans, timing.roundSummary);
+        _changed();
+      });
+    } else {
+      game.startNextRound();
+      _changed();
+    }
+  }
+
+  void _dismissRoundSummary(int seat) {
+    if (!_roundSummary.isActive) return;
+    _roundSummary.dismiss(seat);
+    _changed();
   }
 
   /// From the end of a trick with announcements until their recap is closed.
@@ -571,6 +599,8 @@ class HostSession {
         _chooseMelds(joinerSeat);
       case pb.ClientMessage_Body.dismissRecap:
         _dismissRecap(joinerSeat);
+      case pb.ClientMessage_Body.dismissRoundSummary:
+        _dismissRoundSummary(joinerSeat);
       case pb.ClientMessage_Body.leave:
         _leftBy = _nicknames[joinerSeat];
         _timer?.cancel();

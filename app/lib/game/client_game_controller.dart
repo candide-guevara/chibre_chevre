@@ -42,6 +42,9 @@ class ClientGameController implements GameController {
   void dismissRecap() => session.dismissRecap();
 
   @override
+  void dismissRoundSummary() => session.dismissRoundSummary();
+
+  @override
   void setAway(bool away) => session.setAway(away);
 
   @override

@@ -9,29 +9,41 @@ class RoundSummary extends StatelessWidget {
     super.key,
     required this.roundPoints,
     required this.team,
+    required this.onDismiss,
   });
 
   final List<int> roundPoints;
   final int team;
+  final VoidCallback onDismiss;
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    return Card(
-      color: ChibreColors.feltDark,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Manche terminée', style: text.titleLarge),
-            const SizedBox(height: 12),
-            Text('Nous +${roundPoints[team]}', style: text.titleMedium),
-            Text(
-              'Ordi +${roundPoints[opponentTeam(team)]}',
-              style: text.titleMedium,
-            ),
-          ],
+    return GestureDetector(
+      onTap: onDismiss,
+      child: Card(
+        color: ChibreColors.feltDark,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Manche terminée', style: text.titleLarge),
+              const SizedBox(height: 12),
+              Text('Nous +${roundPoints[team]}', style: text.titleMedium),
+              Text(
+                'Ordi +${roundPoints[opponentTeam(team)]}',
+                style: text.titleMedium,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Touchez pour continuer',
+                style: text.bodySmall?.copyWith(
+                  color: ChibreColors.ivory.withValues(alpha: 0.7),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

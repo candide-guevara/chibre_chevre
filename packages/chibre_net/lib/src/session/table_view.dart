@@ -39,6 +39,7 @@ class TableView {
     this.leftBy,
     this.trickHold = HostConfig.defaultTrickHold,
     this.recapFor = const [],
+    this.roundSummaryFor = const [],
     this.meldChoiceFor = const [],
     this.assistance = false,
     this.sortByTrump = false,
@@ -85,6 +86,10 @@ class TableView {
   /// nobody plays until it is empty.
   final List<int> recapFor;
 
+  /// The seats still reading the summary of the round; the next round waits
+  /// until it is empty.
+  final List<int> roundSummaryFor;
+
   /// The humans still choosing their melds; the computer players wait.
   final List<int> meldChoiceFor;
 
@@ -105,6 +110,9 @@ class TableView {
 
   /// Whether this player should see the recap of the announcements.
   bool get showsRecap => recapFor.contains(seat);
+
+  /// Whether this player should see the summary of the round.
+  bool get showsRoundSummary => roundSummaryFor.contains(seat);
 
   bool get isPaused => pausedFor != null;
 
@@ -129,6 +137,7 @@ class TableView {
         leftBy: leftBy ?? this.leftBy,
         trickHold: trickHold,
         recapFor: recapFor,
+        roundSummaryFor: roundSummaryFor,
         meldChoiceFor: meldChoiceFor,
         assistance: assistance,
         sortByTrump: sortByTrump,

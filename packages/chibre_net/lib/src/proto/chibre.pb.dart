@@ -847,6 +847,49 @@ class DismissRecap extends $pb.GeneratedMessage {
   static DismissRecap? _defaultInstance;
 }
 
+/// The player closed the summary of the round.
+class DismissRoundSummary extends $pb.GeneratedMessage {
+  factory DismissRoundSummary() => DismissRoundSummary._();
+
+  DismissRoundSummary._();
+
+  factory DismissRoundSummary.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      DismissRoundSummary()..mergeFromBuffer(data, registry);
+  factory DismissRoundSummary.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      DismissRoundSummary()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DismissRoundSummary',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
+      createEmptyInstance: DismissRoundSummary.$_createMessage)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissRoundSummary clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissRoundSummary copyWith(void Function(DismissRoundSummary) updates) =>
+      super.copyWith((message) => updates(message as DismissRoundSummary))
+          as DismissRoundSummary;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use DismissRoundSummary() / DismissRoundSummary.new instead')
+  static DismissRoundSummary create() => DismissRoundSummary._();
+  static $pb.GeneratedMessage $_createMessage() => DismissRoundSummary._();
+  @$core.override
+  DismissRoundSummary createEmptyInstance() => DismissRoundSummary._();
+  @$core.pragma('dart2js:noInline')
+  static DismissRoundSummary getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DismissRoundSummary>(
+          DismissRoundSummary.$_createMessage);
+  static DismissRoundSummary? _defaultInstance;
+}
+
 /// The player chose their melds (sent with their first card) or not to
 /// announce any.
 class MeldsChosen extends $pb.GeneratedMessage {
@@ -899,6 +942,7 @@ enum ClientMessage_Body {
   leave,
   dismissRecap,
   meldsChosen,
+  dismissRoundSummary,
   notSet
 }
 
@@ -912,6 +956,7 @@ class ClientMessage extends $pb.GeneratedMessage {
     Leave? leave,
     DismissRecap? dismissRecap,
     MeldsChosen? meldsChosen,
+    DismissRoundSummary? dismissRoundSummary,
   }) {
     final result = ClientMessage._();
     if (hello != null) result.hello = hello;
@@ -922,6 +967,8 @@ class ClientMessage extends $pb.GeneratedMessage {
     if (leave != null) result.leave = leave;
     if (dismissRecap != null) result.dismissRecap = dismissRecap;
     if (meldsChosen != null) result.meldsChosen = meldsChosen;
+    if (dismissRoundSummary != null)
+      result.dismissRoundSummary = dismissRoundSummary;
     return result;
   }
 
@@ -944,13 +991,14 @@ class ClientMessage extends $pb.GeneratedMessage {
     6: ClientMessage_Body.leave,
     7: ClientMessage_Body.dismissRecap,
     8: ClientMessage_Body.meldsChosen,
+    9: ClientMessage_Body.dismissRoundSummary,
     0: ClientMessage_Body.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ClientMessage',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'chibre'),
       createEmptyInstance: ClientMessage.$_createMessage)
-    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8])
+    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8, 9])
     ..aOM<Hello>(1, _omitFieldNames ? '' : 'hello',
         subBuilder: Hello.$_createMessage)
     ..aOM<Action>(2, _omitFieldNames ? '' : 'action',
@@ -967,6 +1015,8 @@ class ClientMessage extends $pb.GeneratedMessage {
         subBuilder: DismissRecap.$_createMessage)
     ..aOM<MeldsChosen>(8, _omitFieldNames ? '' : 'meldsChosen',
         subBuilder: MeldsChosen.$_createMessage)
+    ..aOM<DismissRoundSummary>(9, _omitFieldNames ? '' : 'dismissRoundSummary',
+        subBuilder: DismissRoundSummary.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -999,6 +1049,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   @$pb.TagNumber(7)
   @$pb.TagNumber(8)
+  @$pb.TagNumber(9)
   ClientMessage_Body whichBody() => _ClientMessage_BodyByTag[$_whichOneof(0)]!;
   @$pb.TagNumber(1)
   @$pb.TagNumber(2)
@@ -1008,6 +1059,7 @@ class ClientMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   @$pb.TagNumber(7)
   @$pb.TagNumber(8)
+  @$pb.TagNumber(9)
   void clearBody() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -1097,6 +1149,17 @@ class ClientMessage extends $pb.GeneratedMessage {
   void clearMeldsChosen() => $_clearField(8);
   @$pb.TagNumber(8)
   MeldsChosen ensureMeldsChosen() => $_ensure(7);
+
+  @$pb.TagNumber(9)
+  DismissRoundSummary get dismissRoundSummary => $_getN(8);
+  @$pb.TagNumber(9)
+  set dismissRoundSummary(DismissRoundSummary value) => $_setField(9, value);
+  @$pb.TagNumber(9)
+  $core.bool hasDismissRoundSummary() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearDismissRoundSummary() => $_clearField(9);
+  @$pb.TagNumber(9)
+  DismissRoundSummary ensureDismissRoundSummary() => $_ensure(8);
 }
 
 class Welcome extends $pb.GeneratedMessage {
@@ -1686,6 +1749,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.bool? sortByTrump,
     $core.bool? autoAnnounce,
     $core.int? thinkingTimeMs,
+    $core.Iterable<$core.int>? roundSummaryFor,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1715,6 +1779,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
     if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
     if (thinkingTimeMs != null) result.thinkingTimeMs = thinkingTimeMs;
+    if (roundSummaryFor != null) result.roundSummaryFor.addAll(roundSummaryFor);
     return result;
   }
 
@@ -1771,6 +1836,8 @@ class TableSnapshot extends $pb.GeneratedMessage {
     ..aOB(27, _omitFieldNames ? '' : 'autoAnnounce')
     ..aI(28, _omitFieldNames ? '' : 'thinkingTimeMs',
         fieldType: $pb.PbFieldType.OU3)
+    ..p<$core.int>(
+        29, _omitFieldNames ? '' : 'roundSummaryFor', $pb.PbFieldType.KU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2016,6 +2083,11 @@ class TableSnapshot extends $pb.GeneratedMessage {
   $core.bool hasThinkingTimeMs() => $_has(26);
   @$pb.TagNumber(28)
   void clearThinkingTimeMs() => $_clearField(28);
+
+  /// Seats still reading the summary of the round; the next round waits
+  /// until it is empty.
+  @$pb.TagNumber(29)
+  $pb.PbList<$core.int> get roundSummaryFor => $_getList(27);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
