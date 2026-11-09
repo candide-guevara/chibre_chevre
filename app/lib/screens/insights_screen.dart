@@ -44,7 +44,7 @@ class InsightsScreen extends StatelessWidget {
 
   Widget _content(BuildContext context, TableView table) {
     final text = Theme.of(context).textTheme;
-    final humans = [table.seat, partnerOf(table.seat)];
+    final humans = [table.seat, if (!table.solo) partnerOf(table.seat)];
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [

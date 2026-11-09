@@ -2499,6 +2499,7 @@ class SavedGame extends $pb.GeneratedMessage {
     $core.bool? sortByTrump,
     $core.bool? autoAnnounce,
     $core.int? thinkingTimeMs,
+    $core.bool? solo,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2512,6 +2513,7 @@ class SavedGame extends $pb.GeneratedMessage {
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
     if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
     if (thinkingTimeMs != null) result.thinkingTimeMs = thinkingTimeMs;
+    if (solo != null) result.solo = solo;
     return result;
   }
 
@@ -2541,6 +2543,7 @@ class SavedGame extends $pb.GeneratedMessage {
     ..aOB(10, _omitFieldNames ? '' : 'autoAnnounce')
     ..aI(11, _omitFieldNames ? '' : 'thinkingTimeMs',
         fieldType: $pb.PbFieldType.OU3)
+    ..aOB(12, _omitFieldNames ? '' : 'solo')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2649,6 +2652,16 @@ class SavedGame extends $pb.GeneratedMessage {
   $core.bool hasThinkingTimeMs() => $_has(9);
   @$pb.TagNumber(11)
   void clearThinkingTimeMs() => $_clearField(11);
+
+  /// A single player game: a computer player is the host's partner.
+  @$pb.TagNumber(12)
+  $core.bool get solo => $_getBF(10);
+  @$pb.TagNumber(12)
+  set solo($core.bool value) => $_setBool(10, value);
+  @$pb.TagNumber(12)
+  $core.bool hasSolo() => $_has(10);
+  @$pb.TagNumber(12)
+  void clearSolo() => $_clearField(12);
 }
 
 const $core.bool _omitFieldNames =

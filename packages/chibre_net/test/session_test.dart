@@ -37,8 +37,9 @@ class RecordingBotRunner implements BotRunner {
   @override
   Future<Map<int, List<Blunder>>?> analyseRound(
           GameRecord record, int roundIndex,
-          {Duration? timeLimit}) =>
-      _inner.analyseRound(record, roundIndex, timeLimit: timeLimit);
+          {Set<int> seats = const {0, 2}, Duration? timeLimit}) =>
+      _inner.analyseRound(record, roundIndex,
+          seats: seats, timeLimit: timeLimit);
 }
 
 /// Every round's analysis runs out of time until the game is over.
@@ -53,13 +54,13 @@ class TimingOutBotRunner implements BotRunner {
   @override
   Future<Map<int, List<Blunder>>?> analyseRound(
       GameRecord record, int roundIndex,
-      {Duration? timeLimit}) async {
+      {Set<int> seats = const {0, 2}, Duration? timeLimit}) async {
     if (timeLimit != null) {
       timedOut.add(roundIndex);
       return null;
     }
     analysed.add(roundIndex);
-    return _inner.analyseRound(record, roundIndex);
+    return _inner.analyseRound(record, roundIndex, seats: seats);
   }
 }
 
@@ -612,5 +613,60 @@ void main() {
     expect(back.roundIndex, 1);
     await restarted.close();
     expect(store.saved, isNull);
+  });
+
+  group('a single player game', () {
+    const soloConfig = HostConfig(
+        gameName: 'Partie solo',
+        nickname: 'Ana',
+        options: options,
+        trickHold: Duration.zero,
+        solo: true);
+
+    test('starts at once, with a computer partner, without the network',
+        () async {
+      final network = InMemoryNetwork();
+      final bots = RecordingBotRunner();
+      final host = newHost(network, bots: bots);
+      await host.create(soloConfig);
+      expect(host.table!.phase, isNot(TablePhase.waitingForPlayer));
+      expect(host.table!.isPaused, isFalse);
+      expect(host.table!.solo, isTrue);
+      expect(host.table!.nicknames, ['Ana', 'Ordi 1', 'Partenaire', 'Ordi 2']);
+      expect(host.address, isNull);
+      expect(await InMemoryTransport(network).discover().first, isEmpty);
+
+      autoplay(host.tables, host.act, host.meldsChosen);
+      if (host.table!.isMyTurn) {
+        host.act(HeuristicPlayer().decide(host.table!.player!));
+      }
+      final end = await host.tables.firstWhere(
+          (t) => t.phase == TablePhase.gameOver && t.insights != null);
+      expect(end.scores.reduce(max), greaterThanOrEqualTo(300));
+      expect(bots.decidedFor, containsAll([1, 2, 3]));
+      expect(bots.decidedFor, isNot(contains(0)));
+      expect(end.insights!.map((b) => b.seat).toSet(), isNot(contains(2)));
+
+      host.proposeRematch(sameCards: false);
+      expect(host.table!.phase, isNot(TablePhase.gameOver));
+      expect(host.table!.scores, [0, 0]);
+      await host.close();
+    });
+
+    test('resumes without waiting for anyone', () async {
+      final network = InMemoryNetwork();
+      final store = MemoryStore();
+      final host = newHost(network, store: store);
+      await host.create(soloConfig);
+      expect(await HostSession.savedGameName(store), 'Partie solo');
+
+      final restarted = newHost(network, store: store);
+      await restarted.resume();
+      expect(restarted.table!.isPaused, isFalse);
+      expect(restarted.table!.solo, isTrue);
+      expect(restarted.table!.nicknames[2], 'Partenaire');
+      await restarted.close();
+      await host.close();
+    });
   });
 }

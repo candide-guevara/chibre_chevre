@@ -14,6 +14,7 @@ The goal of this project is to create a phone app to play the [chibre][0] card g
 
 * 2 human players, each with their own phone, play as partners against a team of 2 computer players.
   * Seating (counter-clockwise play order): Human A (host), Bot 1, Human B (joiner), Bot 2. Humans sit opposite each other.
+* Single player mode: one human plays with a computer partner ("Partenaire", in the joiner's seat) against the 2 bots, on one phone without the network. The partner uses exactly the same algorithm and compute budget as the opponents.
 * the app shall not collect any personal data, nor have any form of account.
   * A random installation id (generated locally, never tied to a person) may be used to recognise a reconnecting player.
 * All computation happens on the phones. **There is no backend in the first version**: games are played over the local network (same Wi-Fi).
@@ -27,7 +28,7 @@ The goal of this project is to create a phone app to play the [chibre][0] card g
 
 ## Out of scope
 
-* Only 2 human player mode is supported.
+* More than 2 human players.
 * iOS.
 * Internet play (first version; LAN only).
 * The app will never be monetized, this is just to have fun with my friends.
@@ -109,13 +110,14 @@ Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
 
 ## Start screen
 
-It consists of 3 buttons
+It consists of 4 buttons
 
 * Rejoindre une partie (Join game)
 * Créer une partie (Host game)
+* Jouer seul (Single player): opens the host game screen, titled "Jouer seul" and without a game name; "Lancer la partie" opens the play game screen at once. The game is never advertised, nothing waits for a joiner (recaps, summaries and meld choices only wait for the human), a rematch starts at once, and the insights show only the human's blunders. It is saved and resumed like any hosted game.
 * Profil (Player details)
 
-Until the player details are input, the join and host buttons must be greyed out.
+Until the player details are input, the join, host and single player buttons must be greyed out.
 
 ## Player details screen
 

@@ -21,8 +21,8 @@ class IsolateBotRunner implements BotRunner {
   @override
   Future<Map<int, List<Blunder>>?> analyseRound(
           GameRecord record, int roundIndex,
-          {Duration? timeLimit}) =>
-      _analyseRound(budget, record, roundIndex, timeLimit);
+          {Set<int> seats = const {0, 2}, Duration? timeLimit}) =>
+      _analyseRound(budget, record, roundIndex, seats, timeLimit);
 
   // Static so the isolate closures capture nothing but their arguments.
   static Future<GameAction> _decide(
@@ -32,8 +32,13 @@ class IsolateBotRunner implements BotRunner {
             random: seed == null ? null : Random(seed),
           ).decide(view));
 
-  static Future<Map<int, List<Blunder>>?> _analyseRound(ComputeBudget budget,
-          GameRecord record, int roundIndex, Duration? timeLimit) =>
+  static Future<Map<int, List<Blunder>>?> _analyseRound(
+          ComputeBudget budget,
+          GameRecord record,
+          int roundIndex,
+          Set<int> seats,
+          Duration? timeLimit) =>
       Isolate.run(() => BlunderCalculator(samples: budget.analysisSamples)
-          .analyseRound(record, roundIndex, timeLimit: timeLimit));
+          .analyseRound(record, roundIndex,
+              seats: seats, timeLimit: timeLimit));
 }

@@ -45,6 +45,7 @@ class TableView {
     this.sortByTrump = false,
     this.autoAnnounce = false,
     this.thinkingTime = HostConfig.defaultThinkingTime,
+    this.solo = false,
   });
 
   final int seat;
@@ -108,6 +109,10 @@ class TableView {
   /// "Jouer pour moi".
   final Duration thinkingTime;
 
+  /// A single player game: the partner is a computer player. Only the host
+  /// sees such tables, so they are never sent over the network.
+  final bool solo;
+
   /// Whether this player should see the recap of the announcements.
   bool get showsRecap => recapFor.contains(seat);
 
@@ -143,5 +148,6 @@ class TableView {
         sortByTrump: sortByTrump,
         autoAnnounce: autoAnnounce,
         thinkingTime: thinkingTime,
+        solo: solo,
       );
 }

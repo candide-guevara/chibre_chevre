@@ -275,4 +275,6 @@ message SavedGame {
   bool auto_announce = 10;
   // 0 in games saved before it existed: the default is used.
   uint32 thinking_time_ms = 11;
+  // A single player game: a computer player is the host's partner.
+  bool solo = 12;
 }

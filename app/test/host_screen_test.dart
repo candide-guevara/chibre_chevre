@@ -63,4 +63,25 @@ void main() {
     expect(profile.gameDefaults.options.multipliersEnabled, isTrue);
     expect(profile.gameDefaults.options.finishLastRound, isTrue);
   });
+
+  testWidgets('a single player game needs no name', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final profile = await ProfileStore.open();
+    await profile.setNickname('Ana');
+    await tester.pumpWidget(
+      Services(
+        services: AppServices.forTesting(
+          profile: profile,
+          savedGames: NoSavedGame(),
+        ),
+        child: MaterialApp(
+          theme: chibreTheme(),
+          home: const HostScreen(solo: true),
+        ),
+      ),
+    );
+    expect(find.text('Jouer seul'), findsOneWidget);
+    expect(find.text('Nom de la partie'), findsNothing);
+    expect(find.text('Lancer la partie'), findsOneWidget);
+  });
 }

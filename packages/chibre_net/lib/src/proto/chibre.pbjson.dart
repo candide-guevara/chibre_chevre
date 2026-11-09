@@ -853,6 +853,7 @@ const SavedGame$json = {
     {'1': 'sort_by_trump', '3': 9, '4': 1, '5': 8, '10': 'sortByTrump'},
     {'1': 'auto_announce', '3': 10, '4': 1, '5': 8, '10': 'autoAnnounce'},
     {'1': 'thinking_time_ms', '3': 11, '4': 1, '5': 13, '10': 'thinkingTimeMs'},
+    {'1': 'solo', '3': 12, '4': 1, '5': 8, '10': 'solo'},
   ],
   '9': [
     {'1': 5, '2': 6},
@@ -867,4 +868,5 @@ final $typed_data.Uint8List savedGameDescriptor = $convert.base64Decode(
     'IuY2hpYnJlLkdhbWVSZWNvcmRSBnJlY29yZBIiCg10cmlja19ob2xkX21zGAcgASgNUgt0cmlj'
     'a0hvbGRNcxIeCgphc3Npc3RhbmNlGAggASgIUgphc3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bX'
     'AYCSABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW5ub3VuY2UYCiABKAhSDGF1dG9Bbm5vdW5j'
-    'ZRIoChB0aGlua2luZ190aW1lX21zGAsgASgNUg50aGlua2luZ1RpbWVNc0oECAUQBg==');
+    'ZRIoChB0aGlua2luZ190aW1lX21zGAsgASgNUg50aGlua2luZ1RpbWVNcxISCgRzb2xvGAwgAS'
+    'gIUgRzb2xvSgQIBRAG');

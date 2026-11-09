@@ -5,10 +5,10 @@ import 'package:chibre_core/chibre_core.dart';
 abstract interface class BotRunner {
   Future<GameAction> decide(PlayerView view);
 
-  /// The biggest blunders of the human seats in the round [roundIndex] of
+  /// The biggest blunders of [seats] in the round [roundIndex] of
   /// [record], or null once [timeLimit] is exceeded; see
   /// [BlunderCalculator.analyseRound].
   Future<Map<int, List<Blunder>>?> analyseRound(
       GameRecord record, int roundIndex,
-      {Duration? timeLimit});
+      {Set<int> seats = const {0, 2}, Duration? timeLimit});
 }

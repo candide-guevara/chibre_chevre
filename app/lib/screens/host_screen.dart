@@ -5,16 +5,23 @@ import 'package:flutter/material.dart';
 import '../game/advanced_settings.dart';
 import '../game/game_defaults.dart';
 import '../services/app_services.dart';
+import '../game/host_game_controller.dart';
 import '../widgets/host_actions_bar.dart';
 import 'advanced_settings_screen.dart';
+import 'play_screen.dart';
 import 'waiting_screen.dart';
 
 /// The options of a new game, starting from the player's game defaults.
 /// With [editingDefaults], the same options edit those defaults instead.
 class HostScreen extends StatefulWidget {
-  const HostScreen({super.key, this.editingDefaults = false});
+  const HostScreen({super.key, this.editingDefaults = false, this.solo = false})
+    : assert(!(editingDefaults && solo));
 
   final bool editingDefaults;
+
+  /// A single player game, which starts at once rather than waiting for a
+  /// player to join.
+  final bool solo;
 
   @override
   State<HostScreen> createState() => _HostScreenState();
@@ -47,8 +54,9 @@ class _HostScreenState extends State<HostScreen> {
     super.dispose();
   }
 
-  String get _defaultName =>
-      'Partie de ${Services.of(context).profile.nickname}';
+  String get _defaultName => widget.solo
+      ? 'Partie solo'
+      : 'Partie de ${Services.of(context).profile.nickname}';
 
   void _apply(GameDefaults defaults) {
     _target.text = '${defaults.options.targetScore}';
@@ -110,11 +118,16 @@ class _HostScreenState extends State<HostScreen> {
         sortByTrump: _advanced.sortByTrump,
         autoAnnounce: _advanced.autoAnnounce,
         thinkingTime: _advanced.thinkingTime,
+        solo: widget.solo,
       ),
     );
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => WaitingScreen(session: session)),
+      MaterialPageRoute(
+        builder: (_) => widget.solo
+            ? PlayScreen(controller: HostGameController(session))
+            : WaitingScreen(session: session),
+      ),
     );
   }
 
@@ -122,7 +135,11 @@ class _HostScreenState extends State<HostScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text(
-        widget.editingDefaults ? 'Paramètres par défaut' : 'Créer une partie',
+        widget.editingDefaults
+            ? 'Paramètres par défaut'
+            : widget.solo
+            ? 'Jouer seul'
+            : 'Créer une partie',
       ),
     ),
     bottomNavigationBar: HostActionsBar(
@@ -138,8 +155,9 @@ class _HostScreenState extends State<HostScreen> {
     body: ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        // The name is the game's own, not a default.
-        if (!widget.editingDefaults) ...[
+        // The name is the game's own, not a default; a single player game
+        // is never listed, so it needs none.
+        if (!widget.editingDefaults && !widget.solo) ...[
           TextField(
             controller: _name,
             maxLength: 30,

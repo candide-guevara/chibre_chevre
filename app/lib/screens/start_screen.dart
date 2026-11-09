@@ -40,7 +40,7 @@ class _StartScreenState extends State<StartScreen> {
     final session = await Services.of(context).newHostSession();
     await session.resume();
     if (!mounted) return;
-    // Paused until the joiner reconnects.
+    // Paused until the joiner reconnects, unless playing alone.
     await _open(PlayScreen(controller: HostGameController(session)));
   }
 
@@ -85,6 +85,13 @@ class _StartScreenState extends State<StartScreen> {
                             ? () => _open(const HostScreen())
                             : null,
                         child: const Text('Créer une partie'),
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        onPressed: hasProfile
+                            ? () => _open(const HostScreen(solo: true))
+                            : null,
+                        child: const Text('Jouer seul'),
                       ),
                       const SizedBox(height: 16),
                       OutlinedButton(

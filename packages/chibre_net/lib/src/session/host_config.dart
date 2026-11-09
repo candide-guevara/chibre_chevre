@@ -11,6 +11,7 @@ class HostConfig {
     this.sortByTrump = false,
     this.autoAnnounce = false,
     this.thinkingTime = defaultThinkingTime,
+    this.solo = false,
   });
 
   static const defaultTrickHold = Duration(milliseconds: 1500);
@@ -38,4 +39,8 @@ class HostConfig {
   /// How long a computer player thinks per decision; also the budget of
   /// "Jouer pour moi".
   final Duration thinkingTime;
+
+  /// A single player game: a computer player is the host's partner, and
+  /// the game starts at once, without the network.
+  final bool solo;
 }

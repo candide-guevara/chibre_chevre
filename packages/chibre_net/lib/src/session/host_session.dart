@@ -63,6 +63,7 @@ class HostSession {
   late bool _sortByTrump;
   late bool _autoAnnounce;
   late Duration _thinkingTime;
+  var _solo = false;
   String? _joinerId;
   GameState? _game;
   GameServer? _server;
@@ -108,7 +109,8 @@ class HostSession {
     return bytes == null ? null : pb.SavedGame.fromBuffer(bytes).gameName;
   }
 
-  /// Starts a new game and waits for a player to join.
+  /// Starts a new game and waits for a player to join, or starts it at
+  /// once in a single player game.
   Future<void> create(HostConfig config) async {
     _gameId = List.generate(4, (_) => _random.nextInt(1 << 32))
         .map((n) => n.toRadixString(16))
@@ -120,12 +122,22 @@ class HostSession {
     _sortByTrump = config.sortByTrump;
     _autoAnnounce = config.autoAnnounce;
     _thinkingTime = config.thinkingTime;
+    _solo = config.solo;
     bots = newBots(_thinkingTime);
-    _nicknames = [config.nickname, 'Ordi 1', '', 'Ordi 2'];
+    _nicknames = [
+      config.nickname,
+      'Ordi 1',
+      _solo ? soloPartnerNickname : '',
+      'Ordi 2',
+    ];
+    if (_solo) _startGame();
     await _open();
   }
 
-  /// Resumes the game saved in [store], waiting for the joiner to reconnect.
+  static const soloPartnerNickname = 'Partenaire';
+
+  /// Resumes the game saved in [store], waiting for the joiner to reconnect
+  /// unless it is a single player game.
   Future<void> resume() async {
     final saved = pb.SavedGame.fromBuffer((await store!.load())!);
     final record = decodeRecord(saved.record);
@@ -141,6 +153,7 @@ class HostSession {
     _thinkingTime = saved.thinkingTimeMs == 0
         ? HostConfig.defaultThinkingTime
         : Duration(milliseconds: saved.thinkingTimeMs);
+    _solo = saved.solo;
     bots = newBots(_thinkingTime);
     _game = replayRecord(record);
     await _open();
@@ -187,8 +200,10 @@ class HostSession {
   }
 
   Future<void> _open() async {
-    _server = await transport.listen();
-    _server!.connections.listen(_accept);
+    if (!_solo) {
+      _server = await transport.listen();
+      _server!.connections.listen(_accept);
+    }
     _changed();
   }
 
@@ -204,7 +219,9 @@ class HostSession {
 
   String? get _pausedFor {
     if (_game == null) return null;
-    if (_joiner == null || _joinerAway) return _nicknames[joinerSeat];
+    if (!_solo && (_joiner == null || _joinerAway)) {
+      return _nicknames[joinerSeat];
+    }
     if (_hostAway) return _nicknames[hostSeat];
     return null;
   }
@@ -241,6 +258,7 @@ class HostSession {
         phase: TablePhase.waitingForPlayer,
         roundIndex: 0,
         scores: const [0, 0],
+        solo: _solo,
       );
     }
     final phase = switch (game.phase) {
@@ -275,6 +293,7 @@ class HostSession {
       recapFor: _recap.waitingFor,
       roundSummaryFor: _roundSummary.waitingFor,
       meldChoiceFor: _meldChoice.pending(game.round, _humans),
+      solo: _solo,
     );
   }
 
@@ -283,7 +302,7 @@ class HostSession {
   /// Lists the game while it waits for a player, or for the joiner to come
   /// back; a full game is not listed.
   void _updateAdvertisement() {
-    final listed = !_isOver && (_game == null || _joiner == null);
+    final listed = !_solo && !_isOver && (_game == null || _joiner == null);
     if (!listed) {
       _stopAdvertising();
       return;
@@ -328,6 +347,7 @@ class HostSession {
       sortByTrump: _sortByTrump,
       autoAnnounce: _autoAnnounce,
       thinkingTimeMs: _thinkingTime.inMilliseconds,
+      solo: _solo,
       record: encodeRecord(game.record),
     ).writeToBuffer());
   }
@@ -354,7 +374,7 @@ class HostSession {
         }
         _roundInsights[game.roundIndex] ??= bots
             .analyseRound(game.record, game.roundIndex,
-                timeLimit: roundAnalysisTime)
+                seats: _humans.toSet(), timeLimit: roundAnalysisTime)
             .onError((_, __) => null);
         _scheduleRoundSummary(game);
       case GamePhase.choosingTrump || GamePhase.playing:
@@ -385,7 +405,7 @@ class HostSession {
     }
     if (_recap.isDue(round)) {
       _timer = Timer(_trickHold + timing.trickSlide, () {
-        _recap.start(round, [hostSeat, joinerSeat], timing.popup);
+        _recap.start(round, _humans, timing.popup);
         _changed();
       });
       return true;
@@ -423,7 +443,8 @@ class HostSession {
   bool _waitsForRecap(RoundState round) =>
       _recap.isActive || _recap.isDue(round);
 
-  static const _humans = [hostSeat, joinerSeat];
+  List<int> get _humans =>
+      _solo ? const [hostSeat] : const [hostSeat, joinerSeat];
 
   void _chooseMelds(int seat) {
     _meldChoice.choose(seat);
@@ -458,7 +479,7 @@ class HostSession {
     _changed();
   }
 
-  static bool _isBot(int seat) => seat != hostSeat && seat != joinerSeat;
+  bool _isBot(int seat) => !_humans.contains(seat);
 
   Future<GameAction> _currentBotDecision(GameState game, int seat) =>
       _botDecision(
@@ -482,12 +503,12 @@ class HostSession {
     final analysed = await Future.wait([
       for (var i = 0; i <= game.roundIndex; i++)
         (rounds[i] ?? Future.value()).then((round) async =>
-            round ?? (await bots.analyseRound(game.record, i))!),
+            round ??
+            (await bots.analyseRound(game.record, i, seats: _humans.toSet()))!),
     ]);
     if (_game != game || _closed) return;
-    final blunders =
-        BlunderCalculator.merge(analysed, seats: const {hostSeat, joinerSeat});
-    _insights = [...?blunders[hostSeat], ...?blunders[joinerSeat]];
+    final blunders = BlunderCalculator.merge(analysed, seats: _humans.toSet());
+    _insights = [for (final seat in _humans) ...?blunders[seat]];
     _analysing = false;
     _changed();
   }
@@ -510,6 +531,11 @@ class HostSession {
   void _proposeRematch(int seat, bool sameCards) {
     if (_game?.phase != GamePhase.gameOver || _isOver) return;
     _rematch = RematchOffer(proposedBy: seat, sameCards: sameCards);
+    // Alone, nobody else has to accept.
+    if (_solo) {
+      _answerRematch(joinerSeat, true);
+      return;
+    }
     _changed();
   }
 
