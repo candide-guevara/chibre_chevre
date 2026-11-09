@@ -76,4 +76,21 @@ void main() {
         .analyse(record, onProgress: progress.add);
     expect(progress.last, 1.0);
   });
+
+  test('merged rounds give the blunders of the whole game', () {
+    final record = MatchRunner(List.filled(seatCount, HeuristicPlayer()),
+            options: const GameOptions(targetScore: 500))
+        .playGame(deals: RandomDealSource(Random(3)))
+        .record;
+    expect(record.rounds.length, greaterThan(1));
+    final whole =
+        BlunderCalculator(samples: 5, random: Random(1)).analyse(record);
+    final calculator = BlunderCalculator(samples: 5, random: Random(1));
+    final merged = BlunderCalculator.merge([
+      for (var i = 0; i < record.rounds.length; i++)
+        calculator.analyseRound(record, i),
+    ]);
+    expect('$merged', '$whole');
+    expect(merged[0], isNotEmpty);
+  });
 }

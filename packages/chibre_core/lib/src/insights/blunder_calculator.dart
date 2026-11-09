@@ -37,18 +37,45 @@ class BlunderCalculator {
   }) {
     final total = record.rounds.fold(0, (sum, r) => sum + r.actions.length);
     var done = 0;
-    final blunders = <Blunder>[];
+    final rounds = <Map<int, List<Blunder>>>[];
+    for (var roundIndex = 0; roundIndex < record.rounds.length; roundIndex++) {
+      final before = done;
+      rounds.add(analyseRound(record, roundIndex,
+          seats: seats,
+          maxPerSeat: maxPerSeat,
+          onProgress: onProgress == null
+              ? null
+              : (progress) => onProgress((before +
+                      progress * record.rounds[roundIndex].actions.length) /
+                  total)));
+      done += record.rounds[roundIndex].actions.length;
+    }
+    return merge(rounds, seats: seats, maxPerSeat: maxPerSeat);
+  }
+
+  /// [analyse] for the round [roundIndex] of [record] alone, so that rounds
+  /// can be analysed as soon as they are played; see [merge].
+  Map<int, List<Blunder>> analyseRound(
+    GameRecord record,
+    int roundIndex, {
+    Set<int> seats = const {0, 2},
+    int maxPerSeat = 3,
+    void Function(double progress)? onProgress,
+  }) {
     final game = GameState.replaying(record);
-    for (final (roundIndex, round) in record.rounds.indexed) {
-      if (roundIndex > 0) game.startNextRound();
-      for (final action in round.actions) {
-        if (seats.contains(action.seat)) {
-          final view = game.viewFor(action.seat);
-          blunders.addAll(_judge(view, action, round, roundIndex));
-        }
-        game.apply(action);
-        onProgress?.call(++done / total);
+    for (var i = 0; i < roundIndex; i++) {
+      record.rounds[i].actions.forEach(game.apply);
+      game.startNextRound();
+    }
+    final round = record.rounds[roundIndex];
+    final blunders = <Blunder>[];
+    for (final (index, action) in round.actions.indexed) {
+      if (seats.contains(action.seat)) {
+        final view = game.viewFor(action.seat);
+        blunders.addAll(_judge(view, action, round, roundIndex));
       }
+      game.apply(action);
+      onProgress?.call((index + 1) / round.actions.length);
     }
     return {
       for (final seat in seats)
@@ -56,7 +83,21 @@ class BlunderCalculator {
     };
   }
 
-  List<Blunder> _worst(Iterable<Blunder> blunders, int count) =>
+  /// The [maxPerSeat] biggest blunders of each of [seats] over [rounds],
+  /// the results of [analyseRound]: the same as [analyse] on the whole game.
+  static Map<int, List<Blunder>> merge(
+    Iterable<Map<int, List<Blunder>>> rounds, {
+    Set<int> seats = const {0, 2},
+    int maxPerSeat = 3,
+  }) =>
+      {
+        for (final seat in seats)
+          seat: _worst(
+              rounds.expand((round) => round[seat] ?? const <Blunder>[]),
+              maxPerSeat),
+      };
+
+  static List<Blunder> _worst(Iterable<Blunder> blunders, int count) =>
       (blunders.where((b) => b.pointsLost >= minimumLoss).toList()
             ..sort((a, b) => b.pointsLost.compareTo(a.pointsLost)))
           .take(count)
