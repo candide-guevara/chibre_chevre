@@ -71,6 +71,11 @@ class _StartScreenState extends State<StartScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                FractionallySizedBox(
+                  widthFactor: 1 / 3,
+                  child: Image.asset('assets/images/chevre_smile_red.webp'),
+                ),
+                const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   // On one line, smaller on narrow phones.
