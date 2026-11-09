@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
+import '../theme/screen_theme.dart';
 
 /// With automatic announcements, the melds the player holds at the start of
 /// a round: announce them all, or keep them secret.
@@ -22,37 +23,40 @@ class MeldOffer extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     const size = Size(120, 44);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      color: ChibreColors.feltDark,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Vos annonces', style: text.titleLarge),
-            const SizedBox(height: 12),
-            for (final meld in melds)
-              Text(meldName(meld), style: text.titleMedium),
-            const SizedBox(height: 20),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(minimumSize: size),
-                  onPressed: onKeepSecret,
-                  child: const Text('Garder secret'),
-                ),
-                FilledButton(
-                  style: FilledButton.styleFrom(minimumSize: size),
-                  onPressed: onAnnounce,
-                  child: const Text('Annoncer'),
-                ),
-              ],
-            ),
-          ],
+    return ScreenTheme(
+      color: UiColors.popup,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        color: UiColors.popup,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Vos annonces', style: text.titleLarge),
+              const SizedBox(height: 12),
+              for (final meld in melds)
+                Text(meldName(meld), style: text.titleMedium),
+              const SizedBox(height: 20),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(minimumSize: size),
+                    onPressed: onKeepSecret,
+                    child: const Text('Garder secret'),
+                  ),
+                  FilledButton(
+                    style: FilledButton.styleFrom(minimumSize: size),
+                    onPressed: onAnnounce,
+                    child: const Text('Annoncer'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

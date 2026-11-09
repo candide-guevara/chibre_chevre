@@ -39,12 +39,12 @@ class AnnouncementSummary extends StatelessWidget {
 
     String gain(int team, int points) =>
         '${team == teamOf(player.seat) ? 'Nous' : 'Ordi'} +${points * multiplier}';
-    final gainStyle = text.titleMedium?.copyWith(color: ChibreColors.brass);
+    final gainStyle = text.titleMedium?.copyWith(color: UiColors.accent);
 
     return GestureDetector(
       onTap: onDismiss,
       child: Card(
-        color: ChibreColors.feltDark,
+        color: UiColors.popup,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -76,9 +76,7 @@ class AnnouncementSummary extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Touchez pour continuer',
-                style: text.bodySmall?.copyWith(
-                  color: ChibreColors.ivory.withValues(alpha: 0.7),
-                ),
+                style: text.bodySmall?.copyWith(color: UiColors.textMuted),
               ),
             ],
           ),

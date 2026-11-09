@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../card_art/card_design.dart';
 import '../card_art/card_designs.dart';
 import '../services/app_services.dart';
+import '../theme/flow_color.dart';
 import '../widgets/card_deck_choice.dart';
 import 'host_screen.dart';
 
@@ -85,8 +86,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 24),
           OutlinedButton(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const HostScreen(editingDefaults: true),
+              flowRoute<void>(
+                context,
+                (_) => const HostScreen(editingDefaults: true),
               ),
             ),
             child: const Text('Paramètres par défaut'),

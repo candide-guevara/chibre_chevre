@@ -3,6 +3,7 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
+import '../theme/flow_color.dart';
 import 'insights_screen.dart';
 import '../widgets/rematch_buttons.dart';
 
@@ -41,8 +42,9 @@ class EndScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 FilledButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => InsightsScreen(controller: controller),
+                    flowRoute(
+                      context,
+                      (_) => InsightsScreen(controller: controller),
                     ),
                   ),
                   child: const Text('Analyse de la partie'),

@@ -32,14 +32,14 @@ class TrumpIndicator extends StatelessWidget {
             height: _size,
             alignment: Alignment.center,
             decoration: const BoxDecoration(
-              color: ChibreColors.ivory,
+              color: UiColors.trumpBadge,
               shape: BoxShape.circle,
             ),
             child: suit == null
                 ? Text(
                     modeSymbol(mode),
                     style: text.titleLarge?.copyWith(
-                      color: ChibreColors.feltDark,
+                      color: UiColors.onTrumpBadge,
                     ),
                   )
                 : SuitIcon(suit, size: _size * 0.6),
@@ -48,7 +48,7 @@ class TrumpIndicator extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               '×$multiplier',
-              style: text.titleLarge?.copyWith(color: ChibreColors.brass),
+              style: text.titleLarge?.copyWith(color: UiColors.accent),
             ),
           ],
         ],

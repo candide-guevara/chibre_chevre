@@ -26,7 +26,7 @@ class BlunderTile extends StatelessWidget {
         ? 'Manche ${blunder.roundIndex + 1}'
         : 'Manche ${blunder.roundIndex + 1}, pli ${blunder.trickIndex! + 1}';
     return Card(
-      color: ChibreColors.feltDark,
+      color: UiColors.panel,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -42,7 +42,7 @@ class BlunderTile extends StatelessWidget {
                 ),
                 Text(
                   '−${blunder.pointsLost.round()} pts',
-                  style: text.titleMedium?.copyWith(color: ChibreColors.brass),
+                  style: text.titleMedium?.copyWith(color: UiColors.accent),
                 ),
               ],
             ),

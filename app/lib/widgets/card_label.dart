@@ -22,7 +22,7 @@ class CardLabel extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
-        color: ChibreColors.ivory,
+        color: UiColors.cardLabel,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

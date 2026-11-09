@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../game/client_game_controller.dart';
 import '../services/app_services.dart';
+import '../theme/flow_color.dart';
 import '../widgets/open_game_list.dart';
 import 'play_screen.dart';
 
@@ -45,8 +46,9 @@ class _JoinScreenState extends State<JoinScreen> {
       final advisor = await services.newAdvisor();
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => PlayScreen(
+        flowRoute(
+          context,
+          (_) => PlayScreen(
             controller: ClientGameController(session, advisor: advisor),
           ),
         ),

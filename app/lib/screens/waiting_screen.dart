@@ -1,3 +1,5 @@
+import '../theme/flow_color.dart';
+
 import 'dart:async';
 
 import 'package:chibre_net/chibre_net.dart';
@@ -37,9 +39,9 @@ class _WaitingScreenState extends State<WaitingScreen> {
   void _play() {
     _subscription.cancel();
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) =>
-            PlayScreen(controller: HostGameController(widget.session)),
+      flowRoute(
+        context,
+        (_) => PlayScreen(controller: HostGameController(widget.session)),
       ),
     );
   }

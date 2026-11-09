@@ -31,7 +31,7 @@ class OpenGameList extends StatelessWidget {
         final joinable = listing.joinableBy(installationId);
         return ListTile(
           enabled: joinable,
-          tileColor: listing.isPaused ? ChibreColors.feltDark : null,
+          tileColor: listing.isPaused ? UiColors.panel : null,
           title: Text(listing.name),
           subtitle: Text(
             listing.isPaused
@@ -41,8 +41,8 @@ class OpenGameList extends StatelessWidget {
           trailing: listing.isPaused
               ? Chip(
                   label: Text(joinable ? 'Reprendre' : 'En pause'),
-                  backgroundColor: ChibreColors.brass,
-                  labelStyle: const TextStyle(color: ChibreColors.feltDark),
+                  backgroundColor: UiColors.accent,
+                  labelStyle: const TextStyle(color: UiColors.onAccent),
                 )
               : const Icon(Icons.chevron_right),
           onTap: joinable ? () => onJoin(game) : null,

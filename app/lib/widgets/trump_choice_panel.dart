@@ -25,7 +25,7 @@ class TrumpChoicePanel extends StatelessWidget {
   /// [ChooseTrump] or [Chibrer] suggested by the computer player.
   final GameAction? suggested;
 
-  static const _outline = BorderSide(color: ChibreColors.brass, width: 3);
+  static const _outline = BorderSide(color: UiColors.accent, width: 3);
 
   @override
   Widget build(BuildContext context) => Wrap(

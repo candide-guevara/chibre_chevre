@@ -16,13 +16,14 @@ class SeatBadge extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: isTurn ? ChibreColors.brass : ChibreColors.feltDark,
+        color: isTurn ? UiColors.accent : UiColors.seatBadge,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         nickname,
         style: text.labelLarge?.copyWith(
-          color: isTurn ? ChibreColors.feltDark : ChibreColors.ivory,
+          color: isTurn ? UiColors.onAccent : UiColors.text,
+          fontSize: (text.labelLarge?.fontSize ?? 14) * 1.2,
         ),
       ),
     );

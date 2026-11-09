@@ -22,7 +22,7 @@ class RoundSummary extends StatelessWidget {
     return GestureDetector(
       onTap: onDismiss,
       child: Card(
-        color: ChibreColors.feltDark,
+        color: UiColors.popup,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -38,9 +38,7 @@ class RoundSummary extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Touchez pour continuer',
-                style: text.bodySmall?.copyWith(
-                  color: ChibreColors.ivory.withValues(alpha: 0.7),
-                ),
+                style: text.bodySmall?.copyWith(color: UiColors.textMuted),
               ),
             ],
           ),

@@ -3,6 +3,8 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
+import '../theme/chibre_theme.dart';
+import '../theme/screen_theme.dart';
 import '../widgets/blunder_tile.dart';
 import '../widgets/rematch_buttons.dart';
 
@@ -24,20 +26,23 @@ class InsightsScreen extends StatelessWidget {
           if (context.mounted) Navigator.of(context).pop();
         });
       }
-      return Scaffold(
-        appBar: AppBar(title: const Text('Analyse de la partie')),
-        body: table.insights == null
-            ? const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('L\'expert analyse la partie…'),
-                  ],
-                ),
-              )
-            : _content(context, table),
+      return ScreenTheme(
+        color: ScreenColors.insights,
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Analyse de la partie')),
+          body: table.insights == null
+              ? const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('L\'expert analyse la partie…'),
+                    ],
+                  ),
+                )
+              : _content(context, table),
+        ),
       );
     },
   );

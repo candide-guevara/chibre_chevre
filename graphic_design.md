@@ -15,20 +15,27 @@ Derived from billiard table green (`app/lib/theme/chibre_theme.dart`, `ChibreCol
 
 | Name        | Colour    | Use                                                      |
 |-------------|-----------|----------------------------------------------------------|
-| `felt`      | `#0B6B3A` | screen background, the table                             |
-| `feltDark`  | `#07482A` | app bar, panels, pop-ups, score board, text fields       |
+| `felt`      | `#0B6B3A` | Material seed colour                                     |
+| `feltDark`  | `#07482A` | panels                                                   |
+| `slate`     | `#2F4555` | app bar, the score board atop the table, pop-ups on the table (melds, Stöck, round summary) |
 | `feltLight` | `#17844C` | subtle highlights on the felt                            |
-| `ivory`     | `#FFFBF0` | text, outlines, primary buttons, trump badge             |
+| `ivory`     | `#FFFBF0` | text, trump badge                                        |
+| `cream`     | `#F3E8CF` | buttons: filled background, outlined text and border (the Art Deco Ivoire cards) |
 | `brass`     | `#D9B95B` | accents: whose turn it is, selection, points gained, multiplier, "En pause" badge |
 | `red`       | `#C0272D` | red suits outside the cards                              |
 | `ink`       | `#1E2623` | black suits and text on ivory                            |
+
+Colours are defined in `app/lib/theme/chibre_theme.dart`: `ChibreColors` is the palette, `UiColors` maps each interface element (top bar, pop-ups, panels, accent...) to it, and `ScreenColors` each screen. Widgets only use the roles, so restyling an element is a one-line change there.
+
+Screen backgrounds (`ScreenColors`) are six colours of the same perceived lightness (OKLab L 0.339). The start screen and the insights are navy `#0E356F`, the table green `#164223`. The other screens take the colour of the way the player got there from the start screen (`FlowColor`), so the same screen (e.g. the advanced settings) may have different colours: plum `#4F264A` from the profile, olive `#363B13` from joining or hosting a game, rust `#562B00` from a single player game, crimson `#6D0408` from a resumed game. Text fields are not filled, so they show the screen's background.
 
 The Material theme is dark, seeded from `felt`, with ivory as primary and brass as secondary.
 
 ## Components
 
-* **Buttons**: at least 240×52, corners rounded 8, text 18. The main action of a screen is a filled ivory button with felt text, brighter than the outlined ivory buttons next to it, so the eye goes to it first. Action bars sit at the bottom of the screen.
-* **Panels and pop-ups** (score board, round summary, announcements, pause overlay): `feltDark` cards on the felt; the pause overlay is `feltDark` at 80 % opacity over the table. Secondary text is ivory at 70 %, points gained are brass.
+* **Buttons**: at least 240×52, corners rounded 8, text 18. The main action of a screen is a filled cream button whose text is the screen's background colour, brighter than the outlined cream buttons next to it, so the eye goes to it first. Action bars sit at the bottom of the screen.
+  The filled buttons of the start screen have a suit pip at each end, the label centred between them: ♦ Reprendre, ♠ Rejoindre, ♥ Créer, ♣ Jouer seul, so that red and black alternate (`PipButton`).
+* **Panels and pop-ups**: the score board and the pop-ups on the table (round summary, announcements) are `slate` like the app bar; other panels (blunders, paused games) are `feltDark`; the pause overlay is `feltDark` at 80 % opacity over the table. Secondary text is ivory at 70 %, points gained are brass.
 * **Seat badges**: rounded 12, `feltDark` with ivory text; the player whose turn it is turns brass with felt text.
 * **Trump indicator**: "Atout :" followed by the suit drawn large on an ivory disc (⬇ / ⬆ for Obenabe / Undenufe), then the multiplier in brass.
 * **Cards in the hand**: unplayable cards are darkened (40 % black); selected or suggested cards are raised by 15 % of their height and outlined in brass.

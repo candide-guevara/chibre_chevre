@@ -15,12 +15,12 @@ class PauseOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xCC07482A),
+    color: UiColors.pauseOverlay,
     child: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(color: ChibreColors.ivory),
+          const CircularProgressIndicator(color: UiColors.text),
           const SizedBox(height: 16),
           Text(
             'En attente de $nickname…',

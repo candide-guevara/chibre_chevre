@@ -52,7 +52,7 @@ class PlayingCard extends StatelessWidget {
       face = DecoratedBox(
         position: DecorationPosition.foreground,
         decoration: BoxDecoration(
-          border: Border.all(color: ChibreColors.brass, width: 3),
+          border: Border.all(color: UiColors.accent, width: 3),
           borderRadius: BorderRadius.circular(width * design.cornerRadius),
         ),
         child: face,

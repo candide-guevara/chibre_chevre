@@ -9,11 +9,13 @@ import '../game/hand_order.dart';
 import '../game/meld_selection.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
+import '../theme/flow_color.dart';
+import '../theme/screen_theme.dart';
+import '../widgets/announcement_summary.dart';
 import '../widgets/game_actions_bar.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/meld_offer.dart';
-import '../widgets/announcement_summary.dart';
 import '../widgets/pause_overlay.dart';
 import '../widgets/playing_card.dart';
 import '../widgets/round_summary.dart';
@@ -268,9 +270,7 @@ class _PlayScreenState extends State<PlayScreen> {
   };
 
   void _openPlayedCards() => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => PlayedCardsScreen(controller: _controller),
-    ),
+    flowRoute<void>(context, (_) => PlayedCardsScreen(controller: _controller)),
   );
 
   void _skipMelds() {
@@ -335,74 +335,82 @@ class _PlayScreenState extends State<PlayScreen> {
   Widget build(BuildContext context) {
     final table = _table;
     if (table == null || table.player == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return ScreenTheme(
+        color: ScreenColors.play,
+        child: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
     }
     if (table.phase == TablePhase.gameOver) {
       return EndScreen(controller: _controller, table: table, onHome: _leave);
     }
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _confirmLeave();
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  ScoreBoard(
-                    scores: table.scores,
-                    team: teamOf(table.seat),
-                    target: table.options.targetScore,
-                    mode: table.player!.mode,
-                    multiplier: table.player!.mode == null
-                        ? 1
-                        : table.options.multiplierFor(table.player!.mode!),
-                  ),
-                  Expanded(child: _tableArea(table)),
-                  _actionArea(table),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                    child: HandView(
-                      cards: sortHand(
-                        table.player!.hand,
-                        table.player!.mode,
-                        byTrump: table.sortByTrump,
-                      ),
-                      enabled: _enabledCards(table),
-                      selected: _choosingMelds ? _selection : _suggestedCards,
-                      onTap: _onCardTap,
-                      badge: switch (_stoeckCard(table)) {
-                        final card? => (
-                          card: card,
-                          child: ActionChip(
-                            label: const Text('Stöck'),
-                            onPressed: () => _play(card, stoeck: true),
-                          ),
+    return ScreenTheme(
+      color: ScreenColors.play,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _confirmLeave();
+        },
+        child: Scaffold(
+          // Only colors the status bar like on the other screens.
+          appBar: AppBar(toolbarHeight: 0, automaticallyImplyLeading: false),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    ScoreBoard(
+                      scores: table.scores,
+                      team: teamOf(table.seat),
+                      target: table.options.targetScore,
+                      mode: table.player!.mode,
+                      multiplier: table.player!.mode == null
+                          ? 1
+                          : table.options.multiplierFor(table.player!.mode!),
+                    ),
+                    Expanded(child: _tableArea(table)),
+                    _actionArea(table),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                      child: HandView(
+                        cards: sortHand(
+                          table.player!.hand,
+                          table.player!.mode,
+                          byTrump: table.sortByTrump,
                         ),
-                        null => null,
-                      },
+                        enabled: _enabledCards(table),
+                        selected: _choosingMelds ? _selection : _suggestedCards,
+                        onTap: _onCardTap,
+                        badge: switch (_stoeckCard(table)) {
+                          final card? => (
+                            card: card,
+                            child: ActionChip(
+                              label: const Text('Stöck'),
+                              onPressed: () => _play(card, stoeck: true),
+                            ),
+                          ),
+                          null => null,
+                        },
+                      ),
                     ),
-                  ),
-                  if (table.assistance)
-                    GameActionsBar(
-                      onPlayForMe: table.isMyTurn && !_decidingMelds
-                          ? _suggest
-                          : null,
-                      thinking: _thinking,
-                      onPlayedCards: _openPlayedCards,
-                    ),
-                ],
-              ),
-              if (table.isPaused)
-                Positioned.fill(
-                  child: PauseOverlay(
-                    nickname: table.pausedFor!,
-                    onAbandon: _leave,
-                  ),
+                    if (table.assistance)
+                      GameActionsBar(
+                        onPlayForMe: table.isMyTurn && !_decidingMelds
+                            ? _suggest
+                            : null,
+                        thinking: _thinking,
+                        onPlayedCards: _openPlayedCards,
+                      ),
+                  ],
                 ),
-            ],
+                if (table.isPaused)
+                  Positioned.fill(
+                    child: PauseOverlay(
+                      nickname: table.pausedFor!,
+                      onAbandon: _leave,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -574,10 +582,7 @@ class _PlayScreenState extends State<PlayScreen> {
     if (table.isMyTurn) return Text('À vous de jouer', style: style);
     final waiting = _waitingFor(table);
     if (waiting == null) return const SizedBox.shrink();
-    return Text(
-      waiting,
-      style: style?.copyWith(color: ChibreColors.ivory.withValues(alpha: 0.7)),
-    );
+    return Text(waiting, style: style?.copyWith(color: UiColors.textMuted));
   }
 
   /// What the game waits for when it is not this player's turn.

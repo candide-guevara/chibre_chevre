@@ -6,8 +6,8 @@ import 'package:chibre_core/chibre_core.dart';
 import '../theme/chibre_theme.dart';
 
 Color suitColor(Suit suit) => suit == Suit.diamonds || suit == Suit.hearts
-    ? ChibreColors.red
-    : ChibreColors.ink;
+    ? UiColors.redSuit
+    : UiColors.blackSuit;
 
 /// The outline of a suit symbol filling [box].
 Path suitPath(Suit suit, Rect box) => switch (suit) {

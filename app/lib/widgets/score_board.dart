@@ -27,7 +27,8 @@ class ScoreBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     return Container(
-      color: ChibreColors.feltDark,
+      // The top bar, like the app bar of the other screens.
+      color: UiColors.topBar,
       // Fixed, so that the table below does not move when the trump appears.
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 16),

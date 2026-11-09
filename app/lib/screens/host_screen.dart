@@ -6,6 +6,7 @@ import '../game/advanced_settings.dart';
 import '../game/game_defaults.dart';
 import '../services/app_services.dart';
 import '../game/host_game_controller.dart';
+import '../theme/flow_color.dart';
 import '../widgets/host_actions_bar.dart';
 import 'advanced_settings_screen.dart';
 import 'play_screen.dart';
@@ -91,8 +92,9 @@ class _HostScreenState extends State<HostScreen> {
   }
 
   void _openAdvanced() => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => AdvancedSettingsScreen(
+    flowRoute<void>(
+      context,
+      (_) => AdvancedSettingsScreen(
         settings: _advanced,
         onChanged: (settings) => setState(() => _advanced = settings),
       ),
@@ -123,8 +125,9 @@ class _HostScreenState extends State<HostScreen> {
     );
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => widget.solo
+      flowRoute(
+        context,
+        (_) => widget.solo
             ? PlayScreen(controller: HostGameController(session))
             : WaitingScreen(session: session),
       ),

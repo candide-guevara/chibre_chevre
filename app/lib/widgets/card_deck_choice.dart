@@ -46,9 +46,7 @@ class CardDeckChoice extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected
-                  ? ChibreColors.brass
-                  : ChibreColors.ivory.withValues(alpha: 0.2),
+              color: isSelected ? UiColors.accent : UiColors.faintOutline,
               width: 3,
             ),
           ),
