@@ -25,6 +25,7 @@ class _HostScreenState extends State<HostScreen> {
   final _target = TextEditingController();
   var _obenUnde = false;
   var _multipliers = false;
+  var _finishLastRound = false;
   var _advanced = const AdvancedSettings();
   var _starting = false;
   var _loaded = false;
@@ -53,6 +54,7 @@ class _HostScreenState extends State<HostScreen> {
     _target.text = '${defaults.options.targetScore}';
     _obenUnde = defaults.options.obenUndeAllowed;
     _multipliers = defaults.options.multipliersEnabled;
+    _finishLastRound = defaults.options.finishLastRound;
     _advanced = defaults.advanced;
   }
 
@@ -71,6 +73,7 @@ class _HostScreenState extends State<HostScreen> {
     targetScore: _targetScore!,
     obenUndeAllowed: _obenUnde,
     multipliersEnabled: _multipliers,
+    finishLastRound: _finishLastRound,
   );
 
   Future<void> _saveDefaults() async {
@@ -169,6 +172,15 @@ class _HostScreenState extends State<HostScreen> {
           subtitle: const Text('♦♥ ×1, ♠♣ ×2, Obenabe et Undenufe ×3'),
           value: _multipliers,
           onChanged: (value) => setState(() => _multipliers = value),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Finir la dernière manche'),
+          subtitle: const Text(
+            'L\'équipe qui atteint le score en premier gagne.',
+          ),
+          value: _finishLastRound,
+          onChanged: (value) => setState(() => _finishLastRound = value),
         ),
       ],
     ),

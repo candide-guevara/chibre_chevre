@@ -53,11 +53,14 @@ void main() {
 
     await tester.enterText(find.byType(TextField), '1500');
     await tester.tap(find.text('Multiplicateurs'));
+    await tester.ensureVisible(find.text('Finir la dernière manche'));
+    await tester.tap(find.text('Finir la dernière manche'));
     await tester.tap(find.text('Enregistrer'));
     await tester.pumpAndSettle();
 
     expect(find.byType(HostScreen), findsNothing);
     expect(profile.gameDefaults.options.targetScore, 1500);
     expect(profile.gameDefaults.options.multipliersEnabled, isTrue);
+    expect(profile.gameDefaults.options.finishLastRound, isTrue);
   });
 }

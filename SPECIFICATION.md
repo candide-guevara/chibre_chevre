@@ -96,6 +96,7 @@ Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
   * Stöck (King + Queen of trump, 20 points): always counted regardless of the meld comparison. The player announces it when playing the second of the two cards (a "Stöck" button appears at that moment, or it is announced automatically when the host turned on "Annonces automatiques").
   * Not announcing a meld or Stöck means it does not count (and is a potential blunder in the insights).
 * **End of game**: the first team to reach the target score (default 1000) wins. Points are counted in the order Stöck, melds, tricks, so the game may end mid-round.
+  With the host option "Finir la dernière manche" (default off), that round is played to the end and scored normally; the first team to reach the target score still wins, whatever the rest of the round brings.
 
 ## Computer players
 
@@ -140,6 +141,7 @@ Allows to configure different options, starting from the player's game defaults 
 * number of points (default 1000)
 * trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
 * multipliers: off (default) / on
+* "Finir la dernière manche" (play the last round to the end even when the game is decided): off (default) / on
 
 A bar of three buttons at the bottom of the screen:
 

@@ -26,6 +26,9 @@ message GameOptions {
   uint32 target_score = 1;
   bool oben_unde_allowed = 2;
   bool multipliers_enabled = 3;
+  // The round in which a team reaches the target is played to the end; the
+  // first team to reach it still wins.
+  bool finish_last_round = 4;
 }
 
 // ---------------------------------------------------------------- Discovery

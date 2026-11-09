@@ -18,12 +18,14 @@ pb.GameOptions encodeOptions(GameOptions options) => pb.GameOptions(
       targetScore: options.targetScore,
       obenUndeAllowed: options.obenUndeAllowed,
       multipliersEnabled: options.multipliersEnabled,
+      finishLastRound: options.finishLastRound,
     );
 
 GameOptions decodeOptions(pb.GameOptions options) => GameOptions(
       targetScore: options.targetScore,
       obenUndeAllowed: options.obenUndeAllowed,
       multipliersEnabled: options.multipliersEnabled,
+      finishLastRound: options.finishLastRound,
     );
 
 Meld decodeMeld(Int64 bits) {

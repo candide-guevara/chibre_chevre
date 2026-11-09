@@ -16,6 +16,7 @@ class GameDefaults {
     'targetScore': options.targetScore,
     'obenUndeAllowed': options.obenUndeAllowed,
     'multipliersEnabled': options.multipliersEnabled,
+    'finishLastRound': options.finishLastRound,
     'trickHoldMs': advanced.trickHold.inMilliseconds,
     'assistance': advanced.assistance,
     'sortByTrump': advanced.sortByTrump,
@@ -40,6 +41,10 @@ class GameDefaults {
         multipliersEnabled: read(
           'multipliersEnabled',
           defaults.options.multipliersEnabled,
+        ),
+        finishLastRound: read(
+          'finishLastRound',
+          defaults.options.finishLastRound,
         ),
       ),
       advanced: AdvancedSettings(

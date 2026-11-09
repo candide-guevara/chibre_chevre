@@ -63,6 +63,7 @@ const GameOptions$json = {
       '5': 8,
       '10': 'multipliersEnabled'
     },
+    {'1': 'finish_last_round', '3': 4, '4': 1, '5': 8, '10': 'finishLastRound'},
   ],
 };
 
@@ -70,7 +71,8 @@ const GameOptions$json = {
 final $typed_data.Uint8List gameOptionsDescriptor = $convert.base64Decode(
     'CgtHYW1lT3B0aW9ucxIhCgx0YXJnZXRfc2NvcmUYASABKA1SC3RhcmdldFNjb3JlEioKEW9iZW'
     '5fdW5kZV9hbGxvd2VkGAIgASgIUg9vYmVuVW5kZUFsbG93ZWQSLwoTbXVsdGlwbGllcnNfZW5h'
-    'YmxlZBgDIAEoCFISbXVsdGlwbGllcnNFbmFibGVk');
+    'YmxlZBgDIAEoCFISbXVsdGlwbGllcnNFbmFibGVkEioKEWZpbmlzaF9sYXN0X3JvdW5kGAQgAS'
+    'gIUg9maW5pc2hMYXN0Um91bmQ=');
 
 @$core.Deprecated('Use gameAdvertDescriptor instead')
 const GameAdvert$json = {

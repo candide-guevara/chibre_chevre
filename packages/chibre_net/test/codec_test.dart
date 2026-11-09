@@ -11,7 +11,10 @@ import 'package:test/test.dart';
 
 GameState playedGame() => MatchRunner(
         List.generate(4, (_) => HeuristicPlayer()),
-        options: const GameOptions(targetScore: 500, multipliersEnabled: true))
+        options: const GameOptions(
+            targetScore: 500,
+            multipliersEnabled: true,
+            finishLastRound: true))
     .playGame(deals: RandomDealSource(Random(1)));
 
 void main() {
@@ -36,6 +39,7 @@ void main() {
         replayRecord(decodeRecord(pb.GameRecord.fromBuffer(bytes)));
     expect(replayed.scores, game.scores);
     expect(replayed.winningTeam, game.winningTeam);
+    expect(replayed.options.finishLastRound, isTrue);
   });
 
   test('a table survives encoding', () {

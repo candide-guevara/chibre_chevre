@@ -73,6 +73,39 @@ void main() {
         throwsA(isA<IllegalActionException>()));
   });
 
+  test('with finishLastRound, the last round is played to the end and the '
+      'first team to reach the target wins', () {
+    var midRound = 0;
+    for (var seed = 0; seed < 20; seed++) {
+      final stopped = GameState(
+          options: const GameOptions(targetScore: 300),
+          deals: RandomDealSource(Random(seed)));
+      playUntilOver(stopped);
+      final finished = GameState(
+          options: const GameOptions(targetScore: 300, finishLastRound: true),
+          deals: RandomDealSource(Random(seed)));
+      // Same decisions as [stopped], then the rest of the round.
+      for (final (index, round) in stopped.record.rounds.indexed) {
+        if (index > 0) finished.startNextRound();
+        for (final action in round.actions) {
+          finished.apply(action);
+        }
+      }
+      if (stopped.round.phase != RoundPhase.over) {
+        midRound++;
+        expect(finished.phase, GamePhase.playing);
+        expect(finished.winningTeam, isNull);
+      }
+      playUntilOver(finished);
+      expect(finished.roundIndex, stopped.roundIndex);
+      expect(finished.round.phase, RoundPhase.over);
+      expect(finished.winningTeam, stopped.winningTeam);
+      expect(finished.scores[0] + finished.scores[1],
+          greaterThanOrEqualTo(stopped.scores[0] + stopped.scores[1]));
+    }
+    expect(midRound, greaterThan(10));
+  });
+
   test('scores add up the round points until the target', () {
     final game = GameState(
         options: const GameOptions(targetScore: 1000),

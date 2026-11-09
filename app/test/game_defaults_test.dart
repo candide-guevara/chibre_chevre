@@ -23,6 +23,7 @@ void main() {
           targetScore: 1500,
           obenUndeAllowed: true,
           multipliersEnabled: true,
+          finishLastRound: true,
         ),
         advanced: AdvancedSettings(
           trickHold: Duration(seconds: 3),
@@ -38,6 +39,7 @@ void main() {
     expect(defaults.options.targetScore, 1500);
     expect(defaults.options.obenUndeAllowed, isTrue);
     expect(defaults.options.multipliersEnabled, isTrue);
+    expect(defaults.options.finishLastRound, isTrue);
     expect(defaults.advanced.trickHold, const Duration(seconds: 3));
     expect(defaults.advanced.assistance, isTrue);
     expect(defaults.advanced.sortByTrump, isTrue);

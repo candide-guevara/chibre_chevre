@@ -38,13 +38,18 @@ class GameState {
   final DealSource _deals;
   final _scores = [0, 0];
   late RoundState _round;
-  int? _winningTeam;
+
+  /// The first team to reach the target score.
+  int? _winner;
 
   /// The next round, once dealt ahead of time by [nextRoundViewFor].
   RoundState? _nextRound;
 
   GamePhase get phase {
-    if (_winningTeam != null) return GamePhase.gameOver;
+    if (_winner != null &&
+        (!options.finishLastRound || _round.phase == RoundPhase.over)) {
+      return GamePhase.gameOver;
+    }
     return switch (_round.phase) {
       RoundPhase.choosingTrump => GamePhase.choosingTrump,
       RoundPhase.playing => GamePhase.playing,
@@ -61,13 +66,15 @@ class GameState {
 
   List<int> get scores => List.unmodifiable(_scores);
 
-  int? get winningTeam => _winningTeam;
+  /// Known once the game is over.
+  int? get winningTeam => phase == GamePhase.gameOver ? _winner : null;
 
   PlayerView viewFor(int seat) =>
       PlayerView.ofRound(_round, seat, scores: _scores);
 
   /// Applies [action] and returns the points that were added to the scores.
-  /// Points are counted one entry at a time, so the game can end mid-round.
+  /// Points are counted one entry at a time, so the game can end mid-round,
+  /// unless [GameOptions.finishLastRound].
   List<ScoreEntry> apply(GameAction action) {
     if (phase == GamePhase.gameOver) {
       throw const IllegalActionException('The game is over');
@@ -78,9 +85,9 @@ class GameState {
     for (final entry in entries) {
       _scores[entry.team] += entry.points;
       counted.add(entry);
-      if (_scores[entry.team] >= options.targetScore) {
-        _winningTeam = entry.team;
-        break;
+      if (_winner == null && _scores[entry.team] >= options.targetScore) {
+        _winner = entry.team;
+        if (!options.finishLastRound) break;
       }
     }
     return counted;

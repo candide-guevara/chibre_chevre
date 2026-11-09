@@ -26,12 +26,14 @@ class GameOptions extends $pb.GeneratedMessage {
     $core.int? targetScore,
     $core.bool? obenUndeAllowed,
     $core.bool? multipliersEnabled,
+    $core.bool? finishLastRound,
   }) {
     final result = GameOptions._();
     if (targetScore != null) result.targetScore = targetScore;
     if (obenUndeAllowed != null) result.obenUndeAllowed = obenUndeAllowed;
     if (multipliersEnabled != null)
       result.multipliersEnabled = multipliersEnabled;
+    if (finishLastRound != null) result.finishLastRound = finishLastRound;
     return result;
   }
 
@@ -52,6 +54,7 @@ class GameOptions extends $pb.GeneratedMessage {
         fieldType: $pb.PbFieldType.OU3)
     ..aOB(2, _omitFieldNames ? '' : 'obenUndeAllowed')
     ..aOB(3, _omitFieldNames ? '' : 'multipliersEnabled')
+    ..aOB(4, _omitFieldNames ? '' : 'finishLastRound')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -102,6 +105,17 @@ class GameOptions extends $pb.GeneratedMessage {
   $core.bool hasMultipliersEnabled() => $_has(2);
   @$pb.TagNumber(3)
   void clearMultipliersEnabled() => $_clearField(3);
+
+  /// The round in which a team reaches the target is played to the end; the
+  /// first team to reach it still wins.
+  @$pb.TagNumber(4)
+  $core.bool get finishLastRound => $_getBF(3);
+  @$pb.TagNumber(4)
+  set finishLastRound($core.bool value) => $_setBool(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasFinishLastRound() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearFinishLastRound() => $_clearField(4);
 }
 
 /// Broadcast by the host so other phones can list the game.
