@@ -81,6 +81,11 @@ dart compile exe bin/speed_bench.dart -o /tmp/speed_bench && /tmp/speed_bench
 # Expert teams with different thinking budgets (seconds on a phone) play
 # whole games against each other.
 dart compile exe bin/budget_match.dart -o /tmp/budget_match && /tmp/budget_match --pairs 50
+# How well cheap predictors guess the expert's card: record games once,
+# then evaluate predictors on them as often as needed.
+dart compile exe bin/predict_bench.dart -o /tmp/predict_bench
+/tmp/predict_bench record /tmp/games.txt --games 28
+/tmp/predict_bench evaluate /tmp/games.txt
 ```
 
 Compile them (phones run compiled code too): `dart run` is slower and

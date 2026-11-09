@@ -32,7 +32,10 @@ class Ismcts {
   final double rolloutRandomness;
   final Random _random;
 
-  Card search(PlayerView view) {
+  Card search(PlayerView view) => rank(view).first;
+
+  /// The legal cards, most visited first.
+  List<Card> rank(PlayerView view) {
     final sampler = WorldSampler(view);
     final root = _Node(null, view.seat);
     final start = Playout.fromView(view, sampler.hands);
@@ -43,11 +46,10 @@ class Ismcts {
       }
       _iterate(root, start.withHands(sampler.sample(_random)));
     }
-    var best = root.children.first;
-    for (final child in root.children) {
-      if (child.visits > best.visits) best = child;
-    }
-    return best.card!;
+    // Stable on so few cards: ties keep the order the cards were tried in.
+    final children = List.of(root.children)
+      ..sort((a, b) => b.visits - a.visits);
+    return [for (final child in children) child.card!];
   }
 
   bool _timeIsUp(Stopwatch stopwatch) =>
