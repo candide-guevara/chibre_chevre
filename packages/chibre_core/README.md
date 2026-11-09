@@ -1,7 +1,7 @@
 # chibre_core
 
 Pure Dart (no Flutter) game engine, computer players and game analysis for
-the Chibre app. See `SPECIFICATION.md` at the repository root.
+the Chibre Chèvre app. See `SPECIFICATION.md` at the repository root.
 
 - `lib/src/engine/`: cards, rules, melds, rounds and games.
 - `lib/src/ai/`: random, heuristic and expert computer players.

@@ -1,6 +1,6 @@
 # Project specs
 
-The goal of this project is to create a phone app to play the [chibre][0] card game.
+The goal of this project is to create a phone app, named **Chibre Chèvre**, to play the [chibre][0] card game.
 
 ## Expected agent behavior
 

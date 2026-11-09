@@ -26,7 +26,7 @@ class ChibreApp extends StatelessWidget {
       builder: (context, design, child) =>
           CardDesignScope(design: design, child: child!),
       child: MaterialApp(
-        title: 'Chibre',
+        title: 'Chibre Chèvre',
         debugShowCheckedModeBanner: false,
         theme: chibreTheme(),
         home: const StartScreen(),

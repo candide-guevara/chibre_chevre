@@ -1,7 +1,8 @@
-# Chibre
+# Chibre Chèvre
 
 A phone app to play [Chibre](https://www.swisslos.ch/fr/jass/informations/les-regles-du-jass/bases-du-jass.html)
-with a friend against two expert computer players, over the local network.
+with a friend against two expert computer players, over the local network, or alone
+with a computer partner.
 See [SPECIFICATION.md](SPECIFICATION.md).
 
 | Directory | What |

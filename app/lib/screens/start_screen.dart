@@ -71,9 +71,16 @@ class _StartScreenState extends State<StartScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Chibre',
-                  style: Theme.of(context).textTheme.displayMedium,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  // On one line, smaller on narrow phones.
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Chibre Chèvre',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 48),
                 Padding(

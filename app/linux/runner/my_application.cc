@@ -45,11 +45,11 @@ static void my_application_activate(GApplication* application) {
   if (use_header_bar) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
-    gtk_header_bar_set_title(header_bar, "chibre");
+    gtk_header_bar_set_title(header_bar, "Chibre Chèvre");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
-    gtk_window_set_title(window, "chibre");
+    gtk_window_set_title(window, "Chibre Chèvre");
   }
 
   // Phone form factor (OnePlus 13R: 1264x2780 px, ~412x906 logical).

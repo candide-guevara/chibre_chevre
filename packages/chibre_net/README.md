@@ -1,6 +1,6 @@
 # chibre_net
 
-Pure Dart wire protocol, transports and game sessions for the Chibre app.
+Pure Dart wire protocol, transports and game sessions for the Chibre Chèvre app.
 See `SPECIFICATION.md` at the repository root.
 
 - `lib/src/proto/`: generated from `proto/chibre.proto` (do not edit).

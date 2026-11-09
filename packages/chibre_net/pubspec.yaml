@@ -1,5 +1,5 @@
 name: chibre_net
-description: Wire protocol, transports (LAN, in memory) and game sessions for the Chibre app (pure Dart).
+description: Wire protocol, transports (LAN, in memory) and game sessions for the Chibre Chèvre app (pure Dart).
 publish_to: none
 
 environment:
