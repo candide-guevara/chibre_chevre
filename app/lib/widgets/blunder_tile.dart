@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../game/hand_order.dart';
 import '../labels.dart';
 import '../theme/chibre_theme.dart';
-import 'playing_card.dart';
+import 'card_label.dart';
 
 /// One blunder of the insights: the situation, what was done, what was
 /// better and what it cost.
@@ -54,7 +54,10 @@ class BlunderTile extends StatelessWidget {
             ),
             if (blunder.trick.isNotEmpty) _cards('Sur la table', blunder.trick),
             const SizedBox(height: 8),
-            Text(_explanation(), style: text.bodyMedium),
+            Text.rich(
+              TextSpan(children: _explanation()),
+              style: text.bodyMedium,
+            ),
           ],
         ),
       ),
@@ -68,27 +71,44 @@ class BlunderTile extends StatelessWidget {
         SizedBox(width: 90, child: Text(label)),
         Expanded(
           child: Wrap(
-            spacing: 2,
-            runSpacing: 2,
-            children: [
-              for (final card in cards) PlayingCard(card: card, width: 26),
-            ],
+            spacing: 4,
+            runSpacing: 4,
+            children: [for (final card in cards) CardLabel(card)],
           ),
         ),
       ],
     ),
   );
 
-  String _explanation() => switch (blunder.kind) {
-    BlunderKind.trumpChoice =>
-      'Choisi : ${trumpOptionName(blunder.chosenTrump!)}. '
-          'Mieux : ${trumpOptionName(blunder.bestTrump!)}.',
-    BlunderKind.cardPlay =>
-      'Joué : ${cardName(blunder.playedCard!)}. '
-          'Mieux : ${cardName(blunder.bestCard!)}.',
-    BlunderKind.missedMeld =>
-      'Non annoncé : ${blunder.missedMelds.map(meldName).join(', ')}.',
-    BlunderKind.missedStoeck =>
-      'Le Stöck n\'a pas été annoncé avec ${cardName(blunder.playedCard!)}.',
+  List<InlineSpan> _explanation() => switch (blunder.kind) {
+    BlunderKind.trumpChoice => [
+      TextSpan(
+        text:
+            'Choisi : ${trumpOptionName(blunder.chosenTrump!)}. '
+            'Mieux : ${trumpOptionName(blunder.bestTrump!)}.',
+      ),
+    ],
+    BlunderKind.cardPlay => [
+      const TextSpan(text: 'Joué : '),
+      cardSpan(blunder.playedCard!),
+      const TextSpan(text: '. Mieux : '),
+      cardSpan(blunder.bestCard!),
+      const TextSpan(text: '.'),
+    ],
+    BlunderKind.missedMeld => [
+      const TextSpan(text: 'Non annoncé : '),
+      for (final (i, meld) in blunder.missedMelds.indexed) ...[
+        TextSpan(text: '${i == 0 ? '' : ', '}${meld.value} '),
+        for (final card in meld.cards.cards) ...[
+          cardSpan(card),
+          const TextSpan(text: ' '),
+        ],
+      ],
+    ],
+    BlunderKind.missedStoeck => [
+      const TextSpan(text: 'Le Stöck n\'a pas été annoncé avec '),
+      cardSpan(blunder.playedCard!),
+      const TextSpan(text: '.'),
+    ],
   };
 }

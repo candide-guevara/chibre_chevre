@@ -202,6 +202,7 @@ Rematch keeps the same seats and options; the joiner must accept.
 During the course of the game all the moves, trump choices, melds and starting hands are recorded.
 After the game, the expert AI analyses each human decision (trump choice / chibrer, melds and Stöck announced or missed, card plays) by comparing the expected points of the chosen action against the best alternative, given the information available to that player at the time.
 It surfaces the 3 biggest blunders (largest expected point loss) for each human player, showing the situation (hand, trick, trump), what was played, what was better and the estimated cost in points.
+Cards are written as their rank and suit (e.g. "7♣", on a small ivory label in the cards' colours) rather than drawn as card images, in the situation as in the explanation ("Mieux : 7♣").
 For example failing to call a meld.
 
 The analysis runs on the host in background isolates and the result is sent to the joiner.
