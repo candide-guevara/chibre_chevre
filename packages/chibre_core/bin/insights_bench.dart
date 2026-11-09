@@ -7,7 +7,7 @@ import 'package:chibre_core/chibre_core.dart';
 const _usage = '''
 Measures how long the insights take, per round and per game: a weak
 expert team plays a strong one, then the weak team's decisions are
-analysed one game at a time, as on the phone. Games come in pairs on the
+analysed round by round, one game at a time. Games come in pairs on the
 same deals with the teams swapped, which also measures how much weaker the
 weak team is.
 
@@ -18,7 +18,7 @@ value, whose time here is what any uncapped phone waits.
 
 Usage: dart run bin/insights_bench.dart [options]
   --pairs <n>      pairs of games (default 12)
-  --weak <s>       the weak team's thinking time (default 0.2)
+  --weak <s>       the weak team's thinking time (default 0.1)
   --strong <s>     the strong team's thinking time (default 0.6)
   --analysis <s>   the thinking time the analysis budget is derived from
                    (default 0.6, as in the app)
@@ -37,7 +37,7 @@ Future<void> main(List<String> args) async {
     options[args[i].substring(2)] = args[i + 1];
   }
   final games = 2 * int.parse(options['pairs'] ?? '12');
-  final weak = double.parse(options['weak'] ?? '0.2');
+  final weak = double.parse(options['weak'] ?? '0.1');
   final strong = double.parse(options['strong'] ?? '0.6');
   final analysis = double.parse(options['analysis'] ?? '0.6');
 
@@ -96,24 +96,19 @@ void _analyse(List<_Result> results, int samples) {
   for (final (index, result) in results.indexed) {
     final record = result.record;
     final seats = result.weakSeats;
-    final ends = <int>[];
-    var actions = 0;
     for (final round in record.rounds) {
-      actions += round.actions.length;
-      ends.add(actions);
       decisions += round.actions.where((a) => seats.contains(a.seat)).length;
     }
+    final calculator =
+        BlunderCalculator(samples: samples, random: Random(index));
     final laps = <double>[];
-    final timer = Stopwatch()..start();
-    var round = 0;
-    final found = BlunderCalculator(samples: samples, random: Random(index))
-        .analyse(record, seats: seats, onProgress: (progress) {
-      if ((progress * actions).round() == ends[round]) {
-        laps.add(timer.elapsedMicroseconds / 1e6);
-        timer.reset();
-        round++;
-      }
-    });
+    final perRound = <Map<int, List<Blunder>>>[];
+    for (var round = 0; round < record.rounds.length; round++) {
+      final timer = Stopwatch()..start();
+      perRound.add(calculator.analyseRound(record, round, seats: seats));
+      laps.add(timer.elapsedMicroseconds / 1e6);
+    }
+    final found = BlunderCalculator.merge(perRound, seats: seats);
     blunders += found.values.fold(0, (sum, b) => sum + b.length);
     totals.add(laps.reduce((a, b) => a + b));
     rounds.addAll(laps);
