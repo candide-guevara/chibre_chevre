@@ -91,6 +91,12 @@ dart compile exe bin/predict_bench.dart -o /tmp/predict_bench
 # against a 0.6 s one; also how much weaker the 0.1 s team is.
 dart compile exe bin/insights_bench.dart -o /tmp/insights_bench
 /tmp/insights_bench --pairs 12
+
+# Two playing algorithms of bin/variants.dart on the same deals with the
+# teams swapped: points per round and time per decision, or game win rate.
+dart compile exe bin/algo_match.dart -o /tmp/algo_match
+/tmp/algo_match expert8700v2 expert8700v1 --pairs 300
+/tmp/algo_match expert8700v2 expert8700v1 --games 60
 ```
 
 Compile them (phones run compiled code too): `dart run` is slower and
