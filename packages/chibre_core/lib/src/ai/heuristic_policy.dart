@@ -13,8 +13,28 @@ import '../engine/trump_mode.dart';
 ///
 /// It runs millions of times per decision of the expert player, hence the
 /// card sets rather than lists. Ties go to the card with the lowest index.
+typedef CardPolicy = Card Function(
+    CardSet hand, List<Card> trick, TrumpMode mode, CardSet unplayed);
+
+/// The policy the computer players use unless told otherwise.
+const CardPolicy defaultPolicy = heuristicCardV2;
+
+/// The first policy: always tries to win a trick an opponent is winning,
+/// with its cheapest winning card.
 Card heuristicCard(
-    CardSet hand, List<Card> trick, TrumpMode mode, CardSet unplayed) {
+        CardSet hand, List<Card> trick, TrumpMode mode, CardSet unplayed) =>
+    _policy(hand, trick, mode, unplayed, v2: false);
+
+/// [heuristicCard], except that when an opponent is winning the trick it
+/// doesn't trump with a card worth more than the trick if it can play
+/// another card, and when last to play it wins with its richest card of the
+/// led suit.
+Card heuristicCardV2(
+        CardSet hand, List<Card> trick, TrumpMode mode, CardSet unplayed) =>
+    _policy(hand, trick, mode, unplayed, v2: true);
+
+Card _policy(CardSet hand, List<Card> trick, TrumpMode mode, CardSet unplayed,
+    {required bool v2}) {
   final legal = legalMoves(hand, trick, mode);
   if (legal.withoutFirst.isEmpty) return legal.first;
   final others = unplayed - hand;
@@ -36,6 +56,23 @@ Card heuristicCard(
     winners = winners | legal.ofSuit(trump);
   }
   if (winners.isEmpty) return _cheapest(legal, mode);
+  if (v2) {
+    final plainWinners =
+        trump == null ? winners : winners - CardSet.suit(trump);
+    if (plainWinners.isEmpty) {
+      final cheapest = _cheapest(winners, mode);
+      final losers = legal - winners;
+      if (cardPoints(cheapest, mode) > pointsOf(trick, mode) &&
+          losers.isNotEmpty) {
+        return _cheapest(losers, mode);
+      }
+    }
+    if (isLast) {
+      return plainWinners.isEmpty
+          ? _cheapest(winners, mode)
+          : _mostPoints(plainWinners, mode);
+    }
+  }
   if (isLast) return _cheapest(winners, mode);
   var safeWinners = CardSet.empty;
   for (var rest = winners; rest.isNotEmpty; rest = rest.withoutFirst) {
@@ -106,6 +143,19 @@ Card _richest(CardSet cards, TrumpMode mode) {
     if (key < bestKey) {
       best = rest.first;
       bestKey = key;
+    }
+  }
+  return best;
+}
+
+/// Ties go to the card with the lowest index.
+Card _mostPoints(CardSet cards, TrumpMode mode) {
+  var best = cards.first;
+  for (var rest = cards.withoutFirst;
+      rest.isNotEmpty;
+      rest = rest.withoutFirst) {
+    if (cardPoints(rest.first, mode) > cardPoints(best, mode)) {
+      best = rest.first;
     }
   }
   return best;

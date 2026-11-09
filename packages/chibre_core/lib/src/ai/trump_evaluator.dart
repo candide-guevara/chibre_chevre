@@ -19,10 +19,14 @@ import 'trump_option.dart';
 /// Values are the expected advantage of the player's team (half the point
 /// difference, multiplier included).
 class TrumpEvaluator {
-  TrumpEvaluator({required this.samples, Random? random})
+  TrumpEvaluator(
+      {required this.samples, this.policy = defaultPolicy, Random? random})
       : _random = random ?? Random();
 
   final int samples;
+
+  /// Plays the rounds out.
+  final CardPolicy policy;
   final Random _random;
 
   Map<TrumpOption, double> evaluate(PlayerView view) {
@@ -67,8 +71,8 @@ class TrumpEvaluator {
     final playout = Playout.newRound(hands, mode, view.trumpChooser);
     while (!playout.isOver) {
       final seat = playout.seatToAct;
-      playout.play(heuristicCard(
-          playout.hands[seat], playout.trick, mode, playout.unplayed));
+      playout.play(
+          policy(playout.hands[seat], playout.trick, mode, playout.unplayed));
     }
     var advantage = playout.advantage(team);
     for (var seat = 0; seat < seatCount; seat++) {

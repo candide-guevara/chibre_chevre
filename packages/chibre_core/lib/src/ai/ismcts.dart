@@ -19,6 +19,7 @@ class Ismcts {
     this.timeLimit,
     this.exploration = 0.7,
     this.rolloutRandomness = 0.1,
+    this.policy = defaultPolicy,
     Random? random,
   }) : _random = random ?? Random();
 
@@ -30,6 +31,9 @@ class Ismcts {
 
   /// Probability of playing a random legal card during rollouts.
   final double rolloutRandomness;
+
+  /// Plays the rollouts.
+  final CardPolicy policy;
   final Random _random;
 
   Card search(PlayerView view) => rank(view).first;
@@ -112,8 +116,7 @@ class Ismcts {
       return legal[_random.nextInt(legal.length)];
     }
     final seat = world.seatToAct;
-    return heuristicCard(
-        world.hands[seat], world.trick, world.mode, world.unplayed);
+    return policy(world.hands[seat], world.trick, world.mode, world.unplayed);
   }
 
   /// The advantage of [team], scaled to [0, 1].

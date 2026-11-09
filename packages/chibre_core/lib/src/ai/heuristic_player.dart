@@ -7,6 +7,10 @@ import 'trump_heuristic.dart';
 
 /// Plays by rules of thumb, without any search. A baseline for the expert.
 class HeuristicPlayer extends ComputerPlayer {
+  HeuristicPlayer({this.policy = defaultPolicy});
+
+  final CardPolicy policy;
+
   @override
   GameAction decideTrump(PlayerView view) {
     final allowed = view.options.allowedModes;
@@ -19,7 +23,7 @@ class HeuristicPlayer extends ComputerPlayer {
 
   @override
   PlayCard decidePlay(PlayerView view) {
-    final card = heuristicCard(view.hand, view.currentTrick!.cards, view.mode!,
+    final card = policy(view.hand, view.currentTrick!.cards, view.mode!,
         CardSet.full - view.playedCards);
     return playWithAnnouncements(view, card);
   }

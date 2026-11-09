@@ -6,6 +6,8 @@ export 'src/ai/compute_budget.dart';
 export 'src/ai/computer_player.dart';
 export 'src/ai/expert_player.dart';
 export 'src/ai/heuristic_player.dart';
+export 'src/ai/heuristic_policy.dart'
+    show CardPolicy, defaultPolicy, heuristicCard, heuristicCardV2;
 export 'src/ai/random_player.dart';
 export 'src/ai/trump_option.dart';
 export 'src/engine/card.dart';

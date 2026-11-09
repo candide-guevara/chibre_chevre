@@ -3,7 +3,6 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:chibre_core/chibre_core.dart';
-import 'package:chibre_core/src/ai/heuristic_policy.dart';
 import 'package:chibre_core/src/ai/ismcts.dart';
 import 'package:chibre_core/src/ai/move_evaluator.dart';
 

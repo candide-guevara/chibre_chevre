@@ -14,10 +14,14 @@ import 'world_sampler.dart';
 /// Values are the expected advantage of the player's team over the rest of
 /// the round (half the point difference, multiplier included).
 class MoveEvaluator {
-  MoveEvaluator({required this.samples, Random? random})
+  MoveEvaluator(
+      {required this.samples, this.policy = defaultPolicy, Random? random})
       : _random = random ?? Random();
 
   final int samples;
+
+  /// Plays the rounds out.
+  final CardPolicy policy;
   final Random _random;
 
   Map<Card, double> evaluate(PlayerView view) {
@@ -32,8 +36,8 @@ class MoveEvaluator {
         final playout = start.withHands(hands)..play(card);
         while (!playout.isOver) {
           final seat = playout.seatToAct;
-          playout.play(heuristicCard(playout.hands[seat], playout.trick,
-              playout.mode, playout.unplayed));
+          playout.play(policy(playout.hands[seat], playout.trick, playout.mode,
+              playout.unplayed));
         }
         totals[card] = totals[card]! + playout.advantage(team);
       }
