@@ -8,6 +8,7 @@ The goal of this project is to create a phone app to play the [chibre][0] card g
 * During our conversation, if a new feature is added or an important detail is discussed, this specification document must be updated.
   * However be frugal, this specification should not become a bible, very niche details can always be found by reading the code.
   * If this specification gets to large, do not hesitate to rewrite some sections to re-summarize and leave out details.
+* When measuring performance by running benchmarks, report the numbers you see on the machine you are running the benches on. Refrain from extrapolating, I do not care what the numbers would be on other devices.
 
 ## Requirements
 
