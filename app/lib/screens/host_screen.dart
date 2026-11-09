@@ -34,6 +34,7 @@ class _HostScreenState extends State<HostScreen> {
     super.didChangeDependencies();
     if (_loaded) return;
     _loaded = true;
+    if (!widget.editingDefaults) Services.of(context).measureSpeed();
     _name.text = _defaultName;
     _apply(Services.of(context).profile.gameDefaults);
   }

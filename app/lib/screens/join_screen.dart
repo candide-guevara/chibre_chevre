@@ -20,6 +20,15 @@ class _JoinScreenState extends State<JoinScreen> {
   late final _games = Services.of(context).transport.discover();
   final _address = TextEditingController();
   var _joining = false;
+  var _measuring = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_measuring) return;
+    _measuring = true;
+    Services.of(context).measureSpeed();
+  }
 
   @override
   void dispose() {

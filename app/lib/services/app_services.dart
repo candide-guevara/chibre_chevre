@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
@@ -10,7 +11,6 @@ import '../card_art/card_image_loader.dart';
 import '../widgets/playing_card.dart';
 import 'card_decks.dart';
 import 'network_lock.dart';
-import 'playout_speed_loader.dart';
 import 'profile_store.dart';
 import 'test_deal.dart';
 
@@ -25,17 +25,16 @@ class AppServices {
     required this.cardDecks,
     required this.transport,
     required this.savedGames,
-    required this.playoutsPerSecond,
     this.testDeal,
-  });
+  }) : _measure = _measureInBackground;
 
   /// Services without network or files, for widget tests.
   @visibleForTesting
   AppServices.forTesting({required this.profile, required this.savedGames})
     : cardDecks = CardDecks(profile),
       transport = InMemoryTransport(InMemoryNetwork()),
-      playoutsPerSecond = Future.value(1000),
-      testDeal = null;
+      testDeal = null,
+      _measure = (() async => 1000);
 
   static Future<AppServices> start({TestDeal? testDeal}) async {
     final profile = await ProfileStore.open(profile: _profileName);
@@ -60,7 +59,6 @@ class AppServices {
       savedGames: FileSavedGameStore(
         File('${directory.path}/saved-game$suffix.bin'),
       ),
-      playoutsPerSecond: loadPlayoutsPerSecond(profile),
       testDeal: testDeal,
     );
   }
@@ -73,8 +71,20 @@ class AppServices {
   final Transport transport;
   final SavedGameStore savedGames;
 
-  /// This phone's speed, measured in the background at startup.
-  final Future<double> playoutsPerSecond;
+  /// Measures this phone's search iterations per second.
+  final Future<double> Function() _measure;
+
+  /// The measure started by [measureSpeed], for the next game.
+  Future<double>? _speed;
+
+  static Future<double> _measureInBackground() =>
+      Isolate.run(() => measurePlayoutsPerSecond());
+
+  /// Measures the phone's speed for the next game, in the background. The
+  /// host and join screens call it as they open, so that the result is
+  /// ready when the game starts and reflects how fast the phone is at that
+  /// moment (once the app has started, in battery saver mode...).
+  void measureSpeed() => _speed = _measure();
 
   /// Cards dealt to the host in every round, for testing.
   final TestDeal? testDeal;
@@ -94,7 +104,9 @@ class AppServices {
 
   /// Computer players thinking for a given time on this phone.
   Future<BotRunner Function(Duration thinkingTime)> _newBots() async {
-    final speed = await playoutsPerSecond;
+    final measuring = _speed ?? _measure();
+    _speed = null; // The next game measures again.
+    final speed = await measuring;
     return (thinkingTime) => IsolateBotRunner(
       budget: ComputeBudget.forSpeed(speed, target: thinkingTime),
       seed: _seed,
