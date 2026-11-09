@@ -18,7 +18,8 @@ class InlineBotRunner implements BotRunner {
       ExpertPlayer(budget: budget, random: _random).decide(view);
 
   @override
-  Future<Map<int, List<Blunder>>> analyse(GameRecord record) async =>
+  Future<Map<int, List<Blunder>>?> analyseRound(
+          GameRecord record, int roundIndex, {Duration? timeLimit}) async =>
       BlunderCalculator(samples: budget.analysisSamples, random: _random)
-          .analyse(record);
+          .analyseRound(record, roundIndex, timeLimit: timeLimit);
 }

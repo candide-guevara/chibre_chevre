@@ -47,7 +47,7 @@ class BlunderCalculator {
               ? null
               : (progress) => onProgress((before +
                       progress * record.rounds[roundIndex].actions.length) /
-                  total)));
+                  total))!);
       done += record.rounds[roundIndex].actions.length;
     }
     return merge(rounds, seats: seats, maxPerSeat: maxPerSeat);
@@ -55,13 +55,17 @@ class BlunderCalculator {
 
   /// [analyse] for the round [roundIndex] of [record] alone, so that rounds
   /// can be analysed as soon as they are played; see [merge].
-  Map<int, List<Blunder>> analyseRound(
+  ///
+  /// Gives up and returns null once [timeLimit] is exceeded.
+  Map<int, List<Blunder>>? analyseRound(
     GameRecord record,
     int roundIndex, {
     Set<int> seats = const {0, 2},
     int maxPerSeat = 3,
+    Duration? timeLimit,
     void Function(double progress)? onProgress,
   }) {
+    final stopwatch = Stopwatch()..start();
     final game = GameState.replaying(record);
     for (var i = 0; i < roundIndex; i++) {
       record.rounds[i].actions.forEach(game.apply);
@@ -71,6 +75,7 @@ class BlunderCalculator {
     final blunders = <Blunder>[];
     for (final (index, action) in round.actions.indexed) {
       if (seats.contains(action.seat)) {
+        if (timeLimit != null && stopwatch.elapsed > timeLimit) return null;
         final view = game.viewFor(action.seat);
         blunders.addAll(_judge(view, action, round, roundIndex));
       }

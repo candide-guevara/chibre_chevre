@@ -199,7 +199,10 @@ After the game, the expert AI analyses each human decision (trump choice / chibr
 It surfaces the 3 biggest blunders (largest expected point loss) for each human player, showing the situation (hand, trick, trump), what was played, what was better and the estimated cost in points.
 For example failing to call a meld.
 
-The analysis runs on the host in a background isolate (a progress indicator is shown) and the result is sent to the joiner.
+The analysis runs on the host in background isolates and the result is sent to the joiner.
+Each round is analysed as soon as it ends, while its summary is shown, for at most 0.5 s so that it never delays the next round; a round not analysed in time is analysed again after the game.
+At the end of the game only those rounds and the last one are left (a progress indicator is shown), then the 3 biggest blunders of each player are picked among all rounds.
+A game resumed after the app was closed analyses its earlier rounds at the end.
 
 At the end of the screen:
 

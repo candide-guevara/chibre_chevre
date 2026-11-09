@@ -105,7 +105,7 @@ void _analyse(List<_Result> results, int samples) {
     final perRound = <Map<int, List<Blunder>>>[];
     for (var round = 0; round < record.rounds.length; round++) {
       final timer = Stopwatch()..start();
-      perRound.add(calculator.analyseRound(record, round, seats: seats));
+      perRound.add(calculator.analyseRound(record, round, seats: seats)!);
       laps.add(timer.elapsedMicroseconds / 1e6);
     }
     final found = BlunderCalculator.merge(perRound, seats: seats);

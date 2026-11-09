@@ -35,18 +35,44 @@ class RecordingBotRunner implements BotRunner {
   }
 
   @override
-  Future<Map<int, List<Blunder>>> analyse(GameRecord record) =>
-      _inner.analyse(record);
+  Future<Map<int, List<Blunder>>?> analyseRound(
+          GameRecord record, int roundIndex,
+          {Duration? timeLimit}) =>
+      _inner.analyseRound(record, roundIndex, timeLimit: timeLimit);
+}
+
+/// Every round's analysis runs out of time until the game is over.
+class TimingOutBotRunner implements BotRunner {
+  final _inner = InlineBotRunner(budget: budget, random: Random(1));
+  final timedOut = <int>[];
+  final analysed = <int>[];
+
+  @override
+  Future<GameAction> decide(PlayerView view) => _inner.decide(view);
+
+  @override
+  Future<Map<int, List<Blunder>>?> analyseRound(
+      GameRecord record, int roundIndex,
+      {Duration? timeLimit}) async {
+    if (timeLimit != null) {
+      timedOut.add(roundIndex);
+      return null;
+    }
+    analysed.add(roundIndex);
+    return _inner.analyseRound(record, roundIndex);
+  }
 }
 
 /// [thinkingTimes] records the thinking time of the computer players.
 HostSession newHost(InMemoryNetwork network,
-        {SavedGameStore? store, List<Duration>? thinkingTimes}) =>
+        {SavedGameStore? store,
+        List<Duration>? thinkingTimes,
+        BotRunner? bots}) =>
     HostSession(
       transport: InMemoryTransport(network),
       newBots: (thinkingTime) {
         thinkingTimes?.add(thinkingTime);
-        return InlineBotRunner(budget: budget, random: Random(1));
+        return bots ?? InlineBotRunner(budget: budget, random: Random(1));
       },
       store: store,
       timing: SessionTiming.instant,
@@ -80,8 +106,8 @@ StreamSubscription<TableView> autoplay(Stream<TableView> tables,
 }
 
 Future<(HostSession, ClientSession)> startGame(InMemoryNetwork network,
-    {SavedGameStore? store}) async {
-  final host = newHost(network, store: store);
+    {SavedGameStore? store, BotRunner? bots}) async {
+  final host = newHost(network, store: store, bots: bots);
   await host.create(const HostConfig(
       gameName: 'Partie de Ana',
       nickname: 'Ana',
@@ -133,6 +159,25 @@ void main() {
     expect(hostEnd.winningTeam, isNotNull);
     expect(clientEnd.scores, hostEnd.scores);
     expect(hostEnd.scores.reduce(max), greaterThanOrEqualTo(300));
+    await host.close();
+  });
+
+  test(
+      'rounds analysed in the background, or not in time, end up in the '
+      'insights', () async {
+    final network = InMemoryNetwork();
+    final bots = TimingOutBotRunner();
+    final (host, client) = await startGame(network, bots: bots);
+    autoplay(host.tables, host.act, host.meldsChosen);
+    autoplay(client.tables, client.act, client.meldsChosen);
+    if (host.table!.isMyTurn) {
+      host.act(HeuristicPlayer().decide(host.table!.player!));
+    }
+    await host.tables.firstWhere((t) => t.insights != null);
+    final rounds = bots.analysed.length;
+    expect(rounds, greaterThan(1));
+    expect(bots.timedOut, [for (var i = 0; i < rounds - 1; i++) i]);
+    expect(bots.analysed..sort(), [for (var i = 0; i < rounds; i++) i]);
     await host.close();
   });
 

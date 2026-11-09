@@ -88,9 +88,18 @@ void main() {
     final calculator = BlunderCalculator(samples: 5, random: Random(1));
     final merged = BlunderCalculator.merge([
       for (var i = 0; i < record.rounds.length; i++)
-        calculator.analyseRound(record, i),
+        calculator.analyseRound(record, i)!,
     ]);
     expect('$merged', '$whole');
     expect(merged[0], isNotEmpty);
+  });
+
+  test('gives up on a round once its time limit is exceeded', () {
+    final record = playRound([]);
+    final calculator = BlunderCalculator(samples: 30, random: Random(1));
+    expect(
+        calculator.analyseRound(record, 0, timeLimit: Duration.zero), isNull);
+    expect(calculator.analyseRound(record, 0, timeLimit: Duration(minutes: 1)),
+        isNotNull);
   });
 }

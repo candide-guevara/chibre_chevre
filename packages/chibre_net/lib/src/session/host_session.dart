@@ -74,6 +74,13 @@ class HostSession {
   RematchOffer? _rematch;
   List<Blunder>? _insights;
   var _analysing = false;
+
+  /// The insights of each round, analysed in the background as soon as it
+  /// ends; null when that ran out of time.
+  var _roundInsights = <int, Future<Map<int, List<Blunder>>?>>{};
+
+  /// So that analysing a round in the background never delays the next one.
+  static const roundAnalysisTime = Duration(milliseconds: 500);
   var _version = 0;
   Timer? _timer;
   final _recap = AnnouncementRecap();
@@ -187,6 +194,7 @@ class HostSession {
     _game = GameState(options: _options, deals: deals ?? _newDeals());
     _insights = null;
     _analysing = false;
+    _roundInsights = {};
   }
 
   String? get _pausedFor {
@@ -338,6 +346,10 @@ class HostSession {
           _botDecision((game, game.roundIndex + 1, 0),
               () => game.nextRoundViewFor(chooser));
         }
+        _roundInsights[game.roundIndex] ??= bots
+            .analyseRound(game.record, game.roundIndex,
+                timeLimit: roundAnalysisTime)
+            .onError((_, __) => null);
         _timer = Timer(timing.roundSummary, () {
           if (version != _version) return;
           game.startNextRound();
@@ -438,8 +450,15 @@ class HostSession {
 
   Future<void> _analyse(GameState game) async {
     _analysing = true;
-    final blunders = await bots.analyse(game.record);
+    final rounds = _roundInsights;
+    final analysed = await Future.wait([
+      for (var i = 0; i <= game.roundIndex; i++)
+        (rounds[i] ?? Future.value()).then((round) async =>
+            round ?? (await bots.analyseRound(game.record, i))!),
+    ]);
     if (_game != game || _closed) return;
+    final blunders =
+        BlunderCalculator.merge(analysed, seats: const {hostSeat, joinerSeat});
     _insights = [...?blunders[hostSeat], ...?blunders[joinerSeat]];
     _analysing = false;
     _changed();
