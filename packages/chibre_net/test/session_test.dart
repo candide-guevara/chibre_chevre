@@ -389,6 +389,7 @@ void main() {
             botDelay: Duration.zero,
             trickSlide: const Duration(milliseconds: 20),
             popup: summary),
+        random: Random(2),
       );
       await host.create(const HostConfig(
           gameName: 'g',
@@ -401,6 +402,13 @@ void main() {
       host.tables.listen(tables.add);
       autoplay(host.tables, host.act, host.meldsChosen);
       autoplay(client.tables, client.act, client.meldsChosen);
+      // The recap of the announcements shares the summary's long timeout.
+      host.tables.listen((t) {
+        if (t.showsRecap) host.dismissRecap();
+      });
+      client.tables.listen((t) {
+        if (t.showsRecap) client.dismissRecap();
+      });
       await pumpEventQueue();
       if (host.table!.isMyTurn) {
         host.act(HeuristicPlayer().decide(host.table!.player!));
