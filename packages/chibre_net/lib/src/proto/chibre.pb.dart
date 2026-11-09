@@ -1685,6 +1685,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     $core.bool? assistance,
     $core.bool? sortByTrump,
     $core.bool? autoAnnounce,
+    $core.int? thinkingTimeMs,
   }) {
     final result = TableSnapshot._();
     if (viewer != null) result.viewer = viewer;
@@ -1713,6 +1714,7 @@ class TableSnapshot extends $pb.GeneratedMessage {
     if (assistance != null) result.assistance = assistance;
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
     if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
+    if (thinkingTimeMs != null) result.thinkingTimeMs = thinkingTimeMs;
     return result;
   }
 
@@ -1767,6 +1769,8 @@ class TableSnapshot extends $pb.GeneratedMessage {
     ..aOB(25, _omitFieldNames ? '' : 'assistance')
     ..aOB(26, _omitFieldNames ? '' : 'sortByTrump')
     ..aOB(27, _omitFieldNames ? '' : 'autoAnnounce')
+    ..aI(28, _omitFieldNames ? '' : 'thinkingTimeMs',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2001,6 +2005,17 @@ class TableSnapshot extends $pb.GeneratedMessage {
   $core.bool hasAutoAnnounce() => $_has(25);
   @$pb.TagNumber(27)
   void clearAutoAnnounce() => $_clearField(27);
+
+  /// How long a computer player thinks per decision, before the minimum
+  /// delay; each phone turns it into a number of iterations for its speed.
+  @$pb.TagNumber(28)
+  $core.int get thinkingTimeMs => $_getIZ(26);
+  @$pb.TagNumber(28)
+  set thinkingTimeMs($core.int value) => $_setUnsignedInt32(26, value);
+  @$pb.TagNumber(28)
+  $core.bool hasThinkingTimeMs() => $_has(26);
+  @$pb.TagNumber(28)
+  void clearThinkingTimeMs() => $_clearField(28);
 }
 
 class ActionRejected extends $pb.GeneratedMessage {
@@ -2397,6 +2412,7 @@ class SavedGame extends $pb.GeneratedMessage {
     $core.bool? assistance,
     $core.bool? sortByTrump,
     $core.bool? autoAnnounce,
+    $core.int? thinkingTimeMs,
   }) {
     final result = SavedGame._();
     if (gameId != null) result.gameId = gameId;
@@ -2409,6 +2425,7 @@ class SavedGame extends $pb.GeneratedMessage {
     if (assistance != null) result.assistance = assistance;
     if (sortByTrump != null) result.sortByTrump = sortByTrump;
     if (autoAnnounce != null) result.autoAnnounce = autoAnnounce;
+    if (thinkingTimeMs != null) result.thinkingTimeMs = thinkingTimeMs;
     return result;
   }
 
@@ -2436,6 +2453,8 @@ class SavedGame extends $pb.GeneratedMessage {
     ..aOB(8, _omitFieldNames ? '' : 'assistance')
     ..aOB(9, _omitFieldNames ? '' : 'sortByTrump')
     ..aOB(10, _omitFieldNames ? '' : 'autoAnnounce')
+    ..aI(11, _omitFieldNames ? '' : 'thinkingTimeMs',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2534,6 +2553,16 @@ class SavedGame extends $pb.GeneratedMessage {
   $core.bool hasAutoAnnounce() => $_has(8);
   @$pb.TagNumber(10)
   void clearAutoAnnounce() => $_clearField(10);
+
+  /// 0 in games saved before it existed: the default is used.
+  @$pb.TagNumber(11)
+  $core.int get thinkingTimeMs => $_getIZ(9);
+  @$pb.TagNumber(11)
+  set thinkingTimeMs($core.int value) => $_setUnsignedInt32(9, value);
+  @$pb.TagNumber(11)
+  $core.bool hasThinkingTimeMs() => $_has(9);
+  @$pb.TagNumber(11)
+  void clearThinkingTimeMs() => $_clearField(11);
 }
 
 const $core.bool _omitFieldNames =

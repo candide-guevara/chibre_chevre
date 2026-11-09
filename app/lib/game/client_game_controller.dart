@@ -8,8 +8,9 @@ class ClientGameController implements GameController {
 
   final ClientSession session;
 
-  /// Computes the suggested moves on this phone.
-  final BotRunner advisor;
+  /// Computes the suggested moves on this phone, for the game's thinking
+  /// time.
+  final BotRunner Function(Duration thinkingTime) advisor;
 
   @override
   Stream<TableView> get tables => session.tables;
@@ -21,7 +22,10 @@ class ClientGameController implements GameController {
   void act(GameAction action) => session.act(action);
 
   @override
-  Future<GameAction> suggestAction() => advisor.decide(session.table!.player!);
+  Future<GameAction> suggestAction() {
+    final table = session.table!;
+    return advisor(table.thinkingTime).decide(table.player!);
+  }
 
   @override
   void proposeRematch({required bool sameCards}) =>

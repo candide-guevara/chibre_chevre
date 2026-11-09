@@ -1,6 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
 
 import '../proto/chibre.pb.dart' as pb;
+import '../session/host_config.dart';
 import '../session/table_view.dart';
 import 'basic_codec.dart';
 import 'blunder_codec.dart';
@@ -24,6 +25,7 @@ pb.TableSnapshot encodeTable(TableView table) {
     assistance: table.assistance,
     sortByTrump: table.sortByTrump,
     autoAnnounce: table.autoAnnounce,
+    thinkingTimeMs: table.thinkingTime.inMilliseconds,
   );
   if (player != null) {
     snapshot
@@ -74,6 +76,9 @@ TableView decodeTable(pb.TableSnapshot snapshot) {
     assistance: snapshot.assistance,
     sortByTrump: snapshot.sortByTrump,
     autoAnnounce: snapshot.autoAnnounce,
+    thinkingTime: snapshot.thinkingTimeMs == 0
+        ? HostConfig.defaultThinkingTime
+        : Duration(milliseconds: snapshot.thinkingTimeMs),
     phase: phase,
     roundIndex: snapshot.roundIndex,
     scores: scores,

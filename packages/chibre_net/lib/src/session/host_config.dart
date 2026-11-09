@@ -10,9 +10,11 @@ class HostConfig {
     this.assistance = false,
     this.sortByTrump = false,
     this.autoAnnounce = false,
+    this.thinkingTime = defaultThinkingTime,
   });
 
   static const defaultTrickHold = Duration(milliseconds: 1500);
+  static const defaultThinkingTime = Duration(milliseconds: 600);
 
   final String gameName;
   final String nickname;
@@ -32,4 +34,8 @@ class HostConfig {
   /// Whether Stöck is announced automatically and the melds are offered in
   /// a pop-up rather than selected card by card.
   final bool autoAnnounce;
+
+  /// How long a computer player thinks per decision; also the budget of
+  /// "Jouer pour moi".
+  final Duration thinkingTime;
 }

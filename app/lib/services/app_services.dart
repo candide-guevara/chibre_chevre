@@ -9,8 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import '../card_art/card_image_loader.dart';
 import '../widgets/playing_card.dart';
 import 'card_decks.dart';
-import 'compute_budget_loader.dart';
 import 'network_lock.dart';
+import 'playout_speed_loader.dart';
 import 'profile_store.dart';
 import 'test_deal.dart';
 
@@ -25,7 +25,7 @@ class AppServices {
     required this.cardDecks,
     required this.transport,
     required this.savedGames,
-    required this.budget,
+    required this.playoutsPerSecond,
     this.testDeal,
   });
 
@@ -34,7 +34,7 @@ class AppServices {
   AppServices.forTesting({required this.profile, required this.savedGames})
     : cardDecks = CardDecks(profile),
       transport = InMemoryTransport(InMemoryNetwork()),
-      budget = Future.value(ComputeBudget.standard),
+      playoutsPerSecond = Future.value(1000),
       testDeal = null;
 
   static Future<AppServices> start({TestDeal? testDeal}) async {
@@ -60,7 +60,7 @@ class AppServices {
       savedGames: FileSavedGameStore(
         File('${directory.path}/saved-game$suffix.bin'),
       ),
-      budget: loadComputeBudget(profile),
+      playoutsPerSecond: loadPlayoutsPerSecond(profile),
       testDeal: testDeal,
     );
   }
@@ -73,24 +73,33 @@ class AppServices {
   final Transport transport;
   final SavedGameStore savedGames;
 
-  /// Measured in the background at startup.
-  final Future<ComputeBudget> budget;
+  /// This phone's speed, measured in the background at startup.
+  final Future<double> playoutsPerSecond;
 
   /// Cards dealt to the host in every round, for testing.
   final TestDeal? testDeal;
 
   Future<HostSession> newHostSession() async => HostSession(
     transport: transport,
-    bots: IsolateBotRunner(budget: await budget, seed: _seed),
+    newBots: await _newBots(),
     store: savedGames,
     newDeals: testDeal == null
         ? null
         : (random) => PresetHandDealSource(testDeal!.presets, random),
   );
 
-  /// Runs the expert computer player for this phone's suggestions.
-  Future<BotRunner> newAdvisor() async =>
-      IsolateBotRunner(budget: await budget, seed: _seed);
+  /// Runs the expert computer player for this phone's suggestions, with
+  /// the game's thinking time.
+  Future<BotRunner Function(Duration thinkingTime)> newAdvisor() => _newBots();
+
+  /// Computer players thinking for a given time on this phone.
+  Future<BotRunner Function(Duration thinkingTime)> _newBots() async {
+    final speed = await playoutsPerSecond;
+    return (thinkingTime) => IsolateBotRunner(
+      budget: ComputeBudget.forSpeed(speed, target: thinkingTime),
+      seed: _seed,
+    );
+  }
 
   /// With a test deal, the computer players replay the same game.
   int? get _seed => testDeal == null ? null : 0;

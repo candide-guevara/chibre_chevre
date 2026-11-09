@@ -7,6 +7,7 @@ class AdvancedSettings {
     this.assistance = false,
     this.sortByTrump = false,
     this.autoAnnounce = false,
+    this.thinkingTime = HostConfig.defaultThinkingTime,
   });
 
   /// How long a complete trick stays before sliding to its winner.
@@ -22,15 +23,20 @@ class AdvancedSettings {
   /// a pop-up rather than selected card by card.
   final bool autoAnnounce;
 
+  /// How long a computer player thinks per decision.
+  final Duration thinkingTime;
+
   AdvancedSettings copyWith({
     Duration? trickHold,
     bool? assistance,
     bool? sortByTrump,
     bool? autoAnnounce,
+    Duration? thinkingTime,
   }) => AdvancedSettings(
     trickHold: trickHold ?? this.trickHold,
     assistance: assistance ?? this.assistance,
     sortByTrump: sortByTrump ?? this.sortByTrump,
     autoAnnounce: autoAnnounce ?? this.autoAnnounce,
+    thinkingTime: thinkingTime ?? this.thinkingTime,
   );
 }

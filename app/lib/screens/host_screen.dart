@@ -105,6 +105,7 @@ class _HostScreenState extends State<HostScreen> {
         assistance: _advanced.assistance,
         sortByTrump: _advanced.sortByTrump,
         autoAnnounce: _advanced.autoAnnounce,
+        thinkingTime: _advanced.thinkingTime,
       ),
     );
     if (!mounted) return;

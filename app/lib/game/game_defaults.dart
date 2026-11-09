@@ -20,6 +20,7 @@ class GameDefaults {
     'assistance': advanced.assistance,
     'sortByTrump': advanced.sortByTrump,
     'autoAnnounce': advanced.autoAnnounce,
+    'thinkingTimeMs': advanced.thinkingTime.inMilliseconds,
   };
 
   /// Missing or malformed values keep their default.
@@ -51,6 +52,12 @@ class GameDefaults {
         assistance: read('assistance', defaults.advanced.assistance),
         sortByTrump: read('sortByTrump', defaults.advanced.sortByTrump),
         autoAnnounce: read('autoAnnounce', defaults.advanced.autoAnnounce),
+        thinkingTime: Duration(
+          milliseconds: read(
+            'thinkingTimeMs',
+            defaults.advanced.thinkingTime.inMilliseconds,
+          ),
+        ),
       ),
     );
   }

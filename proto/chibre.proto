@@ -216,6 +216,9 @@ message TableSnapshot {
   // Whether Stöck is announced automatically and the melds are offered in a
   // pop-up rather than selected card by card.
   bool auto_announce = 27;
+  // How long a computer player thinks per decision, before the minimum
+  // delay; each phone turns it into a number of iterations for its speed.
+  uint32 thinking_time_ms = 28;
 }
 
 message ActionRejected {
@@ -260,4 +263,6 @@ message SavedGame {
   bool assistance = 8;
   bool sort_by_trump = 9;
   bool auto_announce = 10;
+  // 0 in games saved before it existed: the default is used.
+  uint32 thinking_time_ms = 11;
 }

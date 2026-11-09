@@ -101,7 +101,7 @@ Follow the standard Chibre rules from [swisslos.ch][0], with these specifics:
 
 * Expert level. Suggested approach: determinized Monte-Carlo tree search (ISMCTS / perfect-information sampling) over the engine, plus heuristics for trump choice, chibrer and meld decisions. Bots must reason only from information their seat can see (no peeking at other hands).
 * Bots run on the host phone, in a background isolate so the UI never freezes.
-* **Adaptive compute budget**: on first launch (and when the app version changes) the app runs a short benchmark to measure the phone's simulation speed and stores the result locally. The search budget (number of iterations / time per decision) is derived from it to get the strongest play while keeping the game snappy: target ≤ ~1.5 s per bot decision, including a minimum delay of ~0.5 s so humans can follow what happened.
+* **Adaptive compute budget**: on first launch (and when the app version changes) the app runs a short benchmark to measure the phone's simulation speed and stores the result locally. Each game's thinking time (an advanced setting, default 0.6 s) is turned into a search budget (number of iterations per decision) for the phone's measured speed: on the host for the bots, and on each phone for "Jouer pour moi". Bots also wait a minimum delay of ~0.6 s so humans can follow what happened. Benchmarks (`speed_bench`, `budget_match`) showed little strength gained beyond ~5000 iterations, hence the low default.
 * To hide latency, a bot starts searching as soon as it is its turn, even while the game waits for the humans (trick pause, recap, meld choice; during the round summary, the next round is already dealt so that a bot choosing trump can think); it plays once both the wait and the minimum delay are over.
 * Bots announce melds and Stöck correctly.
 
@@ -154,6 +154,7 @@ Opened from the host game screen; its options are part of the game the host crea
 * pause before collecting a trick: a slider from 0.5 s to 5 s (default 1.5 s, steps of 0.5 s). It sets how long a complete trick stays on the table before sliding to its winner, so beginners have time to memorize the cards played. The host shares it with the joiner so both phones animate in step, and keeps it when resuming a saved game.
 * "Aide de jeu": a toggle (default off) showing the button bar of the play game screen ("Jouer pour moi" and "Cartes jouées") on both phones.
 * "Trier la main selon l'atout": a toggle (default off). Off, hands are always sorted ♥ ♠ ♦ ♣, from 6 to ace; on, trump comes first once chosen and each suit is sorted by strength in the round's trump mode. Applies to both phones (hand and insights).
+* "Réflexion des ordinateurs": a slider from 0.2 s to 2 s (default 0.6 s, steps of 0.2 s), the computer players' thinking time per decision, also used by "Jouer pour moi". Each phone turns it into a number of search iterations for its own speed (see [Computer players](#computer-players)).
 * "Annonces automatiques": a toggle (default off) streamlining the announcements on both phones: the meld selection is replaced by a pop-up offering the player's melds, and Stöck is announced automatically (see the play game screen).
 
 ## Waiting for player screen

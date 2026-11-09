@@ -26,7 +26,7 @@ import 'table_view.dart';
 class HostSession {
   HostSession({
     required this.transport,
-    required this.bots,
+    required this.newBots,
     this.store,
     this.timing = const SessionTiming(),
     this.newDeals,
@@ -37,7 +37,12 @@ class HostSession {
   static const joinerSeat = 2;
 
   final Transport transport;
-  final BotRunner bots;
+
+  /// Creates the computer players once the game's thinking time is known.
+  final BotRunner Function(Duration thinkingTime) newBots;
+
+  /// The computer players, available once a game is created or resumed.
+  late final BotRunner bots;
   final SavedGameStore? store;
   final SessionTiming timing;
 
@@ -56,6 +61,7 @@ class HostSession {
   late bool _assistance;
   late bool _sortByTrump;
   late bool _autoAnnounce;
+  late Duration _thinkingTime;
   String? _joinerId;
   GameState? _game;
   GameServer? _server;
@@ -104,6 +110,8 @@ class HostSession {
     _assistance = config.assistance;
     _sortByTrump = config.sortByTrump;
     _autoAnnounce = config.autoAnnounce;
+    _thinkingTime = config.thinkingTime;
+    bots = newBots(_thinkingTime);
     _nicknames = [config.nickname, 'Ordi 1', '', 'Ordi 2'];
     await _open();
   }
@@ -121,6 +129,10 @@ class HostSession {
     _assistance = saved.assistance;
     _sortByTrump = saved.sortByTrump;
     _autoAnnounce = saved.autoAnnounce;
+    _thinkingTime = saved.thinkingTimeMs == 0
+        ? HostConfig.defaultThinkingTime
+        : Duration(milliseconds: saved.thinkingTimeMs);
+    bots = newBots(_thinkingTime);
     _game = replayRecord(record);
     await _open();
   }
@@ -212,6 +224,7 @@ class HostSession {
         assistance: _assistance,
         sortByTrump: _sortByTrump,
         autoAnnounce: _autoAnnounce,
+        thinkingTime: _thinkingTime,
         phase: TablePhase.waitingForPlayer,
         roundIndex: 0,
         scores: const [0, 0],
@@ -234,6 +247,7 @@ class HostSession {
       assistance: _assistance,
       sortByTrump: _sortByTrump,
       autoAnnounce: _autoAnnounce,
+      thinkingTime: _thinkingTime,
       phase: phase,
       roundIndex: game.roundIndex,
       scores: game.scores,
@@ -299,6 +313,7 @@ class HostSession {
       assistance: _assistance,
       sortByTrump: _sortByTrump,
       autoAnnounce: _autoAnnounce,
+      thinkingTimeMs: _thinkingTime.inMilliseconds,
       record: encodeRecord(game.record),
     ).writeToBuffer());
   }

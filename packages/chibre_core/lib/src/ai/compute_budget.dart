@@ -11,7 +11,7 @@ class ComputeBudget {
   /// [playoutsPerSecond] is measured by `measurePlayoutsPerSecond`.
   factory ComputeBudget.forSpeed(
     double playoutsPerSecond, {
-    Duration target = const Duration(milliseconds: 1000),
+    Duration target = const Duration(milliseconds: 600),
   }) {
     final playouts = playoutsPerSecond * target.inMicroseconds / 1e6;
     return ComputeBudget(

@@ -29,6 +29,7 @@ void main() {
           assistance: true,
           sortByTrump: true,
           autoAnnounce: true,
+          thinkingTime: Duration(milliseconds: 1200),
         ),
       ),
     );
@@ -41,6 +42,7 @@ void main() {
     expect(defaults.advanced.assistance, isTrue);
     expect(defaults.advanced.sortByTrump, isTrue);
     expect(defaults.advanced.autoAnnounce, isTrue);
+    expect(defaults.advanced.thinkingTime, const Duration(milliseconds: 1200));
   });
 
   test('profiles keep their own defaults', () async {

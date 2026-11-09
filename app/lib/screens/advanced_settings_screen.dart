@@ -47,6 +47,22 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
           ),
         ),
         const SizedBox(height: 16),
+        Text(
+          'Réflexion des ordinateurs : ${_seconds(_settings.thinkingTime)}',
+        ),
+        Slider(
+          value: _settings.thinkingTime.inMilliseconds / 1000,
+          min: 0.2,
+          max: 2,
+          divisions: 9,
+          label: _seconds(_settings.thinkingTime),
+          onChanged: (value) => _update(
+            _settings.copyWith(
+              thinkingTime: Duration(milliseconds: (value * 1000).round()),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: const Text('Aide de jeu'),

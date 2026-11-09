@@ -39,10 +39,15 @@ class RecordingBotRunner implements BotRunner {
       _inner.analyse(record);
 }
 
-HostSession newHost(InMemoryNetwork network, {SavedGameStore? store}) =>
+/// [thinkingTimes] records the thinking time of the computer players.
+HostSession newHost(InMemoryNetwork network,
+        {SavedGameStore? store, List<Duration>? thinkingTimes}) =>
     HostSession(
       transport: InMemoryTransport(network),
-      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      newBots: (thinkingTime) {
+        thinkingTimes?.add(thinkingTime);
+        return InlineBotRunner(budget: budget, random: Random(1));
+      },
       store: store,
       timing: SessionTiming.instant,
       random: Random(2),
@@ -134,14 +139,16 @@ void main() {
   test('the joiner and a resumed game use the host\'s settings', () async {
     final network = InMemoryNetwork();
     final store = MemoryStore();
-    final host = newHost(network, store: store);
+    final thinkingTimes = <Duration>[];
+    final host = newHost(network, store: store, thinkingTimes: thinkingTimes);
     await host.create(const HostConfig(
         gameName: 'g',
         nickname: 'Ana',
         trickHold: Duration(seconds: 3),
         assistance: true,
         sortByTrump: true,
-        autoAnnounce: true));
+        autoAnnounce: true,
+        thinkingTime: Duration(milliseconds: 1400)));
     final client = newClient(network);
     await client.join(await findGame(network));
     final table = await client.tables.firstWhere((t) => t.player != null);
@@ -149,14 +156,18 @@ void main() {
     expect(table.assistance, isTrue);
     expect(table.sortByTrump, isTrue);
     expect(table.autoAnnounce, isTrue);
+    expect(table.thinkingTime, const Duration(milliseconds: 1400));
 
     network.disconnectAll();
-    final restarted = newHost(network, store: store);
+    final restarted =
+        newHost(network, store: store, thinkingTimes: thinkingTimes);
     await restarted.resume();
     expect(restarted.table!.trickHold, const Duration(seconds: 3));
     expect(restarted.table!.assistance, isTrue);
     expect(restarted.table!.sortByTrump, isTrue);
     expect(restarted.table!.autoAnnounce, isTrue);
+    expect(restarted.table!.thinkingTime, const Duration(milliseconds: 1400));
+    expect(thinkingTimes, List.filled(2, const Duration(milliseconds: 1400)));
     await restarted.close();
   });
 
@@ -165,7 +176,7 @@ void main() {
     final preset = CardSet.parse('D7 D9 DJ DA');
     final host = HostSession(
       transport: InMemoryTransport(network),
-      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
       timing: SessionTiming.instant,
       newDeals: (random) => PresetHandDealSource({0: preset}, random),
     );
@@ -180,7 +191,7 @@ void main() {
     final network = InMemoryNetwork();
     final host = HostSession(
       transport: InMemoryTransport(network),
-      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
       timing: SessionTiming.instant,
       newDeals: (random) =>
           PresetHandDealSource({0: CardSet.parse('D7')}, random),
@@ -209,7 +220,7 @@ void main() {
     final bots = RecordingBotRunner();
     final host = HostSession(
       transport: InMemoryTransport(network),
-      bots: bots,
+      newBots: (_) => bots,
       timing: SessionTiming.instant,
       newDeals: (random) =>
           PresetHandDealSource({0: CardSet.parse('D7')}, random),
@@ -237,7 +248,7 @@ void main() {
     final bots = RecordingBotRunner();
     final host = HostSession(
       transport: InMemoryTransport(network),
-      bots: bots,
+      newBots: (_) => bots,
       timing: const SessionTiming(
           botDelay: Duration.zero,
           trickSlide: Duration.zero,
@@ -275,7 +286,7 @@ void main() {
       final network = InMemoryNetwork();
       final host = HostSession(
         transport: InMemoryTransport(network),
-        bots: InlineBotRunner(budget: budget, random: Random(1)),
+        newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
             botDelay: Duration.zero,
             trickSlide: Duration.zero,
@@ -329,7 +340,7 @@ void main() {
     final network = InMemoryNetwork();
     final host = HostSession(
       transport: InMemoryTransport(network),
-      bots: InlineBotRunner(budget: budget, random: Random(1)),
+      newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
       timing: const SessionTiming(
           botDelay: Duration.zero,
           trickSlide: Duration.zero,

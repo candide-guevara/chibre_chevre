@@ -618,6 +618,7 @@ const TableSnapshot$json = {
     {'1': 'assistance', '3': 25, '4': 1, '5': 8, '10': 'assistance'},
     {'1': 'sort_by_trump', '3': 26, '4': 1, '5': 8, '10': 'sortByTrump'},
     {'1': 'auto_announce', '3': 27, '4': 1, '5': 8, '10': 'autoAnnounce'},
+    {'1': 'thinking_time_ms', '3': 28, '4': 1, '5': 13, '10': 'thinkingTimeMs'},
   ],
   '4': [TableSnapshot_Phase$json],
   '9': [
@@ -656,9 +657,10 @@ final $typed_data.Uint8List tableSnapshotDescriptor = $convert.base64Decode(
     'GBYgASgNUgt0cmlja0hvbGRNcxIbCglyZWNhcF9mb3IYFyADKA1SCHJlY2FwRm9yEiYKD21lbG'
     'RfY2hvaWNlX2ZvchgYIAMoDVINbWVsZENob2ljZUZvchIeCgphc3Npc3RhbmNlGBkgASgIUgph'
     'c3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bXAYGiABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW'
-    '5ub3VuY2UYGyABKAhSDGF1dG9Bbm5vdW5jZSJ9CgVQaGFzZRIcChhQSEFTRV9XQUlUSU5HX0ZP'
-    'Ul9QTEFZRVIQABIYChRQSEFTRV9DSE9PU0lOR19UUlVNUBABEhEKDVBIQVNFX1BMQVlJTkcQAh'
-    'IUChBQSEFTRV9ST1VORF9PVkVSEAMSEwoPUEhBU0VfR0FNRV9PVkVSEARKBAgEEAU=');
+    '5ub3VuY2UYGyABKAhSDGF1dG9Bbm5vdW5jZRIoChB0aGlua2luZ190aW1lX21zGBwgASgNUg50'
+    'aGlua2luZ1RpbWVNcyJ9CgVQaGFzZRIcChhQSEFTRV9XQUlUSU5HX0ZPUl9QTEFZRVIQABIYCh'
+    'RQSEFTRV9DSE9PU0lOR19UUlVNUBABEhEKDVBIQVNFX1BMQVlJTkcQAhIUChBQSEFTRV9ST1VO'
+    'RF9PVkVSEAMSEwoPUEhBU0VfR0FNRV9PVkVSEARKBAgEEAU=');
 
 @$core.Deprecated('Use actionRejectedDescriptor instead')
 const ActionRejected$json = {
@@ -820,6 +822,7 @@ const SavedGame$json = {
     {'1': 'assistance', '3': 8, '4': 1, '5': 8, '10': 'assistance'},
     {'1': 'sort_by_trump', '3': 9, '4': 1, '5': 8, '10': 'sortByTrump'},
     {'1': 'auto_announce', '3': 10, '4': 1, '5': 8, '10': 'autoAnnounce'},
+    {'1': 'thinking_time_ms', '3': 11, '4': 1, '5': 13, '10': 'thinkingTimeMs'},
   ],
   '9': [
     {'1': 5, '2': 6},
@@ -834,4 +837,4 @@ final $typed_data.Uint8List savedGameDescriptor = $convert.base64Decode(
     'IuY2hpYnJlLkdhbWVSZWNvcmRSBnJlY29yZBIiCg10cmlja19ob2xkX21zGAcgASgNUgt0cmlj'
     'a0hvbGRNcxIeCgphc3Npc3RhbmNlGAggASgIUgphc3Npc3RhbmNlEiIKDXNvcnRfYnlfdHJ1bX'
     'AYCSABKAhSC3NvcnRCeVRydW1wEiMKDWF1dG9fYW5ub3VuY2UYCiABKAhSDGF1dG9Bbm5vdW5j'
-    'ZUoECAUQBg==');
+    'ZRIoChB0aGlua2luZ190aW1lX21zGAsgASgNUg50aGlua2luZ1RpbWVNc0oECAUQBg==');
