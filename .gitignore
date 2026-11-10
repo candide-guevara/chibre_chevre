@@ -1,2 +1,4 @@
 .dart_tool/
 build/
+# The upload key and other secrets, never committed.
+/keys/
