@@ -70,7 +70,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           TextField(
             controller: _nickname,
-            autofocus: true,
             maxLength: 20,
             textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(labelText: 'Pseudo'),

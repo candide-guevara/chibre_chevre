@@ -9,6 +9,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'host_screen_test.dart';
 
 void main() {
+  testWidgets('the keyboard stays hidden until the nickname is tapped', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({'nickname': 'Bea'});
+    final services = AppServices.forTesting(
+      profile: await ProfileStore.open(),
+      savedGames: NoSavedGame(),
+    );
+    await tester.pumpWidget(
+      Services(
+        services: services,
+        child: MaterialApp(theme: chibreTheme(), home: const ProfileScreen()),
+      ),
+    );
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isFalse);
+
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isTrue);
+  });
+
   testWidgets('the card design is chosen on the profile screen', (
     tester,
   ) async {
