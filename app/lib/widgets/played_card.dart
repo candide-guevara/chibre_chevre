@@ -18,7 +18,7 @@ class PlayedCard extends StatelessWidget {
   final double width;
   final TablePosition from;
 
-  static const _duration = Duration(milliseconds: 300);
+  static const _duration = Duration(milliseconds: 400);
 
   @override
   Widget build(BuildContext context) {

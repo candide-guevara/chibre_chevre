@@ -40,7 +40,7 @@ The Material theme is dark, seeded from `felt`, with ivory as primary and brass 
 * **Trump indicator**: "Atout :" followed by the suit drawn large on an ivory disc (⬇ / ⬆ for Obenabe / Undenufe), then the multiplier in brass.
 * **Cards in the hand**: unplayable cards are darkened (40 % black); selected or suggested cards are raised by 15 % of their height and outlined in brass.
 * **App icon**: the goat of the start screen, `app/assets/icons/chevre_round.webp`, whole on its own cream, already faded at its border; the classic icon is cut out of the square `app/assets/icons/chevre_square.webp`, and fades out to transparent along its outline. `app/tool/make_launcher_icons.py` renders the Android icons from them.
-* **Motion**: kept short and functional. Selection 120 ms, turn badge 200 ms, a played card slides to the trick in 300 ms; a complete trick waits for the host's pause, then slides to its winner and fades out. Animations play even when the phone has animations turned off (`AnimatedBinding`), since they show who played which card and who won each trick.
+* **Motion**: kept short and functional. Selection 120 ms, turn badge 400 ms, a played card slides to the trick in 400 ms; a complete trick waits for the host's pause, then slides to its winner and fades out. Animations play even when the phone has animations turned off (`AnimatedBinding`), since they show who played which card and who won each trick.
 
 ## Cards
 

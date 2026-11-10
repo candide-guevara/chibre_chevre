@@ -322,7 +322,7 @@ void main() {
     game.apply(PlayCard(0, Card.parse('SA')));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
 
     final second = game.viewFor(1).legalCards.cards.first;
     game.apply(PlayCard(1, second));
@@ -344,7 +344,7 @@ void main() {
         .x;
     expect(offsetOf(Card.parse('SA')), 0);
     expect(offsetOf(second), greaterThan(0)); // From the right.
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
     expect(offsetOf(second), 0);
   });
 
