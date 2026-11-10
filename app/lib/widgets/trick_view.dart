@@ -34,7 +34,8 @@ class TrickView extends StatefulWidget {
   final int viewer;
   final double cardWidth;
 
-  /// How long the complete trick stays before sliding to its winner.
+  /// How long the complete trick stays, once its last card is in place,
+  /// before sliding to its winner.
   final Duration hold;
 
   /// The seat that won the trick, once it is complete.
@@ -79,7 +80,7 @@ class _TrickViewState extends State<TrickView>
   Future<void> _collectIfWon() async {
     if (widget.winner == null) return;
     final generation = _generation;
-    await Future<void>.delayed(widget.hold);
+    await Future<void>.delayed(const SessionTiming().cardSlide + widget.hold);
     if (mounted && generation == _generation) _controller.forward();
   }
 

@@ -1,4 +1,5 @@
 import 'package:chibre_core/chibre_core.dart';
+import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/widgets.dart';
 
 import 'playing_card.dart';
@@ -18,14 +19,12 @@ class PlayedCard extends StatelessWidget {
   final double width;
   final TablePosition from;
 
-  static const _duration = Duration(milliseconds: 400);
-
   @override
   Widget build(BuildContext context) {
     final distance = Offset(width * 2.5, width * cardAspectRatio * 2);
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 1, end: 0),
-      duration: _duration,
+      duration: const SessionTiming().cardSlide,
       curve: Curves.easeOut,
       builder: (context, remaining, child) => Transform.translate(
         offset:

@@ -89,6 +89,8 @@ GameState gameWith(CardSet hand) {
   );
 }
 
+const trickHold = Duration(milliseconds: 700);
+
 TableView tableOf(
   GameState game, {
   int seat = 0,
@@ -111,7 +113,7 @@ TableView tableOf(
   player: game.viewFor(seat),
   seatToAct: game.phase == GamePhase.roundOver ? null : game.seatToAct,
   roundPoints: game.round.points,
-  trickHold: const Duration(milliseconds: 700),
+  trickHold: trickHold,
   recapFor: recapFor,
   roundSummaryFor: roundSummaryFor,
   meldChoiceFor: meldChoiceFor,
@@ -256,8 +258,10 @@ void main() {
         )
         .opacity;
     expect(opacity(), 1);
-    await tester.pump(const Duration(milliseconds: 700));
-    await tester.pump(const Duration(milliseconds: 400));
+    const timing = SessionTiming();
+    await tester.pump(timing.cardSlide + trickHold);
+    expect(opacity(), 1);
+    await tester.pump(timing.trickSlide);
     expect(opacity(), 0);
   });
 
@@ -322,7 +326,7 @@ void main() {
     game.apply(PlayCard(0, Card.parse('SA')));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const SessionTiming().cardSlide);
 
     final second = game.viewFor(1).legalCards.cards.first;
     game.apply(PlayCard(1, second));
@@ -344,7 +348,7 @@ void main() {
         .x;
     expect(offsetOf(Card.parse('SA')), 0);
     expect(offsetOf(second), greaterThan(0)); // From the right.
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const SessionTiming().cardSlide);
     expect(offsetOf(second), 0);
   });
 

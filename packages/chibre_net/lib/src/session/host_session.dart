@@ -387,8 +387,11 @@ class HostSession {
         if (_scheduleRecap(game.round)) return;
         if (!isBot) return;
         if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
-        _timer = Timer(
-            _pauseBeforeBot(game.round), () => _playBot(game, seat, version));
+        final pause = _pauseBeforeBot(game.round);
+        // The pause counts towards the bot's minimum delay.
+        final minimum =
+            pause >= timing.botDelay ? Duration.zero : timing.botDelay - pause;
+        _timer = Timer(pause, () => _playBot(game, seat, version, minimum));
     }
   }
 
@@ -404,7 +407,7 @@ class HostSession {
       return true;
     }
     if (_recap.isDue(round)) {
-      _timer = Timer(_trickHold + timing.trickSlide, () {
+      _timer = Timer(timing.trickOnTable(_trickHold), () {
         _recap.start(round, _humans, timing.popup);
         _changed();
       });
@@ -423,7 +426,7 @@ class HostSession {
         _changed();
       });
     } else if (!summary.wasShownFor(game.roundIndex)) {
-      _timer = Timer(_trickHold + timing.trickSlide, () {
+      _timer = Timer(timing.trickOnTable(_trickHold), () {
         summary.start(game.roundIndex, _humans, timing.popup);
         _changed();
       });
@@ -465,14 +468,15 @@ class HostSession {
         round.currentTrick?.isEmpty == true && round.completedTricks.isNotEmpty;
     final afterRecap = _recap.wasShownAfterLastTrick(round);
     return trickJustEnded && !afterRecap
-        ? _trickHold + timing.trickSlide
+        ? timing.trickOnTable(_trickHold)
         : Duration.zero;
   }
 
-  Future<void> _playBot(GameState game, int seat, int version) async {
+  Future<void> _playBot(
+      GameState game, int seat, int version, Duration minimum) async {
     final results = await Future.wait([
       _currentBotDecision(game, seat),
-      Future<void>.delayed(timing.botDelay),
+      Future<void>.delayed(minimum),
     ]);
     if (version != _version || _pausedFor != null || _isOver) return;
     game.apply(results.first as GameAction);

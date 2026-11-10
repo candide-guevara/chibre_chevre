@@ -297,6 +297,7 @@ void main() {
       newBots: (_) => bots,
       timing: const SessionTiming(
           botDelay: Duration.zero,
+          cardSlide: Duration.zero,
           trickSlide: Duration.zero,
           popup: Duration(milliseconds: 100)),
       // The host chooses trump first, so Ordi 1 chooses it next.
@@ -333,7 +334,10 @@ void main() {
         transport: InMemoryTransport(network),
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
-            botDelay: Duration.zero, trickSlide: Duration.zero, popup: recap),
+            botDelay: Duration.zero,
+            cardSlide: Duration.zero,
+            trickSlide: Duration.zero,
+            popup: recap),
         newDeals: (random) =>
             PresetHandDealSource({0: CardSet.parse('D7 H7 H8 H9 H10')}, random),
       );
@@ -388,6 +392,7 @@ void main() {
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
             botDelay: Duration.zero,
+            cardSlide: Duration.zero,
             trickSlide: const Duration(milliseconds: 20),
             popup: summary),
         random: Random(2),
@@ -452,6 +457,7 @@ void main() {
       newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
       timing: const SessionTiming(
           botDelay: Duration.zero,
+          cardSlide: Duration.zero,
           trickSlide: Duration.zero,
           popup: Duration(minutes: 1)),
       newDeals: (random) => PresetHandDealSource(
@@ -650,6 +656,52 @@ void main() {
       host.proposeRematch(sameCards: false);
       expect(host.table!.phase, isNot(TablePhase.gameOver));
       expect(host.table!.scores, [0, 0]);
+      await host.close();
+    });
+
+    test('a bot leads the next trick once the last one slid away', () async {
+      const delay = Duration(milliseconds: 400);
+      final host = HostSession(
+        transport: InMemoryTransport(InMemoryNetwork()),
+        newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
+        timing: const SessionTiming(
+            botDelay: delay,
+            cardSlide: delay,
+            trickSlide: delay,
+            popup: Duration.zero),
+        random: Random(2),
+      );
+      await host.create(soloConfig);
+      final clock = Stopwatch()..start();
+      final gaps = <Duration>[];
+      Duration? trickEnd;
+      var tricks = 0;
+      host.tables.listen((table) {
+        final player = table.player;
+        if (player == null) return;
+        if (table.recapFor.isNotEmpty) trickEnd = null;
+        if (player.completedTricks.length > tricks) {
+          tricks = player.completedTricks.length;
+          trickEnd = clock.elapsed;
+        }
+        final trick = player.currentTrick;
+        if (trick != null && trick.cards.length == 1 && trickEnd != null) {
+          if (trick.leader != 0) gaps.add(clock.elapsed - trickEnd!);
+          trickEnd = null;
+        }
+      });
+      autoplay(host.tables, host.act, host.meldsChosen);
+      if (host.table!.isMyTurn) {
+        host.act(HeuristicPlayer().decide(host.table!.player!));
+      }
+
+      await host.tables.firstWhere((t) => t.phase == TablePhase.roundOver);
+      expect(gaps, isNotEmpty);
+      // The slides count towards the bot's minimum delay, rather than
+      // adding up with it.
+      for (final gap in gaps) {
+        expect(gap, lessThan(delay * 2.5));
+      }
       await host.close();
     });
 
