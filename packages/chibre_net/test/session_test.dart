@@ -296,7 +296,7 @@ void main() {
       transport: InMemoryTransport(network),
       newBots: (_) => bots,
       timing: const SessionTiming(
-          botDelay: Duration.zero,
+          botPause: Duration.zero,
           cardSlide: Duration.zero,
           trickSlide: Duration.zero,
           popup: Duration(milliseconds: 100)),
@@ -334,7 +334,7 @@ void main() {
         transport: InMemoryTransport(network),
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
-            botDelay: Duration.zero,
+            botPause: Duration.zero,
             cardSlide: Duration.zero,
             trickSlide: Duration.zero,
             popup: recap),
@@ -391,7 +391,7 @@ void main() {
         transport: InMemoryTransport(network),
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
         timing: SessionTiming(
-            botDelay: Duration.zero,
+            botPause: Duration.zero,
             cardSlide: Duration.zero,
             trickSlide: const Duration(milliseconds: 20),
             popup: summary),
@@ -456,7 +456,7 @@ void main() {
       transport: InMemoryTransport(network),
       newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
       timing: const SessionTiming(
-          botDelay: Duration.zero,
+          botPause: Duration.zero,
           cardSlide: Duration.zero,
           trickSlide: Duration.zero,
           popup: Duration(minutes: 1)),
@@ -659,36 +659,42 @@ void main() {
       await host.close();
     });
 
-    test('a bot leads the next trick once the last one slid away', () async {
-      const delay = Duration(milliseconds: 400);
+    test('a bot plays a bot pause after the table is still', () async {
+      const timing = SessionTiming(
+          botPause: Duration(milliseconds: 300),
+          cardSlide: Duration(milliseconds: 200),
+          trickSlide: Duration(milliseconds: 400),
+          popup: Duration.zero);
       final host = HostSession(
         transport: InMemoryTransport(InMemoryNetwork()),
         newBots: (_) => InlineBotRunner(budget: budget, random: Random(1)),
-        timing: const SessionTiming(
-            botDelay: delay,
-            cardSlide: delay,
-            trickSlide: delay,
-            popup: Duration.zero),
+        timing: timing,
         random: Random(2),
       );
       await host.create(soloConfig);
       final clock = Stopwatch()..start();
-      final gaps = <Duration>[];
-      Duration? trickEnd;
-      var tricks = 0;
+      final midTrick = <Duration>[], leading = <Duration>[];
+      Duration? lastCard;
+      var cards = 0;
       host.tables.listen((table) {
         final player = table.player;
         if (player == null) return;
-        if (table.recapFor.isNotEmpty) trickEnd = null;
-        if (player.completedTricks.length > tricks) {
-          tricks = player.completedTricks.length;
-          trickEnd = clock.elapsed;
+        // Waiting for the recap is not the bot pause.
+        if (table.recapFor.isNotEmpty) lastCard = null;
+        final current = player.currentTrick?.cards.length ?? 0;
+        final played = player.completedTricks.length * seatCount + current;
+        if (played == cards) return;
+        final now = clock.elapsed;
+        if (played == cards + 1 && lastCard != null) {
+          final trick =
+              current == 0 ? player.completedTricks.last : player.currentTrick!;
+          final seat = trick.seatAt(trick.cards.length - 1);
+          if (seat != 0) {
+            (current == 1 ? leading : midTrick).add(now - lastCard!);
+          }
         }
-        final trick = player.currentTrick;
-        if (trick != null && trick.cards.length == 1 && trickEnd != null) {
-          if (trick.leader != 0) gaps.add(clock.elapsed - trickEnd!);
-          trickEnd = null;
-        }
+        cards = played;
+        lastCard = now;
       });
       autoplay(host.tables, host.act, host.meldsChosen);
       if (host.table!.isMyTurn) {
@@ -696,12 +702,17 @@ void main() {
       }
 
       await host.tables.firstWhere((t) => t.phase == TablePhase.roundOver);
-      expect(gaps, isNotEmpty);
-      // The slides count towards the bot's minimum delay, rather than
-      // adding up with it.
-      for (final gap in gaps) {
-        expect(gap, lessThan(delay * 2.5));
+      void expectAround(List<Duration> gaps, Duration expected) {
+        expect(gaps, isNotEmpty);
+        for (final gap in gaps) {
+          expect(gap, greaterThanOrEqualTo(expected));
+          expect(gap, lessThan(expected + const Duration(milliseconds: 250)));
+        }
       }
+
+      expectAround(midTrick, timing.cardSlide + timing.botPause);
+      expectAround(
+          leading, timing.trickOnTable(soloConfig.trickHold) + timing.botPause);
       await host.close();
     });
 

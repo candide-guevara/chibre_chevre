@@ -1,4 +1,5 @@
 import 'package:chibre_core/chibre_core.dart';
+import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart' hide Card;
 
 import '../card_art/card_designs.dart';
@@ -65,7 +66,7 @@ class PlayingCard extends StatelessWidget {
       child: GestureDetector(
         onTap: enabled ? onTap : null,
         child: AnimatedSlide(
-          duration: const Duration(milliseconds: 120),
+          duration: const SessionTiming().selection,
           offset: Offset(0, selected ? -0.15 : 0),
           child: face,
         ),

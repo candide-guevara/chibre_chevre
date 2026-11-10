@@ -387,11 +387,8 @@ class HostSession {
         if (_scheduleRecap(game.round)) return;
         if (!isBot) return;
         if (_meldChoice.pending(game.round, _humans).isNotEmpty) return;
-        final pause = _pauseBeforeBot(game.round);
-        // The pause counts towards the bot's minimum delay.
-        final minimum =
-            pause >= timing.botDelay ? Duration.zero : timing.botDelay - pause;
-        _timer = Timer(pause, () => _playBot(game, seat, version, minimum));
+        _timer = Timer(_untilStill(game.round) + timing.botPause,
+            () => _playBot(game, seat, version));
     }
   }
 
@@ -460,26 +457,26 @@ class HostSession {
     _changed();
   }
 
-  /// After a trick, the humans watch it stay on the table and slide to its
-  /// winner, unless the recap of the announcements already gave them that
-  /// time.
-  Duration _pauseBeforeBot(RoundState round) {
+  /// How long until the table is still, before the bot pause starts: a
+  /// card just played slides in; after a trick, the humans watch it stay on
+  /// the table and slide to its winner, unless the recap of the
+  /// announcements already gave them that time.
+  Duration _untilStill(RoundState round) {
+    final trick = round.currentTrick;
+    if (trick != null && trick.cards.isNotEmpty) return timing.cardSlide;
     final trickJustEnded =
-        round.currentTrick?.isEmpty == true && round.completedTricks.isNotEmpty;
+        trick?.isEmpty == true && round.completedTricks.isNotEmpty;
     final afterRecap = _recap.wasShownAfterLastTrick(round);
     return trickJustEnded && !afterRecap
         ? timing.trickOnTable(_trickHold)
         : Duration.zero;
   }
 
-  Future<void> _playBot(
-      GameState game, int seat, int version, Duration minimum) async {
-    final results = await Future.wait([
-      _currentBotDecision(game, seat),
-      Future<void>.delayed(minimum),
-    ]);
+  /// Plays the bot's move as soon as its search, started earlier, is done.
+  Future<void> _playBot(GameState game, int seat, int version) async {
+    final action = await _currentBotDecision(game, seat);
     if (version != _version || _pausedFor != null || _isOver) return;
-    game.apply(results.first as GameAction);
+    game.apply(action);
     _changed();
   }
 

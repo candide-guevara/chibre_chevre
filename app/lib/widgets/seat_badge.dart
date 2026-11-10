@@ -1,3 +1,4 @@
+import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/chibre_theme.dart';
@@ -13,7 +14,7 @@ class SeatBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
+      duration: const SessionTiming().turnBadge,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: isTurn ? UiColors.accent : UiColors.seatBadge,
