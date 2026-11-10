@@ -1,7 +1,9 @@
 import 'package:chibre_core/chibre_core.dart';
 
 /// The deal of every round of hosted games, to test the screens without
-/// waiting for the right hand: `--test-fix-deal=<name>` on the command line.
+/// waiting for the right hand: `--test-fix-deal=<name>` on the command line,
+/// or `--dart-define=TEST_FIX_DEAL=<name>` when building (`flutter run`
+/// passes no command line arguments to Android apps).
 /// Every player's cards are fixed. The host (seat 0) always holds the seven
 /// of diamonds so it chooses trump first.
 enum TestDeal {
@@ -46,6 +48,10 @@ enum TestDeal {
 
   static const flag = '--test-fix-deal';
 
+  /// The deal asked for when building, null when none was.
+  static TestDeal? fromDefine() =>
+      named(const String.fromEnvironment('TEST_FIX_DEAL'));
+
   /// The deal asked for in [args], null when the flag is absent.
   static TestDeal? fromArgs(List<String> args) {
     final index = args.indexWhere(
@@ -56,9 +62,19 @@ enum TestDeal {
     final value = arg.contains('=')
         ? arg.substring(arg.indexOf('=') + 1)
         : (index + 1 < args.length ? args[index + 1] : '');
+    return named(value) ?? _unknown(value);
+  }
+
+  /// The deal called [value], null for an empty one.
+  static TestDeal? named(String value) {
+    if (value.isEmpty) return null;
     for (final deal in values) {
       if (deal.flagValue == value) return deal;
     }
+    return _unknown(value);
+  }
+
+  static Never _unknown(String value) {
     final known = values.map((deal) => deal.flagValue).join(', ');
     throw ArgumentError('$flag must be one of: $known (got "$value")');
   }

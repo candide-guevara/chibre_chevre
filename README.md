@@ -51,7 +51,12 @@ use a fixed seed, so they replay the same moves.
 ```bash
 flutter run -d linux --dart-entrypoint-args=--test-fix-deal=stock
 build/linux/x64/debug/bundle/chibre --test-fix-deal=stock  # already built
+flutter run --dart-define=TEST_FIX_DEAL=stock              # on a phone
 ```
+
+`flutter run` passes no command line arguments to Android apps, hence the
+`--dart-define` there; it is read when building, so changing it needs a new
+`flutter run`, not a hot restart.
 
 ## Android
 

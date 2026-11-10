@@ -16,6 +16,12 @@ void main() {
     );
   });
 
+  test('a deal can be asked for by name', () {
+    expect(TestDeal.named(''), isNull);
+    expect(TestDeal.named('sequence'), TestDeal.sequence);
+    expect(() => TestDeal.named('royal'), throwsArgumentError);
+  });
+
   test('the host always holds the seven of diamonds', () {
     for (final deal in TestDeal.values) {
       expect(deal.presets[0]!.contains(Card.parse('D7')), isTrue);

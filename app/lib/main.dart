@@ -10,7 +10,9 @@ import 'theme/chibre_theme.dart';
 /// [args] come from the command line on desktop, e.g. `--test-fix-deal=stock`.
 Future<void> main(List<String> args) async {
   AnimatedBinding.ensureInitialized();
-  final services = await AppServices.start(testDeal: TestDeal.fromArgs(args));
+  final services = await AppServices.start(
+    testDeal: TestDeal.fromArgs(args) ?? TestDeal.fromDefine(),
+  );
   runApp(ChibreApp(services: services));
 }
 
