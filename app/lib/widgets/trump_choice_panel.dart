@@ -5,8 +5,8 @@ import '../labels.dart';
 import '../theme/chibre_theme.dart';
 import 'suit_icon.dart';
 
-/// The choices of the player who must make trump; the [suggested] one, if
-/// any, is outlined.
+/// The choices of the player who must make trump, filling the height it
+/// is given; the [suggested] one, if any, is outlined.
 class TrumpChoicePanel extends StatelessWidget {
   const TrumpChoicePanel({
     super.key,
@@ -27,53 +27,79 @@ class TrumpChoicePanel extends StatelessWidget {
 
   static const _outline = BorderSide(color: UiColors.accent, width: 3);
 
+  /// The height of a mode's symbol, as a share of its button's height.
+  static const _symbolShare = 0.7;
+
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    // Buttons fill their row, however tall the panel is.
+    const size = Size.zero, tapTarget = MaterialTapTargetSize.shrinkWrap;
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         // All the modes share one row, Obenabe and Undenufe drawn as arrows.
-        Row(
-          spacing: 8,
-          children: [
-            for (final mode in modes)
-              Expanded(
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(0, 48),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    side: switch (suggested) {
-                      ChooseTrump(mode: final suggestedMode)
-                          when suggestedMode == mode =>
-                        _outline,
-                      _ => null,
-                    },
-                  ),
-                  onPressed: () => onChoose(mode),
-                  child: Semantics(
-                    label: modeName(mode),
-                    excludeSemantics: true,
-                    child: mode.trumpSuit == null
-                        ? Text(modeSymbol(mode), style: text.titleLarge)
-                        : SuitIcon(mode.trumpSuit!, size: 26),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              for (final mode in modes)
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: size,
+                      tapTargetSize: tapTarget,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      side: switch (suggested) {
+                        ChooseTrump(mode: final suggestedMode)
+                            when suggestedMode == mode =>
+                          _outline,
+                        _ => null,
+                      },
+                    ),
+                    onPressed: () => onChoose(mode),
+                    child: Semantics(
+                      label: modeName(mode),
+                      excludeSemantics: true,
+                      child: _symbol(mode, text),
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
-        if (canChibrer) ...[
-          const SizedBox(height: 8),
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(64, 48),
-              side: suggested is Chibrer ? _outline : null,
-            ),
-            onPressed: onChibrer,
-            child: const Text('Chibrer'),
+            ],
           ),
-        ],
+        ),
+        const SizedBox(height: 8),
+        // Kept empty once chibré, so the buttons keep their height.
+        Expanded(
+          child: canChibrer
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: size,
+                        tapTargetSize: tapTarget,
+                        side: suggested is Chibrer ? _outline : null,
+                      ),
+                      onPressed: onChibrer,
+                      child: const Text('Chibrer'),
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }
+
+  /// The suit, or the arrow of Obenabe / Undenufe, sized to its button.
+  Widget _symbol(TrumpMode mode, TextTheme text) => FractionallySizedBox(
+    heightFactor: _symbolShare,
+    child: FittedBox(
+      child: mode.trumpSuit == null
+          ? Text(modeSymbol(mode), style: text.titleLarge)
+          : SuitIcon(mode.trumpSuit!, size: 26),
+    ),
+  );
 }

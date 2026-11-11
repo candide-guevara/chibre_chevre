@@ -16,11 +16,14 @@ void main() {
       MaterialApp(
         theme: chibreTheme(),
         home: Scaffold(
-          body: TrumpChoicePanel(
-            modes: TrumpMode.values,
-            canChibrer: true,
-            onChoose: (_) {},
-            onChibrer: () {},
+          body: SizedBox(
+            height: 100,
+            child: TrumpChoicePanel(
+              modes: TrumpMode.values,
+              canChibrer: true,
+              onChoose: (_) {},
+              onChibrer: () {},
+            ),
           ),
         ),
       ),

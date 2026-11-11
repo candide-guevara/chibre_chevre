@@ -36,6 +36,9 @@ const _nameRowHeight = 48.0;
 /// Around the hand and the Stöck button lined up with its cards.
 const _handPadding = EdgeInsets.fromLTRB(8, 0, 8, 4);
 
+const _actionAreaPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+const _trumpChoicePadding = EdgeInsets.symmetric(horizontal: 24, vertical: 4);
+
 /// How the space below the score bar is shared: 60% for the table, 40%
 /// for the player's area.
 const _tableFlex = 3, _playerFlex = 2;
@@ -574,28 +577,39 @@ class _PlayScreenState extends State<PlayScreen> {
   Widget _actionArea(TableView table) {
     final player = table.player!;
     final text = Theme.of(context).textTheme;
-    final Widget content;
     if (_choosingTrump(table)) {
-      content = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            player.chibred
-                ? 'Votre partenaire a chibré : choisissez l\'atout'
-                : 'Choisissez l\'atout',
-            style: text.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          TrumpChoicePanel(
-            modes: table.options.allowedModes,
-            canChibrer: !player.chibred,
-            onChoose: (mode) => _controller.act(ChooseTrump(table.seat, mode)),
-            onChibrer: () => _controller.act(Chibrer(table.seat)),
-            suggested: _suggestion,
-          ),
-        ],
+      // The buttons share the height left under the title, so that the
+      // choice always spans the whole width.
+      return Padding(
+        padding: _trumpChoicePadding,
+        child: Column(
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                player.chibred
+                    ? 'Votre partenaire a chibré : choisissez l\'atout'
+                    : 'Choisissez l\'atout',
+                style: text.titleMedium,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: TrumpChoicePanel(
+                modes: table.options.allowedModes,
+                canChibrer: !player.chibred,
+                onChoose: (mode) =>
+                    _controller.act(ChooseTrump(table.seat, mode)),
+                onChibrer: () => _controller.act(Chibrer(table.seat)),
+                suggested: _suggestion,
+              ),
+            ),
+          ],
+        ),
       );
-    } else if (table.phase == TablePhase.playing) {
+    }
+    final Widget content;
+    if (table.phase == TablePhase.playing) {
       content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -627,7 +641,7 @@ class _PlayScreenState extends State<PlayScreen> {
     }
     // Content that would not fit is scaled down.
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: _actionAreaPadding,
       alignment: Alignment.center,
       child: LayoutBuilder(
         builder: (context, box) => FittedBox(
