@@ -13,6 +13,7 @@ import '../theme/flow_color.dart';
 import '../theme/screen_theme.dart';
 import '../widgets/announcement_summary.dart';
 import '../widgets/game_actions_bar.dart';
+import '../widgets/hand_columns.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/meld_offer.dart';
@@ -30,6 +31,9 @@ import 'played_cards_screen.dart';
 /// players on the sides. Shows the end screen once the game is over.
 /// The height taken by the names at the top and bottom of the table.
 const _nameRowHeight = 48.0;
+
+/// Around the hand, and the Stöck button lined up with its cards.
+const _handPadding = EdgeInsets.symmetric(horizontal: 8);
 
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key, required this.controller});
@@ -59,9 +63,6 @@ class _PlayScreenState extends State<PlayScreen> {
   /// The suggestion for the current move, computed as soon as it is the
   /// player's turn so that "Jouer pour moi" answers without waiting.
   Future<GameAction>? _upcomingSuggestion;
-
-  /// Fits the trump choice: a title and two rows of buttons.
-  static const _actionAreaHeight = 136.0;
 
   GameController get _controller => widget.controller;
 
@@ -368,38 +369,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           : table.options.multiplierFor(table.player!.mode!),
                     ),
                     Expanded(child: _tableArea(table)),
-                    _actionArea(table),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                      child: HandView(
-                        cards: sortHand(
-                          table.player!.hand,
-                          table.player!.mode,
-                          byTrump: table.sortByTrump,
-                        ),
-                        enabled: _enabledCards(table),
-                        selected: _choosingMelds ? _selection : _suggestedCards,
-                        onTap: _onCardTap,
-                        badge: switch (_stoeckCard(table)) {
-                          final card? => (
-                            card: card,
-                            child: ActionChip(
-                              label: const Text('Stöck'),
-                              onPressed: () => _play(card, stoeck: true),
-                            ),
-                          ),
-                          null => null,
-                        },
-                      ),
-                    ),
-                    if (table.assistance)
-                      GameActionsBar(
-                        onPlayForMe: table.isMyTurn && !_decidingMelds
-                            ? _suggest
-                            : null,
-                        thinking: _thinking,
-                        onPlayedCards: _openPlayedCards,
-                      ),
+                    Expanded(child: _playerArea(table)),
                   ],
                 ),
                 if (table.isPaused)
@@ -506,6 +476,49 @@ class _PlayScreenState extends State<PlayScreen> {
     );
   }
 
+  /// The action area, the Stöck button when it applies, the player's hand
+  /// and the game actions bar.
+  Widget _playerArea(TableView table) {
+    final hand = sortHand(
+      table.player!.hand,
+      table.player!.mode,
+      byTrump: table.sortByTrump,
+    );
+    final stoeckCard = _stoeckCard(table);
+    return Column(
+      children: [
+        Expanded(child: _actionArea(table)),
+        if (stoeckCard != null)
+          Padding(
+            padding: _handPadding,
+            child: HandColumns(
+              cards: hand,
+              card: stoeckCard,
+              child: ActionChip(
+                label: const Text('Stöck'),
+                onPressed: () => _play(stoeckCard, stoeck: true),
+              ),
+            ),
+          ),
+        Padding(
+          padding: _handPadding,
+          child: HandView(
+            cards: hand,
+            enabled: _enabledCards(table),
+            selected: _choosingMelds ? _selection : _suggestedCards,
+            onTap: _onCardTap,
+          ),
+        ),
+        if (table.assistance)
+          GameActionsBar(
+            onPlayForMe: table.isMyTurn && !_decidingMelds ? _suggest : null,
+            thinking: _thinking,
+            onPlayedCards: _openPlayedCards,
+          ),
+      ],
+    );
+  }
+
   Widget _actionArea(TableView table) {
     final player = table.player!;
     final text = Theme.of(context).textTheme;
@@ -560,10 +573,8 @@ class _PlayScreenState extends State<PlayScreen> {
     } else {
       content = const SizedBox.shrink();
     }
-    // A fixed height keeps the table, and the names on it, from moving when
-    // the content changes; content that would not fit is scaled down.
+    // Content that would not fit is scaled down.
     return Container(
-      height: _actionAreaHeight,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       alignment: Alignment.center,
       child: LayoutBuilder(

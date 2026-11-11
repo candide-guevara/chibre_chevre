@@ -31,6 +31,9 @@ class PlayingCard extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
 
+  /// How far a selected card rises, in card heights.
+  static const selectedRise = 0.15;
+
   @override
   Widget build(BuildContext context) {
     final design = CardDesignScope.of(context);
@@ -67,7 +70,7 @@ class PlayingCard extends StatelessWidget {
         onTap: enabled ? onTap : null,
         child: AnimatedSlide(
           duration: const SessionTiming().selection,
-          offset: Offset(0, selected ? -0.15 : 0),
+          offset: Offset(0, selected ? -selectedRise : 0),
           child: face,
         ),
       ),
