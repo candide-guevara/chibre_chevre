@@ -1,7 +1,8 @@
 name: chibre
 description: "Chibre Chèvre: the Chibre card game, with a friend or alone, against expert computer players."
 publish_to: 'none'
-version: 1.0.0+1
+homepage: https://github.com/candide-guevara/chibre_chevre
+version: 1.0.3+3
 
 environment:
   sdk: ^3.13.7
