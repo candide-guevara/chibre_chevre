@@ -70,6 +70,20 @@ Both phones must be on the same Wi-Fi. Emulators don't receive the other
 instance's broadcasts: in debug builds, type the address shown on the host's
 waiting screen into "Adresse (hôte:port)" on the join screen.
 
+## Measuring frame times
+
+```bash
+cd app
+tool/frame_bench.sh [device id] [rounds] [runs]   # e.g. tool/frame_bench.sh 1f42897a 2 3
+```
+
+Plays a single player game (`good-hand` deal, fixed bot seed) through the
+play screen in profile mode, tapping like a player, and saves the build and
+raster time of every frame to `build/frame_bench/<commit>-<date>-run<n>.json`,
+then prints the median of each statistic over the runs (3 by default). It
+uses its own profile and saved game (`CHIBRE_PROFILE=bench`), so the
+phone's own game is untouched. Compare runs on the same device only.
+
 ## Comparing computer players
 
 ```bash
