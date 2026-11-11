@@ -75,12 +75,18 @@ class _PlayScreenState extends State<PlayScreen> {
   /// player's turn so that "Jouer pour moi" answers without waiting.
   Future<GameAction>? _upcomingSuggestion;
 
+  /// The game is over and the table had time to settle: shows the end
+  /// screen.
+  var _showsEnd = false;
+  Timer? _endTimer;
+
   GameController get _controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
     _table = _controller.table;
+    _showsEnd = _table?.phase == TablePhase.gameOver;
     _subscription = _controller.tables.listen(_onTable);
     _lifecycle = AppLifecycleListener(
       onStateChange: (state) {
@@ -99,6 +105,7 @@ class _PlayScreenState extends State<PlayScreen> {
   void dispose() {
     _subscription.cancel();
     _lifecycle.dispose();
+    _endTimer?.cancel();
     super.dispose();
   }
 
@@ -115,9 +122,31 @@ class _PlayScreenState extends State<PlayScreen> {
     });
     _skipMeldsIfNone();
     _prepareSuggestion();
+    _scheduleEnd(previous, table);
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
+  }
+
+  /// Once the game is won, lets the last card slide in and the last trick
+  /// leave the table, then pauses before showing the end screen.
+  void _scheduleEnd(TableView? previous, TableView table) {
+    if (table.phase != TablePhase.gameOver) {
+      _endTimer?.cancel();
+      _endTimer = null;
+      _showsEnd = false;
+      return;
+    }
+    if (previous?.phase == TablePhase.gameOver) return;
+    const timing = SessionTiming();
+    // The game can end mid-trick, on Stöck.
+    final trick = table.player?.currentTrick;
+    final untilStill = trick != null && trick.cards.isNotEmpty
+        ? timing.cardSlide
+        : timing.trickOnTable(table.trickHold);
+    _endTimer = Timer(untilStill + timing.endPause, () {
+      if (mounted) setState(() => _showsEnd = true);
+    });
   }
 
   /// From the trump choice until the player decides on the melds.
@@ -352,7 +381,7 @@ class _PlayScreenState extends State<PlayScreen> {
         child: const Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }
-    if (table.phase == TablePhase.gameOver) {
+    if (_showsEnd) {
       return EndScreen(controller: _controller, table: table, onHome: _leave);
     }
     return ScreenTheme(

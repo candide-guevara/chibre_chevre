@@ -10,6 +10,7 @@ class SessionTiming {
     this.popup = const Duration(seconds: 10),
     this.selection = const Duration(milliseconds: 120),
     this.turnBadge = const Duration(milliseconds: 400),
+    this.endPause = const Duration(milliseconds: 400),
   });
 
   /// No waiting at all, for tests.
@@ -20,6 +21,7 @@ class SessionTiming {
     popup: Duration.zero,
     selection: Duration.zero,
     turnBadge: Duration.zero,
+    endPause: Duration.zero,
   );
 
   /// The bot pause: once the table is still (the previous card is in place,
@@ -45,6 +47,10 @@ class SessionTiming {
 
   /// How long a player's name takes to change color when their turn comes.
   final Duration turnBadge;
+
+  /// Once the game is won, how long the table stays still, after the last
+  /// trick left it, before the end screen shows.
+  final Duration endPause;
 
   /// How long a complete trick takes to leave the table: its last card
   /// slides in, the trick stays for [hold], then slides to its winner.

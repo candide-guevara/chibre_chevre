@@ -192,6 +192,7 @@ As soon as a player joins, both phones open the play game screen.
 
 ## End game screen
 
+* Once the game is won, the table stays until the last card is in place and, if the trick is complete, it has slid to its winner; the end screen shows 0.4 s later.
 * Shows both teams scores and the winner.
 * A button to go to the insights screen
 * A button to rematch
