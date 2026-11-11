@@ -28,40 +28,52 @@ class TrumpChoicePanel extends StatelessWidget {
   static const _outline = BorderSide(color: UiColors.accent, width: 3);
 
   @override
-  Widget build(BuildContext context) => Wrap(
-    alignment: WrapAlignment.center,
-    spacing: 8,
-    runSpacing: 8,
-    children: [
-      for (final mode in modes)
-        FilledButton(
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(64, 48),
-            side: switch (suggested) {
-              ChooseTrump(mode: final suggestedMode)
-                  when suggestedMode == mode =>
-                _outline,
-              _ => null,
-            },
-          ),
-          onPressed: () => onChoose(mode),
-          child: Semantics(
-            label: modeName(mode),
-            excludeSemantics: true,
-            child: mode.trumpSuit == null
-                ? Text(modeName(mode))
-                : SuitIcon(mode.trumpSuit!, size: 26),
-          ),
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // All the modes share one row, Obenabe and Undenufe drawn as arrows.
+        Row(
+          spacing: 8,
+          children: [
+            for (final mode in modes)
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 48),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    side: switch (suggested) {
+                      ChooseTrump(mode: final suggestedMode)
+                          when suggestedMode == mode =>
+                        _outline,
+                      _ => null,
+                    },
+                  ),
+                  onPressed: () => onChoose(mode),
+                  child: Semantics(
+                    label: modeName(mode),
+                    excludeSemantics: true,
+                    child: mode.trumpSuit == null
+                        ? Text(modeSymbol(mode), style: text.titleLarge)
+                        : SuitIcon(mode.trumpSuit!, size: 26),
+                  ),
+                ),
+              ),
+          ],
         ),
-      if (canChibrer)
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size(64, 48),
-            side: suggested is Chibrer ? _outline : null,
+        if (canChibrer) ...[
+          const SizedBox(height: 8),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(64, 48),
+              side: suggested is Chibrer ? _outline : null,
+            ),
+            onPressed: onChibrer,
+            child: const Text('Chibrer'),
           ),
-          onPressed: onChibrer,
-          child: const Text('Chibrer'),
-        ),
-    ],
-  );
+        ],
+      ],
+    );
+  }
 }
