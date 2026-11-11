@@ -4,9 +4,10 @@ import 'package:flutter/widgets.dart';
 
 import 'hand_layout.dart';
 
-/// A row lined up with the hand below it: one column per card, as wide as
-/// the visible part of that card, with [child] centered in the column of
-/// [card] (it may be wider than the column).
+/// A row lined up with a hand stacked under it, bottom aligned: one column
+/// per card, as wide as the visible part of that card, with [child]
+/// centered in the column of [card] (it may be wider than the column). The
+/// row ends at the top of the cards.
 class HandColumns extends StatelessWidget {
   const HandColumns({
     super.key,
@@ -25,21 +26,24 @@ class HandColumns extends StatelessWidget {
     builder: (context, box) {
       final layout = HandLayout(box.maxWidth, cards.length);
       final column = cards.indexOf(card);
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (var index = 0; index < cards.length; index++)
-            SizedBox(
-              width: layout.columnWidth(index),
-              child: index == column
-                  ? OverflowBox(
-                      maxWidth: double.infinity,
-                      fit: OverflowBoxFit.deferToChild,
-                      child: child,
-                    )
-                  : null,
-            ),
-        ],
+      return Padding(
+        padding: EdgeInsets.only(bottom: layout.cardHeight),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var index = 0; index < cards.length; index++)
+              SizedBox(
+                width: layout.columnWidth(index),
+                child: index == column
+                    ? OverflowBox(
+                        maxWidth: double.infinity,
+                        fit: OverflowBoxFit.deferToChild,
+                        child: child,
+                      )
+                    : null,
+              ),
+          ],
+        ),
       );
     },
   );

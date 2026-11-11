@@ -32,8 +32,11 @@ import 'played_cards_screen.dart';
 /// The height taken by the names at the top and bottom of the table.
 const _nameRowHeight = 48.0;
 
-/// Around the hand, and the Stöck button lined up with its cards.
-const _handPadding = EdgeInsets.symmetric(horizontal: 8);
+/// Around the hand and the Stöck button lined up with its cards.
+const _handPadding = EdgeInsets.fromLTRB(8, 0, 8, 4);
+
+/// The height of the game actions bar, as a share of the player's area.
+const _actionsBarShare = 0.12;
 
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key, required this.controller});
@@ -485,37 +488,50 @@ class _PlayScreenState extends State<PlayScreen> {
       byTrump: table.sortByTrump,
     );
     final stoeckCard = _stoeckCard(table);
-    return Column(
-      children: [
-        Expanded(child: _actionArea(table)),
-        if (stoeckCard != null)
+    return LayoutBuilder(
+      builder: (context, box) => Column(
+        children: [
+          Expanded(child: _actionArea(table)),
           Padding(
             padding: _handPadding,
-            child: HandColumns(
-              cards: hand,
-              card: stoeckCard,
-              child: ActionChip(
-                label: const Text('Stöck'),
-                onPressed: () => _play(stoeckCard, stoeck: true),
-              ),
+            // A raised card goes over the Stöck button.
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                if (stoeckCard != null)
+                  HandColumns(
+                    cards: hand,
+                    card: stoeckCard,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: ActionChip(
+                        label: const Text('Stöck'),
+                        onPressed: () => _play(stoeckCard, stoeck: true),
+                      ),
+                    ),
+                  ),
+                HandView(
+                  cards: hand,
+                  enabled: _enabledCards(table),
+                  selected: _choosingMelds ? _selection : _suggestedCards,
+                  onTap: _onCardTap,
+                ),
+              ],
             ),
           ),
-        Padding(
-          padding: _handPadding,
-          child: HandView(
-            cards: hand,
-            enabled: _enabledCards(table),
-            selected: _choosingMelds ? _selection : _suggestedCards,
-            onTap: _onCardTap,
-          ),
-        ),
-        if (table.assistance)
-          GameActionsBar(
-            onPlayForMe: table.isMyTurn && !_decidingMelds ? _suggest : null,
-            thinking: _thinking,
-            onPlayedCards: _openPlayedCards,
-          ),
-      ],
+          if (table.assistance)
+            SizedBox(
+              height: box.maxHeight * _actionsBarShare,
+              child: GameActionsBar(
+                onPlayForMe: table.isMyTurn && !_decidingMelds
+                    ? _suggest
+                    : null,
+                thinking: _thinking,
+                onPlayedCards: _openPlayedCards,
+              ),
+            ),
+        ],
+      ),
     );
   }
 
