@@ -48,6 +48,8 @@ class BlunderTile extends StatelessWidget {
             ),
             Text(where, style: text.bodySmall),
             const SizedBox(height: 8),
+            if (blunder.mode case final mode?)
+              _row('Atout', Text('${modeSymbol(mode)} ${_trumpName(mode)}')),
             _cards(
               'Main',
               sortHand(blunder.hand, blunder.mode, byTrump: sortByTrump),
@@ -64,21 +66,27 @@ class BlunderTile extends StatelessWidget {
     );
   }
 
-  Widget _cards(String label, List<core.Card> cards) => Padding(
+  Widget _row(String label, Widget content) => Padding(
     padding: const EdgeInsets.only(bottom: 4),
     child: Row(
       children: [
         SizedBox(width: 90, child: Text(label)),
-        Expanded(
-          child: Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: [for (final card in cards) CardLabel(card)],
-          ),
-        ),
+        Expanded(child: content),
       ],
     ),
   );
+
+  Widget _cards(String label, List<core.Card> cards) => _row(
+    label,
+    Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: [for (final card in cards) CardLabel(card)],
+    ),
+  );
+
+  static String _trumpName(TrumpMode mode) =>
+      mode.trumpSuit == null ? modeName(mode) : suitName(mode.trumpSuit!);
 
   List<InlineSpan> _explanation() => switch (blunder.kind) {
     BlunderKind.trumpChoice => [

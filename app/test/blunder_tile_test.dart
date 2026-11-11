@@ -32,4 +32,50 @@ void main() {
     expect(find.textContaining('Mieux', findRichText: true), findsOneWidget);
     expect(find.textContaining('trèfle', findRichText: true), findsNothing);
   });
+
+  testWidgets('the trump is shown, and omitted for a trump choice', (
+    tester,
+  ) async {
+    Future<void> show(Blunder blunder) => tester.pumpWidget(
+      MaterialApp(
+        theme: chibreTheme(),
+        home: Scaffold(body: BlunderTile(blunder: blunder, sortByTrump: false)),
+      ),
+    );
+    Blunder cardPlay(TrumpMode mode) => Blunder(
+      kind: BlunderKind.cardPlay,
+      seat: 0,
+      roundIndex: 0,
+      trickIndex: 0,
+      hand: CardSet.parse('C7 CK'),
+      trick: const [],
+      mode: mode,
+      pointsLost: 5,
+      playedCard: core.Card.parse('CK'),
+      bestCard: core.Card.parse('C7'),
+    );
+
+    await show(cardPlay(TrumpMode.hearts));
+    expect(find.text('Atout'), findsOneWidget);
+    expect(find.text('♥ cœur'), findsOneWidget);
+
+    await show(cardPlay(TrumpMode.obenabe));
+    expect(find.text('⬇ Obenabe'), findsOneWidget);
+
+    await show(
+      Blunder(
+        kind: BlunderKind.trumpChoice,
+        seat: 0,
+        roundIndex: 0,
+        trickIndex: null,
+        hand: CardSet.parse('C7 CK'),
+        trick: const [],
+        mode: null,
+        pointsLost: 5,
+        chosenTrump: TrumpOption.mode(TrumpMode.hearts),
+        bestTrump: TrumpOption.mode(TrumpMode.obenabe),
+      ),
+    );
+    expect(find.text('Atout'), findsNothing);
+  });
 }
