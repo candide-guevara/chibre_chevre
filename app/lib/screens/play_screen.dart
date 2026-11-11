@@ -14,6 +14,7 @@ import '../theme/screen_theme.dart';
 import '../widgets/announcement_summary.dart';
 import '../widgets/game_actions_bar.dart';
 import '../widgets/hand_columns.dart';
+import '../widgets/hand_layout.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/meld_controls.dart';
 import '../widgets/meld_offer.dart';
@@ -493,57 +494,88 @@ class _PlayScreenState extends State<PlayScreen> {
     );
     final stoeckCard = _stoeckCard(table);
     return LayoutBuilder(
-      builder: (context, box) => Column(
-        children: [
-          Expanded(child: _actionArea(table)),
-          Padding(
-            padding: _handPadding,
-            // A raised card goes over the Stöck button.
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                if (stoeckCard != null)
-                  HandColumns(
-                    cards: hand,
-                    card: stoeckCard,
+      builder: (context, box) {
+        final handLayout = HandLayout(
+          box.maxWidth - _handPadding.horizontal,
+          hand.length,
+        );
+        // No card rises while choosing trump, so the choice may use the
+        // room above the cards.
+        final actionAreaBottom =
+            _handPadding.vertical +
+            handLayout.height -
+            (_choosingTrump(table) ? handLayout.riseRoom : 0);
+        return Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: ActionChip(
-                        label: const Text('Stöck'),
-                        onPressed: () => _play(stoeckCard, stoeck: true),
+                      padding: _handPadding,
+                      // A raised card goes over the Stöck button.
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          if (stoeckCard != null)
+                            HandColumns(
+                              cards: hand,
+                              card: stoeckCard,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: ActionChip(
+                                  label: const Text('Stöck'),
+                                  onPressed: () =>
+                                      _play(stoeckCard, stoeck: true),
+                                ),
+                              ),
+                            ),
+                          HandView(
+                            cards: hand,
+                            enabled: _enabledCards(table),
+                            selected: _choosingMelds
+                                ? _selection
+                                : _suggestedCards,
+                            onTap: _onCardTap,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                HandView(
-                  cards: hand,
-                  enabled: _enabledCards(table),
-                  selected: _choosingMelds ? _selection : _suggestedCards,
-                  onTap: _onCardTap,
-                ),
-              ],
-            ),
-          ),
-          if (table.assistance)
-            SizedBox(
-              height: box.maxHeight * _actionsBarShare,
-              child: GameActionsBar(
-                onPlayForMe: table.isMyTurn && !_decidingMelds
-                    ? _suggest
-                    : null,
-                thinking: _thinking,
-                onPlayedCards: _openPlayedCards,
+                  Positioned.fill(
+                    bottom: actionAreaBottom,
+                    child: _actionArea(table),
+                  ),
+                ],
               ),
             ),
-        ],
-      ),
+            if (table.assistance)
+              SizedBox(
+                height: box.maxHeight * _actionsBarShare,
+                child: GameActionsBar(
+                  onPlayForMe: table.isMyTurn && !_decidingMelds
+                      ? _suggest
+                      : null,
+                  thinking: _thinking,
+                  onPlayedCards: _openPlayedCards,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
+
+  /// It is this player's turn to choose trump.
+  bool _choosingTrump(TableView table) =>
+      table.isMyTurn && table.phase == TablePhase.choosingTrump;
 
   Widget _actionArea(TableView table) {
     final player = table.player!;
     final text = Theme.of(context).textTheme;
     final Widget content;
-    if (table.isMyTurn && table.phase == TablePhase.choosingTrump) {
+    if (_choosingTrump(table)) {
       content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [

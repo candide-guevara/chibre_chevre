@@ -27,8 +27,7 @@ class HandView extends StatelessWidget {
       final layout = HandLayout(box.maxWidth, cards.length);
       return SizedBox(
         width: layout.width,
-        // Room for the selected cards to rise.
-        height: layout.cardHeight * (1 + PlayingCard.selectedRise),
+        height: layout.height,
         child: Stack(
           children: [
             for (final (index, card) in cards.indexed)

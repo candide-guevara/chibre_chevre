@@ -29,6 +29,13 @@ class HandLayout {
 
   double get cardHeight => cardWidth * cardAspectRatio;
 
+  /// The room above the cards for the selected ones to rise.
+  double get riseRoom =>
+      cardCount == 0 ? 0 : cardHeight * PlayingCard.selectedRise;
+
+  /// The height of the hand, rise room included.
+  double get height => cardCount == 0 ? 0 : cardHeight + riseRoom;
+
   /// The visible part of a card: the last card shows whole, the others up
   /// to the next card.
   double columnWidth(int index) => index == cardCount - 1 ? cardWidth : step;
