@@ -3,6 +3,7 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
+import '../strings.dart';
 
 /// Proposes a rematch, or answers the other player's proposal.
 class RematchButtons extends StatelessWidget {
@@ -24,27 +25,23 @@ class RematchButtons extends StatelessWidget {
     final offer = table.rematch;
     if (offer != null && offer.proposedBy == table.seat) {
       return Text(
-        'En attente de la réponse de ${table.nicknames[partnerOf(table.seat)]}…',
+        Strings.waitingForAnswer(table.nicknames[partnerOf(table.seat)]),
       );
     }
     if (offer != null) {
       final other = table.nicknames[offer.proposedBy];
       return Column(
         children: [
-          Text(
-            offer.sameCards
-                ? '$other propose une revanche avec les mêmes cartes'
-                : '$other propose une revanche',
-          ),
+          Text(Strings.proposesRematch(other, sameCards: offer.sameCards)),
           const SizedBox(height: 8),
           FilledButton(
             onPressed: () => controller.answerRematch(accept: true),
-            child: const Text('Accepter'),
+            child: const Text(Strings.accept),
           ),
           const SizedBox(height: 8),
           OutlinedButton(
             onPressed: () => controller.answerRematch(accept: false),
-            child: const Text('Refuser'),
+            child: const Text(Strings.refuse),
           ),
         ],
       );
@@ -53,13 +50,13 @@ class RematchButtons extends StatelessWidget {
       children: [
         FilledButton(
           onPressed: () => controller.proposeRematch(sameCards: false),
-          child: const Text('Revanche'),
+          child: const Text(Strings.rematch),
         ),
         if (sameCardsOption) ...[
           const SizedBox(height: 16),
           FilledButton(
             onPressed: () => controller.proposeRematch(sameCards: true),
-            child: const Text('Revanche, mêmes cartes'),
+            child: const Text(Strings.rematchSameCards),
           ),
         ],
       ],

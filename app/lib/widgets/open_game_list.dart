@@ -1,6 +1,7 @@
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 
 /// The games found on the network. Paused games stand out and can only be
@@ -20,7 +21,7 @@ class OpenGameList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (games.isEmpty) {
-      return const Center(child: Text('Recherche de parties sur le réseau…'));
+      return const Center(child: Text(Strings.searchingGames));
     }
     return ListView.separated(
       itemCount: games.length,
@@ -35,12 +36,12 @@ class OpenGameList extends StatelessWidget {
           title: Text(listing.name),
           subtitle: Text(
             listing.isPaused
-                ? 'En pause — ${listing.scores[0]} : ${listing.scores[1]}'
-                : 'Hôte : ${listing.hostNickname}',
+                ? Strings.pausedScores(listing.scores)
+                : Strings.hostIs(listing.hostNickname),
           ),
           trailing: listing.isPaused
               ? Chip(
-                  label: Text(joinable ? 'Reprendre' : 'En pause'),
+                  label: Text(joinable ? Strings.resumeGame : Strings.paused),
                   backgroundColor: UiColors.accent,
                   labelStyle: const TextStyle(color: UiColors.onAccent),
                 )

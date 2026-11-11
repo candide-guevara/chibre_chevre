@@ -5,7 +5,7 @@ import 'package:flutter/material.dart' hide Card;
 import '../card_art/card_designs.dart';
 import '../card_art/card_face_painter.dart';
 import '../card_art/card_images.dart';
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 
 const cardAspectRatio = 1.5;
@@ -63,7 +63,7 @@ class PlayingCard extends StatelessWidget {
       );
     }
     return Semantics(
-      label: cardName(card),
+      label: Strings.cardName(card),
       button: onTap != null,
       enabled: enabled,
       child: GestureDetector(

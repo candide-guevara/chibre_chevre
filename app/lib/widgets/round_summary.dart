@@ -1,6 +1,7 @@
 import 'package:chibre_core/chibre_core.dart' hide Card;
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 
 /// Shown between two deals: what each team scored in the round.
@@ -28,16 +29,22 @@ class RoundSummary extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Manche terminée', style: text.titleLarge),
+              Text(Strings.roundOver, style: text.titleLarge),
               const SizedBox(height: 12),
-              Text('Nous +${roundPoints[team]}', style: text.titleMedium),
               Text(
-                'Ordi +${roundPoints[opponentTeam(team)]}',
+                Strings.gain(ours: true, points: roundPoints[team]),
+                style: text.titleMedium,
+              ),
+              Text(
+                Strings.gain(
+                  ours: false,
+                  points: roundPoints[opponentTeam(team)],
+                ),
                 style: text.titleMedium,
               ),
               const SizedBox(height: 16),
               Text(
-                'Touchez pour continuer',
+                Strings.tapToContinue,
                 style: text.bodySmall?.copyWith(color: UiColors.textMuted),
               ),
             ],

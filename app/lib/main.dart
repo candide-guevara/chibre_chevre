@@ -5,6 +5,7 @@ import 'card_art/card_designs.dart';
 import 'screens/start_screen.dart';
 import 'services/app_services.dart';
 import 'services/test_deal.dart';
+import 'strings.dart';
 import 'theme/chibre_theme.dart';
 
 /// [args] come from the command line on desktop, e.g. `--test-fix-deal=stock`.
@@ -29,7 +30,7 @@ class ChibreApp extends StatelessWidget {
       builder: (context, design, child) =>
           CardDesignScope(design: design, child: child!),
       child: MaterialApp(
-        title: 'Chibre Chèvre',
+        title: Strings.appTitle,
         debugShowCheckedModeBanner: false,
         theme: chibreTheme(),
         home: const StartScreen(),

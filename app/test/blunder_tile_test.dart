@@ -1,3 +1,4 @@
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/blunder_tile.dart';
 import 'package:chibre/widgets/card_label.dart';
@@ -28,9 +29,15 @@ void main() {
     );
     // 3 in the hand, 1 on the table, 2 in the explanation.
     expect(find.byType(CardLabel), findsNWidgets(6));
-    expect(find.text('K'), findsNWidgets(2));
-    expect(find.textContaining('Mieux', findRichText: true), findsOneWidget);
-    expect(find.textContaining('trèfle', findRichText: true), findsNothing);
+    expect(find.text(Strings.rankIndex(Rank.king)), findsNWidgets(2));
+    expect(
+      find.textContaining(Strings.better, findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(Strings.suitName(Suit.clubs), findRichText: true),
+      findsNothing,
+    );
   });
 
   testWidgets('the trump is shown, and omitted for a trump choice', (
@@ -56,11 +63,17 @@ void main() {
     );
 
     await show(cardPlay(TrumpMode.hearts));
-    expect(find.text('Atout'), findsOneWidget);
-    expect(find.text('♥ cœur'), findsOneWidget);
+    expect(find.text(Strings.trump), findsOneWidget);
+    expect(
+      find.text(Strings.trumpWithSymbol(TrumpMode.hearts)),
+      findsOneWidget,
+    );
 
     await show(cardPlay(TrumpMode.obenabe));
-    expect(find.text('⬇ Obenabe'), findsOneWidget);
+    expect(
+      find.text(Strings.trumpWithSymbol(TrumpMode.obenabe)),
+      findsOneWidget,
+    );
 
     await show(
       Blunder(
@@ -76,6 +89,6 @@ void main() {
         bestTrump: TrumpOption.mode(TrumpMode.obenabe),
       ),
     );
-    expect(find.text('Atout'), findsNothing);
+    expect(find.text(Strings.trump), findsNothing);
   });
 }

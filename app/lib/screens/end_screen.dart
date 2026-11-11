@@ -3,9 +3,10 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
+import '../strings.dart';
 import '../theme/flow_color.dart';
-import 'insights_screen.dart';
 import '../widgets/rematch_buttons.dart';
+import 'insights_screen.dart';
 
 /// Final scores, with the way to the insights, a rematch or the start screen.
 class EndScreen extends StatelessWidget {
@@ -32,11 +33,17 @@ class EndScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Text(won ? 'Victoire !' : 'Défaite', style: text.displaySmall),
-                const SizedBox(height: 24),
-                Text('Nous ${table.scores[team]}', style: text.headlineSmall),
                 Text(
-                  'Ordi ${table.scores[opponentTeam(team)]}',
+                  won ? Strings.victory : Strings.defeat,
+                  style: text.displaySmall,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  Strings.ourScore(table.scores[team]),
+                  style: text.headlineSmall,
+                ),
+                Text(
+                  Strings.theirScore(table.scores[opponentTeam(team)]),
                   style: text.headlineSmall,
                 ),
                 const SizedBox(height: 40),
@@ -47,7 +54,7 @@ class EndScreen extends StatelessWidget {
                       (_) => InsightsScreen(controller: controller),
                     ),
                   ),
-                  child: const Text('Analyse de la partie'),
+                  child: const Text(Strings.gameAnalysis),
                 ),
                 const SizedBox(height: 16),
                 RematchButtons(
@@ -56,7 +63,10 @@ class EndScreen extends StatelessWidget {
                   sameCardsOption: false,
                 ),
                 const SizedBox(height: 16),
-                OutlinedButton(onPressed: onHome, child: const Text('Accueil')),
+                OutlinedButton(
+                  onPressed: onHome,
+                  child: const Text(Strings.home),
+                ),
               ],
             ),
           ),

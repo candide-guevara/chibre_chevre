@@ -2,7 +2,7 @@ import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart' hide Card;
 
 import '../card_art/suit_symbol.dart';
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import 'suit_icon.dart';
 
@@ -17,7 +17,7 @@ class CardLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: cardName(card),
+    label: Strings.cardName(card),
     excludeSemantics: true,
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
@@ -29,7 +29,7 @@ class CardLabel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            rankIndex(card.rank),
+            Strings.rankIndex(card.rank),
             style: TextStyle(
               color: suitColor(card.suit),
               fontSize: _size,

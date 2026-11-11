@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../game/client_game_controller.dart';
 import '../services/app_services.dart';
+import '../strings.dart';
 import '../theme/flow_color.dart';
 import '../widgets/open_game_list.dart';
 import 'play_screen.dart';
@@ -55,13 +56,12 @@ class _JoinScreenState extends State<JoinScreen> {
       );
     } on JoinRejectedException catch (error) {
       _fail(switch (error.reason) {
-        JoinRejection.versionMismatch =>
-          'Les deux téléphones n\'ont pas la même version de l\'app.',
-        JoinRejection.gameFull => 'La partie est complète.',
-        JoinRejection.unknown => 'Impossible de rejoindre la partie.',
+        JoinRejection.versionMismatch => Strings.versionMismatch,
+        JoinRejection.gameFull => Strings.gameFull,
+        JoinRejection.unknown => Strings.cannotJoin,
       });
     } catch (_) {
-      _fail('Impossible de rejoindre la partie.');
+      _fail(Strings.cannotJoin);
     }
   }
 
@@ -87,7 +87,7 @@ class _JoinScreenState extends State<JoinScreen> {
   Widget build(BuildContext context) {
     final installationId = Services.of(context).profile.installationId;
     return Scaffold(
-      appBar: AppBar(title: const Text('Rejoindre une partie')),
+      appBar: AppBar(title: const Text(Strings.joinGame)),
       body: _joining
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -111,7 +111,7 @@ class _JoinScreenState extends State<JoinScreen> {
                           child: TextField(
                             controller: _address,
                             decoration: const InputDecoration(
-                              labelText: 'Adresse (hôte:port)',
+                              labelText: Strings.address,
                             ),
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../game/advanced_settings.dart';
+import '../strings.dart';
 
 /// Advanced options of a new game, reported through [onChanged].
 class AdvancedSettingsScreen extends StatefulWidget {
@@ -27,19 +28,17 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Paramètres avancés')),
+    appBar: AppBar(title: const Text(Strings.advancedSettings)),
     body: ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text(
-          'Pause avant de ramasser un pli : ${_seconds(_settings.trickHold)}',
-        ),
+        Text(Strings.trickHold(_settings.trickHold)),
         Slider(
           value: _settings.trickHold.inMilliseconds / 1000,
           min: 0.5,
           max: 5,
           divisions: 9,
-          label: _seconds(_settings.trickHold),
+          label: Strings.seconds(_settings.trickHold),
           onChanged: (value) => _update(
             _settings.copyWith(
               trickHold: Duration(milliseconds: (value * 1000).round()),
@@ -47,15 +46,13 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          'Réflexion des ordinateurs : ${_seconds(_settings.thinkingTime)}',
-        ),
+        Text(Strings.thinkingTime(_settings.thinkingTime)),
         Slider(
           value: _settings.thinkingTime.inMilliseconds / 1000,
           min: 0.2,
           max: 2,
           divisions: 9,
-          label: _seconds(_settings.thinkingTime),
+          label: Strings.seconds(_settings.thinkingTime),
           onChanged: (value) => _update(
             _settings.copyWith(
               thinkingTime: Duration(milliseconds: (value * 1000).round()),
@@ -65,26 +62,22 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
         const SizedBox(height: 16),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Aide de jeu'),
-          subtitle: const Text(
-            'Boutons « Jouer pour moi » et « Cartes jouées »',
-          ),
+          title: const Text(Strings.assistance),
+          subtitle: const Text(Strings.assistanceDetail),
           value: _settings.assistance,
           onChanged: (value) => _update(_settings.copyWith(assistance: value)),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Trier la main selon l\'atout'),
-          subtitle: const Text('Sinon : ♥ ♠ ♦ ♣, du 6 à l\'as'),
+          title: const Text(Strings.sortByTrump),
+          subtitle: const Text(Strings.sortByTrumpOff),
           value: _settings.sortByTrump,
           onChanged: (value) => _update(_settings.copyWith(sortByTrump: value)),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Annonces automatiques'),
-          subtitle: const Text(
-            'Stöck annoncé tout seul, annonces proposées en début de manche',
-          ),
+          title: const Text(Strings.autoAnnounce),
+          subtitle: const Text(Strings.autoAnnounceDetail),
           value: _settings.autoAnnounce,
           onChanged: (value) =>
               _update(_settings.copyWith(autoAnnounce: value)),
@@ -93,7 +86,3 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
     ),
   );
 }
-
-/// "1,5 s": French decimal comma.
-String _seconds(Duration duration) =>
-    '${(duration.inMilliseconds / 1000).toStringAsFixed(1).replaceAll('.', ',')} s';

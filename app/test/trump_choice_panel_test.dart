@@ -1,4 +1,4 @@
-import 'package:chibre/labels.dart';
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/trump_choice_panel.dart';
 import 'package:chibre_core/chibre_core.dart';
@@ -30,9 +30,12 @@ void main() {
     );
     final rows = {
       for (final mode in TrumpMode.values)
-        tester.getCenter(find.bySemanticsLabel(modeName(mode))).dy,
+        tester.getCenter(find.bySemanticsLabel(Strings.modeName(mode))).dy,
     };
     expect(rows, hasLength(1));
-    expect(tester.getCenter(find.text('Chibrer')).dy, greaterThan(rows.single));
+    expect(
+      tester.getCenter(find.text(Strings.chibrer)).dy,
+      greaterThan(rows.single),
+    );
   });
 }

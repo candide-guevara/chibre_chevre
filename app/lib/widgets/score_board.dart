@@ -1,6 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import 'trump_indicator.dart';
 
@@ -34,11 +35,14 @@ class ScoreBoard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Text('Nous ${scores[team]}', style: text.titleMedium),
+          Text(Strings.ourScore(scores[team]), style: text.titleMedium),
           const SizedBox(width: 16),
-          Text('Ordi ${scores[opponentTeam(team)]}', style: text.titleMedium),
+          Text(
+            Strings.theirScore(scores[opponentTeam(team)]),
+            style: text.titleMedium,
+          ),
           const SizedBox(width: 8),
-          Text('/ $target', style: text.bodySmall),
+          Text(Strings.outOf(target), style: text.bodySmall),
           const Spacer(),
           if (mode != null) TrumpIndicator(mode: mode!, multiplier: multiplier),
         ],

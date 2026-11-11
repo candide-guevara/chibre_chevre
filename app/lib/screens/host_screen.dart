@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../game/advanced_settings.dart';
 import '../game/game_defaults.dart';
-import '../services/app_services.dart';
 import '../game/host_game_controller.dart';
+import '../services/app_services.dart';
+import '../strings.dart';
 import '../theme/flow_color.dart';
 import '../widgets/host_actions_bar.dart';
 import 'advanced_settings_screen.dart';
@@ -56,8 +57,8 @@ class _HostScreenState extends State<HostScreen> {
   }
 
   String get _defaultName => widget.solo
-      ? 'Partie solo'
-      : 'Partie de ${Services.of(context).profile.nickname}';
+      ? Strings.soloGameName
+      : Strings.gameNameOf(Services.of(context).profile.nickname);
 
   void _apply(GameDefaults defaults) {
     _target.text = '${defaults.options.targetScore}';
@@ -112,7 +113,9 @@ class _HostScreenState extends State<HostScreen> {
     final session = await services.newHostSession();
     await session.create(
       HostConfig(
-        gameName: _name.text.trim().isEmpty ? 'Chibre' : _name.text.trim(),
+        gameName: _name.text.trim().isEmpty
+            ? Strings.fallbackGameName
+            : _name.text.trim(),
         nickname: services.profile.nickname!,
         options: _options,
         trickHold: _advanced.trickHold,
@@ -139,16 +142,16 @@ class _HostScreenState extends State<HostScreen> {
     appBar: AppBar(
       title: Text(
         widget.editingDefaults
-            ? 'Paramètres par défaut'
+            ? Strings.defaultSettings
             : widget.solo
-            ? 'Jouer seul'
-            : 'Créer une partie',
+            ? Strings.playAlone
+            : Strings.createGame,
       ),
     ),
     bottomNavigationBar: HostActionsBar(
       onDefaults: _loadDefaults,
       onAdvanced: _openAdvanced,
-      primaryLabel: widget.editingDefaults ? 'Enregistrer' : 'Lancer la partie',
+      primaryLabel: widget.editingDefaults ? Strings.save : Strings.startGame,
       onPrimary: _starting || _targetScore == null
           ? null
           : widget.editingDefaults
@@ -164,23 +167,23 @@ class _HostScreenState extends State<HostScreen> {
           TextField(
             controller: _name,
             maxLength: 30,
-            decoration: const InputDecoration(labelText: 'Nom de la partie'),
+            decoration: const InputDecoration(labelText: Strings.gameName),
           ),
           const SizedBox(height: 16),
         ],
         TextField(
           controller: _target,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'Nombre de points'),
+          decoration: const InputDecoration(labelText: Strings.targetScore),
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 24),
-        const Text('Atouts'),
+        const Text(Strings.trumps),
         const SizedBox(height: 8),
         SegmentedButton<bool>(
           segments: const [
-            ButtonSegment(value: false, label: Text('4 couleurs')),
-            ButtonSegment(value: true, label: Text('+ Obenabe, Undenufe')),
+            ButtonSegment(value: false, label: Text(Strings.fourSuits)),
+            ButtonSegment(value: true, label: Text(Strings.withObenUnde)),
           ],
           selected: {_obenUnde},
           onSelectionChanged: (value) =>
@@ -189,17 +192,15 @@ class _HostScreenState extends State<HostScreen> {
         const SizedBox(height: 16),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Multiplicateurs'),
-          subtitle: const Text('♦♥ ×1, ♠♣ ×2, Obenabe et Undenufe ×3'),
+          title: const Text(Strings.multipliers),
+          subtitle: const Text(Strings.multipliersDetail),
           value: _multipliers,
           onChanged: (value) => setState(() => _multipliers = value),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Finir la dernière manche'),
-          subtitle: const Text(
-            'L\'équipe qui atteint le score en premier gagne.',
-          ),
+          title: const Text(Strings.finishLastRound),
+          subtitle: const Text(Strings.finishLastRoundOff),
           value: _finishLastRound,
           onChanged: (value) => setState(() => _finishLastRound = value),
         ),

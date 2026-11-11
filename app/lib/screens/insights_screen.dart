@@ -3,6 +3,7 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import '../theme/screen_theme.dart';
 import '../widgets/blunder_tile.dart';
@@ -29,7 +30,7 @@ class InsightsScreen extends StatelessWidget {
       return ScreenTheme(
         color: ScreenColors.insights,
         child: Scaffold(
-          appBar: AppBar(title: const Text('Analyse de la partie')),
+          appBar: AppBar(title: const Text(Strings.gameAnalysis)),
           body: table.insights == null
               ? const Center(
                   child: Column(
@@ -37,7 +38,7 @@ class InsightsScreen extends StatelessWidget {
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
-                      Text('L\'expert analyse la partie…'),
+                      Text(Strings.analysing),
                     ],
                   ),
                 )
@@ -73,7 +74,7 @@ class InsightsScreen extends StatelessWidget {
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
             },
-            child: const Text('Accueil'),
+            child: const Text(Strings.home),
           ),
         ),
       ],
@@ -82,7 +83,7 @@ class InsightsScreen extends StatelessWidget {
 
   List<Widget> _blundersOf(TableView table, int seat) {
     final blunders = table.insights!.where((b) => b.seat == seat).toList();
-    if (blunders.isEmpty) return [const Text('Aucune erreur notable. Bravo !')];
+    if (blunders.isEmpty) return [const Text(Strings.noBlunder)];
     return [
       for (final blunder in blunders)
         BlunderTile(blunder: blunder, sortByTrump: table.sortByTrump),

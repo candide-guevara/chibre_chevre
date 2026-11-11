@@ -3,7 +3,7 @@ import 'package:chibre_core/chibre_core.dart' hide Card;
 import 'package:flutter/material.dart';
 
 import '../game/hand_order.dart';
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import 'card_label.dart';
 
@@ -23,8 +23,8 @@ class BlunderTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final where = blunder.trickIndex == null
-        ? 'Manche ${blunder.roundIndex + 1}'
-        : 'Manche ${blunder.roundIndex + 1}, pli ${blunder.trickIndex! + 1}';
+        ? Strings.round(blunder.roundIndex)
+        : Strings.roundAndTrick(blunder.roundIndex, blunder.trickIndex!);
     return Card(
       color: UiColors.panel,
       child: Padding(
@@ -36,12 +36,12 @@ class BlunderTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    blunderTitle(blunder.kind),
+                    Strings.blunderTitle(blunder.kind),
                     style: text.titleMedium,
                   ),
                 ),
                 Text(
-                  '−${blunder.pointsLost.round()} pts',
+                  Strings.pointsLost(blunder.pointsLost),
                   style: text.titleMedium?.copyWith(color: UiColors.accent),
                 ),
               ],
@@ -49,12 +49,13 @@ class BlunderTile extends StatelessWidget {
             Text(where, style: text.bodySmall),
             const SizedBox(height: 8),
             if (blunder.mode case final mode?)
-              _row('Atout', Text('${modeSymbol(mode)} ${_trumpName(mode)}')),
+              _row(Strings.trump, Text(Strings.trumpWithSymbol(mode))),
             _cards(
-              'Main',
+              Strings.hand,
               sortHand(blunder.hand, blunder.mode, byTrump: sortByTrump),
             ),
-            if (blunder.trick.isNotEmpty) _cards('Sur la table', blunder.trick),
+            if (blunder.trick.isNotEmpty)
+              _cards(Strings.onTheTable, blunder.trick),
             const SizedBox(height: 8),
             Text.rich(
               TextSpan(children: _explanation()),
@@ -85,28 +86,23 @@ class BlunderTile extends StatelessWidget {
     ),
   );
 
-  static String _trumpName(TrumpMode mode) =>
-      mode.trumpSuit == null ? modeName(mode) : suitName(mode.trumpSuit!);
-
   List<InlineSpan> _explanation() => switch (blunder.kind) {
     BlunderKind.trumpChoice => [
       TextSpan(
-        text:
-            'Choisi : ${trumpOptionName(blunder.chosenTrump!)}. '
-            'Mieux : ${trumpOptionName(blunder.bestTrump!)}.',
+        text: Strings.chosenAndBetter(blunder.chosenTrump!, blunder.bestTrump!),
       ),
     ],
     BlunderKind.cardPlay => [
-      const TextSpan(text: 'Joué : '),
+      const TextSpan(text: Strings.played),
       cardSpan(blunder.playedCard!),
-      const TextSpan(text: '. Mieux : '),
+      const TextSpan(text: Strings.better),
       cardSpan(blunder.bestCard!),
-      const TextSpan(text: '.'),
+      const TextSpan(text: Strings.sentenceEnd),
     ],
     BlunderKind.missedMeld => [
-      const TextSpan(text: 'Non annoncé : '),
+      const TextSpan(text: Strings.notAnnounced),
       for (final (i, meld) in blunder.missedMelds.indexed) ...[
-        TextSpan(text: '${i == 0 ? '' : ', '}${meld.value} '),
+        TextSpan(text: '${i == 0 ? '' : Strings.listSeparator}${meld.value} '),
         for (final card in meld.cards.cards) ...[
           cardSpan(card),
           const TextSpan(text: ' '),
@@ -114,9 +110,9 @@ class BlunderTile extends StatelessWidget {
       ],
     ],
     BlunderKind.missedStoeck => [
-      const TextSpan(text: 'Le Stöck n\'a pas été annoncé avec '),
+      const TextSpan(text: Strings.stoeckNotAnnounced),
       cardSpan(blunder.playedCard!),
-      const TextSpan(text: '.'),
+      const TextSpan(text: Strings.sentenceEnd),
     ],
   };
 }

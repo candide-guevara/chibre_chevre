@@ -1,6 +1,7 @@
 import 'package:chibre/screens/profile_screen.dart';
 import 'package:chibre/services/app_services.dart';
 import 'package:chibre/services/profile_store.dart';
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -51,10 +52,10 @@ void main() {
       ),
     );
 
-    await tester.tap(find.bySemanticsLabel('Vintage'));
+    await tester.tap(find.bySemanticsLabel(Strings.vintageCards));
     await tester.pump();
     expect(profile.cardDesign, 'retired', reason: 'not saved yet');
-    await tester.tap(find.text('Enregistrer'));
+    await tester.tap(find.text(Strings.save));
     await tester.pumpAndSettle();
 
     expect(services.cardDecks.value.id, 'vintage');

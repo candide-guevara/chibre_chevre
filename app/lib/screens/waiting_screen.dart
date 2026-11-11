@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../game/host_game_controller.dart';
+import '../strings.dart';
 import 'play_screen.dart';
 
 /// The host waits for a player to join.
@@ -65,15 +66,18 @@ class _WaitingScreenState extends State<WaitingScreen> {
             const CircularProgressIndicator(),
             const SizedBox(height: 24),
             Text(
-              'En attente d\'un joueur…',
+              Strings.waitingForPlayer,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (kDebugMode && widget.session.address != null) ...[
               const SizedBox(height: 8),
-              Text('Adresse : ${widget.session.address}'),
+              Text(Strings.addressIs(widget.session.address!)),
             ],
             const SizedBox(height: 32),
-            OutlinedButton(onPressed: _cancel, child: const Text('Annuler')),
+            OutlinedButton(
+              onPressed: _cancel,
+              child: const Text(Strings.cancel),
+            ),
           ],
         ),
       ),

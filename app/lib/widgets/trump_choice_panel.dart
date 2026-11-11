@@ -1,7 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import 'suit_icon.dart';
 
@@ -59,7 +59,7 @@ class TrumpChoicePanel extends StatelessWidget {
                     ),
                     onPressed: () => onChoose(mode),
                     child: Semantics(
-                      label: modeName(mode),
+                      label: Strings.modeName(mode),
                       excludeSemantics: true,
                       child: _symbol(mode, text),
                     ),
@@ -83,7 +83,7 @@ class TrumpChoicePanel extends StatelessWidget {
                         side: suggested is Chibrer ? _outline : null,
                       ),
                       onPressed: onChibrer,
-                      child: const Text('Chibrer'),
+                      child: const Text(Strings.chibrer),
                     ),
                   ],
                 )
@@ -98,7 +98,7 @@ class TrumpChoicePanel extends StatelessWidget {
     heightFactor: _symbolShare,
     child: FittedBox(
       child: mode.trumpSuit == null
-          ? Text(modeSymbol(mode), style: text.titleLarge)
+          ? Text(Strings.modeSymbol(mode), style: text.titleLarge)
           : SuitIcon(mode.trumpSuit!, size: 26),
     ),
   );

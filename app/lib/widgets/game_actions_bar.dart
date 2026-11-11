@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
+
 /// The buttons at the bottom of the play screen, as tall as their parent
 /// lets them.
 class GameActionsBar extends StatelessWidget {
@@ -38,7 +40,7 @@ class GameActionsBar extends StatelessWidget {
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Jouer pour moi'),
+                  : const Text(Strings.playForMe),
             ),
           ),
           const SizedBox(width: 8),
@@ -46,7 +48,7 @@ class GameActionsBar extends StatelessWidget {
             child: OutlinedButton(
               style: style,
               onPressed: onPlayedCards,
-              child: const Text('Cartes jouées'),
+              child: const Text(Strings.playedCards),
             ),
           ),
         ],

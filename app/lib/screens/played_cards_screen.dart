@@ -3,7 +3,7 @@ import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
-import '../labels.dart';
+import '../strings.dart';
 import '../widgets/suit_column.dart';
 
 /// What happened so far in the round, as this player could see it: the
@@ -15,7 +15,7 @@ class PlayedCardsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Cartes jouées')),
+    appBar: AppBar(title: const Text(Strings.playedCards)),
     body: StreamBuilder<TableView>(
       stream: controller.tables,
       initialData: controller.table,
@@ -29,14 +29,14 @@ class PlayedCardsScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text('Annonces', style: text.titleMedium),
+            Text(Strings.announcements, style: text.titleMedium),
             const SizedBox(height: 8),
             if (announcements.isEmpty)
-              const Text('Aucune annonce')
+              const Text(Strings.noAnnouncement)
             else
               for (final line in announcements) Text(line),
             const Divider(height: 32),
-            Text('Cartes jouées', style: text.titleMedium),
+            Text(Strings.playedCards, style: text.titleMedium),
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,17 +60,20 @@ class PlayedCardsScreen extends StatelessWidget {
   List<String> _announcements(TableView table, PlayerView player) => [
     for (var seat = 0; seat < seatCount; seat++)
       if (_calls(player, seat) case final calls when calls.isNotEmpty)
-        '${table.nicknames[seat]} : ${calls.join(' · ')}',
+        Strings.playerLine(
+          table.nicknames[seat],
+          calls.join(Strings.callSeparator),
+        ),
   ];
 
   /// What [seat] announced: the melds' cards once shown, only their values
   /// before, and Stöck.
   List<String> _calls(PlayerView player, int seat) => [
     if (player.revealedMelds[seat].isNotEmpty)
-      ...player.revealedMelds[seat].map(meldName)
+      ...player.revealedMelds[seat].map(Strings.meldName)
     else
       ...player.announcedMeldValues[seat].map((value) => '$value'),
-    if (player.stoeckSeat == seat) 'Stöck',
+    if (player.stoeckSeat == seat) Strings.stoeck,
   ];
 
   /// The same order as the hand.

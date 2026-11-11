@@ -7,7 +7,7 @@ import 'package:flutter/material.dart' hide Card;
 import '../game/game_controller.dart';
 import '../game/hand_order.dart';
 import '../game/meld_selection.dart';
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import '../theme/flow_color.dart';
 import '../theme/screen_theme.dart';
@@ -187,12 +187,12 @@ class _PlayScreenState extends State<PlayScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Partie terminée'),
-        content: Text('$nickname a quitté la partie.'),
+        title: const Text(Strings.gameEnded),
+        content: Text(Strings.leftGame(nickname)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: const Text(Strings.ok),
           ),
         ],
       ),
@@ -209,16 +209,16 @@ class _PlayScreenState extends State<PlayScreen> {
     final leave = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Quitter la partie ?'),
-        content: const Text('La partie sera terminée pour les deux joueurs.'),
+        title: const Text(Strings.leaveGame),
+        content: const Text(Strings.leaveGameDetail),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Continuer'),
+            child: const Text(Strings.continueGame),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Quitter'),
+            child: const Text(Strings.leave),
           ),
         ],
       ),
@@ -336,11 +336,7 @@ class _PlayScreenState extends State<PlayScreen> {
     if (melds == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('Ces cartes ne forment pas une annonce.'),
-          ),
-        );
+        ..showSnackBar(const SnackBar(content: Text(Strings.notAMeld)));
       return;
     }
     _controller.meldsChosen();
@@ -557,7 +553,7 @@ class _PlayScreenState extends State<PlayScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: ActionChip(
-                                  label: const Text('Stöck'),
+                                  label: const Text(Strings.stoeck),
                                   onPressed: () =>
                                       _play(stoeckCard, stoeck: true),
                                 ),
@@ -616,9 +612,7 @@ class _PlayScreenState extends State<PlayScreen> {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                player.chibred
-                    ? 'Votre partenaire a chibré : choisissez l\'atout'
-                    : 'Choisissez l\'atout',
+                player.chibred ? Strings.partnerChibred : Strings.chooseTrump,
                 style: text.titleMedium,
               ),
             ),
@@ -657,7 +651,8 @@ class _PlayScreenState extends State<PlayScreen> {
             Wrap(
               spacing: 8,
               children: [
-                for (final meld in _melds) Chip(label: Text(meldName(meld))),
+                for (final meld in _melds)
+                  Chip(label: Text(Strings.meldName(meld))),
               ],
             ),
           ],
@@ -684,8 +679,8 @@ class _PlayScreenState extends State<PlayScreen> {
 
   Widget _statusText(TableView table) {
     final style = Theme.of(context).textTheme.titleMedium;
-    if (_decidingMelds) return Text('Choisissez votre annonce', style: style);
-    if (table.isMyTurn) return Text('À vous de jouer', style: style);
+    if (_decidingMelds) return Text(Strings.chooseMelds, style: style);
+    if (table.isMyTurn) return Text(Strings.yourTurn, style: style);
     final waiting = _waitingFor(table);
     if (waiting == null) return const SizedBox.shrink();
     return Text(waiting, style: style?.copyWith(color: UiColors.textMuted));
@@ -695,19 +690,21 @@ class _PlayScreenState extends State<PlayScreen> {
   String? _waitingFor(TableView table) {
     String name(int seat) => table.nicknames[seat];
     final reading = table.recapFor.where((seat) => seat != table.seat);
-    if (reading.isNotEmpty) return '${name(reading.first)} lit les annonces…';
+    if (reading.isNotEmpty) {
+      return Strings.readsAnnouncements(name(reading.first));
+    }
     final summary = table.roundSummaryFor.where((seat) => seat != table.seat);
     if (summary.isNotEmpty) {
-      return '${name(summary.first)} lit le résumé de la manche…';
+      return Strings.readsRoundSummary(name(summary.first));
     }
     final choosing = table.meldChoiceFor.where((seat) => seat != table.seat);
     if (choosing.isNotEmpty) {
-      return '${name(choosing.first)} choisit son annonce…';
+      return Strings.choosesMelds(name(choosing.first));
     }
     final seat = table.seatToAct;
     if (seat == null) return null;
     return table.phase == TablePhase.choosingTrump
-        ? '${name(seat)} choisit l\'atout…'
-        : '${name(seat)} joue…';
+        ? Strings.choosesTrump(name(seat))
+        : Strings.plays(name(seat));
   }
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:chibre/screens/host_screen.dart';
 import 'package:chibre/services/app_services.dart';
 import 'package:chibre/services/profile_store.dart';
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart';
@@ -49,13 +50,13 @@ void main() {
     );
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
-    expect(find.text('Nom de la partie'), findsNothing);
+    expect(find.text(Strings.gameName), findsNothing);
 
     await tester.enterText(find.byType(TextField), '1500');
-    await tester.tap(find.text('Multiplicateurs'));
-    await tester.ensureVisible(find.text('Finir la dernière manche'));
-    await tester.tap(find.text('Finir la dernière manche'));
-    await tester.tap(find.text('Enregistrer'));
+    await tester.tap(find.text(Strings.multipliers));
+    await tester.ensureVisible(find.text(Strings.finishLastRound));
+    await tester.tap(find.text(Strings.finishLastRound));
+    await tester.tap(find.text(Strings.save));
     await tester.pumpAndSettle();
 
     expect(find.byType(HostScreen), findsNothing);
@@ -80,8 +81,8 @@ void main() {
         ),
       ),
     );
-    expect(find.text('Jouer seul'), findsOneWidget);
-    expect(find.text('Nom de la partie'), findsNothing);
-    expect(find.text('Lancer la partie'), findsOneWidget);
+    expect(find.text(Strings.playAlone), findsOneWidget);
+    expect(find.text(Strings.gameName), findsNothing);
+    expect(find.text(Strings.startGame), findsOneWidget);
   });
 }

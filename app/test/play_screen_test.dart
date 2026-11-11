@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chibre/game/game_controller.dart';
 import 'package:chibre/screens/play_screen.dart';
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/played_card.dart';
 import 'package:chibre/widgets/playing_card.dart';
@@ -160,8 +161,8 @@ void main() {
     final game = newGame();
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    expect(find.text('Choisissez l\'atout'), findsOneWidget);
-    await tester.tap(find.bySemanticsLabel('Atout cœur'));
+    expect(find.text(Strings.chooseTrump), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel(Strings.modeName(TrumpMode.hearts)));
     expect(controller.actions.single.toString(), 'ChooseTrump(0, hearts)');
   });
 
@@ -171,11 +172,11 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.tap(find.text(Strings.skipMelds));
     await tester.pump();
     expect(controller.choseMelds, isTrue);
-    expect(find.text('À vous de jouer'), findsOneWidget);
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    expect(find.text(Strings.yourTurn), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     final play = controller.actions.single as PlayCard;
     expect(play.card, Card.parse('SA'));
     expect(play.melds, isEmpty);
@@ -187,28 +188,30 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    expect(find.text('Choisissez votre annonce'), findsOneWidget);
+    expect(find.text(Strings.chooseMelds), findsOneWidget);
 
     // Selecting a card turns the button into a validation.
-    for (final name in ['6 de cœur', '8 de cœur']) {
-      await tester.tap(find.bySemanticsLabel(name));
+    for (final card in ['H6', 'H8']) {
+      await tester.tap(
+        find.bySemanticsLabel(Strings.cardName(Card.parse(card))),
+      );
     }
     await tester.pump();
-    expect(find.text('Ne pas annoncer, jouer'), findsNothing);
-    await tester.tap(find.text('Valider l\'annonce'));
+    expect(find.text(Strings.skipMelds), findsNothing);
+    await tester.tap(find.text(Strings.validateMelds));
     await tester.pump();
-    expect(find.text('Ces cartes ne forment pas une annonce.'), findsOneWidget);
+    expect(find.text(Strings.notAMeld), findsOneWidget);
     expect(controller.actions, isEmpty);
 
-    await tester.tap(find.bySemanticsLabel('7 de cœur'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('H7'))));
     await tester.pump();
-    await tester.tap(find.text('Valider l\'annonce'));
+    await tester.tap(find.text(Strings.validateMelds));
     await tester.pump();
     expect(find.textContaining('20 ('), findsOneWidget);
-    expect(find.text('Valider l\'annonce'), findsNothing); // No going back.
+    expect(find.text(Strings.validateMelds), findsNothing); // No going back.
     expect(controller.choseMelds, isTrue);
 
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     final play = controller.actions.single as PlayCard;
     expect(play.melds.single.value, 20);
   });
@@ -220,7 +223,7 @@ void main() {
     final paused = tableOf(game).copyWith(pausedFor: 'Bea');
     controller.show(paused);
     await tester.pump();
-    expect(find.text('En attente de Bea…'), findsOneWidget);
+    expect(find.text(Strings.waitingFor('Bea')), findsOneWidget);
   });
 
   testWidgets('melds can be prepared before the player\'s turn', (
@@ -229,14 +232,14 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
     final controller = FakeController(tableOf(game, seat: 2));
     await pumpScreen(tester, controller);
-    expect(find.text('Choisissez votre annonce'), findsOneWidget);
-    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    expect(find.text(Strings.chooseMelds), findsOneWidget);
+    await tester.tap(find.text(Strings.skipMelds));
     controller.show(tableOf(game, seat: 2, meldChoiceFor: [0]));
     await tester.pump();
-    expect(find.text('Ana choisit son annonce…'), findsOneWidget);
+    expect(find.text(Strings.choosesMelds('Ana')), findsOneWidget);
     controller.show(tableOf(game, seat: 2));
     await tester.pump();
-    expect(find.text('Ana joue…'), findsOneWidget);
+    expect(find.text(Strings.plays('Ana')), findsOneWidget);
   });
 
   testWidgets('a complete trick slides away towards its winner', (
@@ -281,18 +284,24 @@ void main() {
     }
     final controller = FakeController(tableOf(game, recapFor: [0, 2]));
     await pumpScreen(tester, controller);
-    expect(find.text('Annonces'), findsOneWidget);
-    expect(find.textContaining('Ana : 20 ('), findsOneWidget);
-    expect(find.textContaining('Ordi 1 : 20 ('), findsOneWidget);
-    expect(find.text('Ordi +20'), findsOneWidget);
+    expect(find.text(Strings.announcements), findsOneWidget);
+    expect(
+      find.textContaining(Strings.playerLine('Ana', '20 (')),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(Strings.playerLine('Ordi 1', '20 (')),
+      findsOneWidget,
+    );
+    expect(find.text(Strings.gain(ours: false, points: 20)), findsOneWidget);
 
-    await tester.tap(find.text('Annonces'));
+    await tester.tap(find.text(Strings.announcements));
     expect(controller.dismissedRecap, isTrue);
 
     controller.show(tableOf(game, recapFor: [2]));
     await tester.pump();
-    expect(find.text('Annonces'), findsNothing);
-    expect(find.text('Bea lit les annonces…'), findsOneWidget);
+    expect(find.text(Strings.announcements), findsNothing);
+    expect(find.text(Strings.readsAnnouncements('Bea')), findsOneWidget);
     await tester.pump(const Duration(seconds: 2));
   });
 
@@ -305,17 +314,17 @@ void main() {
     }
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    expect(find.text('Manche terminée'), findsNothing);
+    expect(find.text(Strings.roundOver), findsNothing);
 
     controller.show(tableOf(game, roundSummaryFor: [0, 2]));
     await tester.pump();
-    await tester.tap(find.text('Manche terminée'));
+    await tester.tap(find.text(Strings.roundOver));
     expect(controller.dismissedRoundSummary, isTrue);
 
     controller.show(tableOf(game, roundSummaryFor: [2]));
     await tester.pump();
-    expect(find.text('Manche terminée'), findsNothing);
-    expect(find.text('Bea lit le résumé de la manche…'), findsOneWidget);
+    expect(find.text(Strings.roundOver), findsNothing);
+    expect(find.text(Strings.readsRoundSummary('Bea')), findsOneWidget);
     await tester.pump(const Duration(seconds: 2));
   });
 
@@ -370,10 +379,10 @@ void main() {
     await tester.pump();
     expect(layout(), choosing); // Meld buttons, trump in the score bar.
 
-    await tester.tap(find.bySemanticsLabel('7 de cœur'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('H7'))));
     await tester.pump();
     expect(layout(), choosing);
-    await tester.tap(find.text('Valider l\'annonce'));
+    await tester.tap(find.text(Strings.validateMelds));
     await tester.pump();
     expect(layout(), choosing);
 
@@ -393,10 +402,12 @@ void main() {
     await pumpScreen(tester, controller);
     await tester.pump(const Duration(milliseconds: 300));
 
-    final chip = tester.getCenter(find.text('Stöck'));
-    final card = tester.getRect(find.bySemanticsLabel('roi de cœur'));
+    final chip = tester.getCenter(find.text(Strings.stoeck));
+    final card = tester.getRect(
+      find.bySemanticsLabel(Strings.cardName(Card.parse('HK'))),
+    );
     expect(chip.dy, lessThan(card.top));
-    await tester.tap(find.text('Stöck'));
+    await tester.tap(find.text(Strings.stoeck));
     final play = controller.actions.single as PlayCard;
     expect(play.card, king);
     expect(play.stoeck, isTrue);
@@ -409,8 +420,11 @@ void main() {
     }
     controller.show(tableOf(game, recapFor: [0, 2]));
     await tester.pump();
-    expect(find.text('Ana : Stöck'), findsOneWidget);
-    expect(find.text('Nous +20'), findsOneWidget);
+    expect(
+      find.text(Strings.playerLine('Ana', Strings.stoeck)),
+      findsOneWidget,
+    );
+    expect(find.text(Strings.gain(ours: true, points: 20)), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
   });
 
@@ -420,18 +434,18 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
     final controller = FakeController(tableOf(game, autoAnnounce: true));
     await pumpScreen(tester, controller);
-    expect(find.text('Vos annonces'), findsOneWidget);
-    expect(find.text('Ne pas annoncer, jouer'), findsNothing);
+    expect(find.text(Strings.yourMelds), findsOneWidget);
+    expect(find.text(Strings.skipMelds), findsNothing);
 
     // Cards cannot be played before deciding.
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     expect(controller.actions, isEmpty);
 
-    await tester.tap(find.text('Annoncer'));
+    await tester.tap(find.text(Strings.announce));
     await tester.pump();
-    expect(find.text('Vos annonces'), findsNothing);
+    expect(find.text(Strings.yourMelds), findsNothing);
     expect(controller.choseMelds, isTrue);
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     final play = controller.actions.single as PlayCard;
     expect(play.melds.single.value, 20);
   });
@@ -442,11 +456,11 @@ void main() {
     final game = newGame()..apply(const ChooseTrump(0, TrumpMode.clubs));
     final controller = FakeController(tableOf(game, autoAnnounce: true));
     await pumpScreen(tester, controller);
-    await tester.tap(find.text('Garder secret'));
+    await tester.tap(find.text(Strings.keepSecret));
     await tester.pump();
-    expect(find.text('Vos annonces'), findsNothing);
+    expect(find.text(Strings.yourMelds), findsNothing);
     expect(controller.choseMelds, isTrue);
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     expect((controller.actions.single as PlayCard).melds, isEmpty);
   });
 
@@ -457,9 +471,9 @@ void main() {
       ..apply(const ChooseTrump(0, TrumpMode.clubs));
     final controller = FakeController(tableOf(game, autoAnnounce: true));
     await pumpScreen(tester, controller);
-    expect(find.text('Vos annonces'), findsNothing);
+    expect(find.text(Strings.yourMelds), findsNothing);
     expect(controller.choseMelds, isTrue);
-    expect(find.text('À vous de jouer'), findsOneWidget);
+    expect(find.text(Strings.yourTurn), findsOneWidget);
   });
 
   testWidgets('automatic announcements: Stöck is announced with the card', (
@@ -470,8 +484,8 @@ void main() {
     );
     await pumpScreen(tester, controller);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Stöck'), findsNothing);
-    await tester.tap(find.bySemanticsLabel('roi de cœur'));
+    expect(find.text(Strings.stoeck), findsNothing);
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('HK'))));
     final play = controller.actions.single as PlayCard;
     expect(play.card, Card.parse('HK'));
     expect(play.stoeck, isTrue);
@@ -490,14 +504,14 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.tap(find.text(Strings.skipMelds));
     await tester.pump();
-    await tester.tap(find.text('Jouer pour moi'));
+    await tester.tap(find.text(Strings.playForMe));
     await tester.pump();
     expect(controller.actions, isEmpty);
     expect(card('SA').selected, isTrue);
 
-    await tester.tap(find.bySemanticsLabel('as de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('SA'))));
     final play = controller.actions.single as PlayCard;
     expect(play.card, Card.parse('SA'));
     expect(play.melds, isEmpty); // The player chose not to announce.
@@ -510,11 +524,11 @@ void main() {
     final controller = FakeController(tableOf(game))
       ..suggestion = PlayCard(0, Card.parse('SA'));
     await pumpScreen(tester, controller);
-    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.tap(find.text(Strings.skipMelds));
     await tester.pump();
-    await tester.tap(find.text('Jouer pour moi'));
+    await tester.tap(find.text(Strings.playForMe));
     await tester.pump();
-    await tester.tap(find.bySemanticsLabel('6 de pique'));
+    await tester.tap(find.bySemanticsLabel(Strings.cardName(Card.parse('S6'))));
     expect((controller.actions.single as PlayCard).card, Card.parse('S6'));
   });
 
@@ -527,11 +541,11 @@ void main() {
     await pumpScreen(tester, controller);
     expect(controller.suggestionsAsked, 0); // Still choosing melds.
 
-    await tester.tap(find.text('Ne pas annoncer, jouer'));
+    await tester.tap(find.text(Strings.skipMelds));
     await tester.pump();
     expect(controller.suggestionsAsked, 1);
 
-    await tester.tap(find.text('Jouer pour moi'));
+    await tester.tap(find.text(Strings.playForMe));
     await tester.pump();
     expect(controller.suggestionsAsked, 1);
   });
@@ -542,12 +556,12 @@ void main() {
     final controller = FakeController(tableOf(newGame()))
       ..suggestion = const ChooseTrump(0, TrumpMode.spades);
     await pumpScreen(tester, controller);
-    await tester.tap(find.text('Jouer pour moi'));
+    await tester.tap(find.text(Strings.playForMe));
     await tester.pump();
     expect(controller.actions, isEmpty);
     final spades = tester.widget<FilledButton>(
       find.ancestor(
-        of: find.bySemanticsLabel('Atout pique'),
+        of: find.bySemanticsLabel(Strings.modeName(TrumpMode.spades)),
         matching: find.byType(FilledButton),
       ),
     );
@@ -562,7 +576,7 @@ void main() {
     await pumpScreen(tester, controller);
     final button = tester.widget<OutlinedButton>(
       find.ancestor(
-        of: find.text('Jouer pour moi'),
+        of: find.text(Strings.playForMe),
         matching: find.byType(OutlinedButton),
       ),
     );
@@ -577,9 +591,12 @@ void main() {
     game.apply(PlayCard(0, Card.parse('SA'), melds: [sequence]));
     final controller = FakeController(tableOf(game));
     await pumpScreen(tester, controller);
-    await tester.tap(find.text('Cartes jouées'));
+    await tester.tap(find.text(Strings.playedCards));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Ana : 20 ('), findsOneWidget);
+    expect(
+      find.textContaining(Strings.playerLine('Ana', '20 (')),
+      findsOneWidget,
+    );
     expect(find.byType(Divider), findsOneWidget);
     expect(find.byType(SuitColumn), findsNWidgets(4));
     expect(
@@ -598,7 +615,7 @@ void main() {
   ) async {
     final controller = FakeController(tableOf(newGame(), assistance: false));
     await pumpScreen(tester, controller);
-    expect(find.text('Jouer pour moi'), findsNothing);
-    expect(find.text('Cartes jouées'), findsNothing);
+    expect(find.text(Strings.playForMe), findsNothing);
+    expect(find.text(Strings.playedCards), findsNothing);
   });
 }

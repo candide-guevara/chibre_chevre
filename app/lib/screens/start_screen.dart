@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../game/host_game_controller.dart';
 import '../services/app_services.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import '../theme/flow_color.dart';
 import '../theme/screen_theme.dart';
@@ -82,7 +83,7 @@ class _StartScreenState extends State<StartScreen> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'Chibre Chèvre',
+                      Strings.appTitle,
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                   ),
@@ -100,7 +101,7 @@ class _StartScreenState extends State<StartScreen> {
                             suit: Suit.diamonds,
                             onPressed: hasProfile ? _resume : null,
                             child: Text(
-                              'Reprendre « $_savedGame »',
+                              Strings.resume(_savedGame!),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -115,7 +116,7 @@ class _StartScreenState extends State<StartScreen> {
                                   ScreenColors.network,
                                 )
                               : null,
-                          child: const Text('Rejoindre une partie'),
+                          child: const Text(Strings.joinGame),
                         ),
                         const SizedBox(height: 16),
                         PipButton(
@@ -126,7 +127,7 @@ class _StartScreenState extends State<StartScreen> {
                                   ScreenColors.network,
                                 )
                               : null,
-                          child: const Text('Créer une partie'),
+                          child: const Text(Strings.createGame),
                         ),
                         const SizedBox(height: 16),
                         PipButton(
@@ -137,7 +138,7 @@ class _StartScreenState extends State<StartScreen> {
                                   ScreenColors.solo,
                                 )
                               : null,
-                          child: const Text('Jouer seul'),
+                          child: const Text(Strings.playAlone),
                         ),
                         const SizedBox(height: 16),
                         OutlinedButton(
@@ -145,7 +146,7 @@ class _StartScreenState extends State<StartScreen> {
                             const ProfileScreen(),
                             ScreenColors.profile,
                           ),
-                          child: const Text('Profil'),
+                          child: const Text(Strings.profile),
                         ),
                       ],
                     ),

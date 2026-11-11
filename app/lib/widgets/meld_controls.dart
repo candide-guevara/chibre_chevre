@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
+
 /// The single button of the meld choice at the start of a round: play
 /// without announcing while no card is selected, or announce the selected
 /// cards.
@@ -22,12 +24,12 @@ class MeldControls extends StatelessWidget {
         ? FilledButton(
             style: FilledButton.styleFrom(minimumSize: size),
             onPressed: onValidate,
-            child: const Text('Valider l\'annonce'),
+            child: const Text(Strings.validateMelds),
           )
         : OutlinedButton(
             style: OutlinedButton.styleFrom(minimumSize: size),
             onPressed: onSkip,
-            child: const Text('Ne pas annoncer, jouer'),
+            child: const Text(Strings.skipMelds),
           );
   }
 }

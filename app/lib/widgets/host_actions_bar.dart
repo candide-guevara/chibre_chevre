@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../strings.dart';
+
 /// The buttons at the bottom of the host screen. The primary action
 /// (starting the game, or saving the defaults) is the filled, brighter
 /// button, so the eye goes to it first.
@@ -39,7 +41,7 @@ class HostActionsBar extends StatelessWidget {
               child: OutlinedButton(
                 style: outlined,
                 onPressed: onDefaults,
-                child: const Text('Par défaut'),
+                child: const Text(Strings.loadDefaults),
               ),
             ),
             const SizedBox(width: 8),
@@ -48,7 +50,7 @@ class HostActionsBar extends StatelessWidget {
               child: OutlinedButton(
                 style: outlined,
                 onPressed: onAdvanced,
-                child: const Text('Avancé'),
+                child: const Text(Strings.advanced),
               ),
             ),
             const SizedBox(width: 8),

@@ -1,3 +1,4 @@
+import 'package:chibre/strings.dart';
 import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/host_actions_bar.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ Future<List<String>> pumpBar(
         bottomNavigationBar: HostActionsBar(
           onDefaults: () => taps.add('defaults'),
           onAdvanced: () => taps.add('advanced'),
-          primaryLabel: 'Lancer la partie',
+          primaryLabel: Strings.startGame,
           onPrimary: canStart ? () => taps.add('start') : null,
         ),
       ),
@@ -30,15 +31,15 @@ Future<List<String>> pumpBar(
 void main() {
   testWidgets('each button calls its action', (tester) async {
     final taps = await pumpBar(tester);
-    await tester.tap(find.text('Par défaut'));
-    await tester.tap(find.text('Avancé'));
-    await tester.tap(find.text('Lancer la partie'));
+    await tester.tap(find.text(Strings.loadDefaults));
+    await tester.tap(find.text(Strings.advanced));
+    await tester.tap(find.text(Strings.startGame));
     expect(taps, ['defaults', 'advanced', 'start']);
   });
 
   testWidgets('starting can be disabled', (tester) async {
     final taps = await pumpBar(tester, canStart: false);
-    await tester.tap(find.text('Lancer la partie'));
+    await tester.tap(find.text(Strings.startGame));
     expect(taps, isEmpty);
   });
 }

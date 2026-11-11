@@ -1,7 +1,7 @@
 import 'package:chibre_core/chibre_core.dart';
 import 'package:flutter/material.dart';
 
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import 'suit_icon.dart';
 
@@ -20,12 +20,12 @@ class TrumpIndicator extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final suit = mode.trumpSuit;
     return Semantics(
-      label: 'Atout : ${modeName(mode)}',
+      label: Strings.trumpIs(mode),
       excludeSemantics: true,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Atout :', style: text.titleMedium),
+          Text(Strings.trumpLabel, style: text.titleMedium),
           const SizedBox(width: 8),
           Container(
             width: _size,
@@ -37,7 +37,7 @@ class TrumpIndicator extends StatelessWidget {
             ),
             child: suit == null
                 ? Text(
-                    modeSymbol(mode),
+                    Strings.modeSymbol(mode),
                     style: text.titleLarge?.copyWith(
                       color: UiColors.onTrumpBadge,
                     ),
@@ -47,7 +47,7 @@ class TrumpIndicator extends StatelessWidget {
           if (multiplier > 1) ...[
             const SizedBox(width: 6),
             Text(
-              '×$multiplier',
+              Strings.multiplier(multiplier),
               style: text.titleLarge?.copyWith(color: UiColors.accent),
             ),
           ],

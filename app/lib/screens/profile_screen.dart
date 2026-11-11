@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../card_art/card_design.dart';
 import '../card_art/card_designs.dart';
 import '../services/app_services.dart';
+import '../strings.dart';
 import '../theme/flow_color.dart';
 import '../widgets/card_deck_choice.dart';
 import 'host_screen.dart';
@@ -47,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Profil')),
+    appBar: AppBar(title: const Text(Strings.profile)),
     bottomNavigationBar: SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -58,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               minimumSize: const Size.fromHeight(52),
             ),
             onPressed: value.text.trim().isEmpty ? null : _save,
-            child: const Text('Enregistrer'),
+            child: const Text(Strings.save),
           ),
         ),
       ),
@@ -72,11 +73,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: _nickname,
             maxLength: 20,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Pseudo'),
+            decoration: const InputDecoration(labelText: Strings.nickname),
             onSubmitted: (_) => _save(),
           ),
           const SizedBox(height: 16),
-          Text('Jeu de cartes', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            Strings.cardDeck,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           CardDeckChoice(
             selected: _design,
@@ -90,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 (_) => const HostScreen(editingDefaults: true),
               ),
             ),
-            child: const Text('Paramètres par défaut'),
+            child: const Text(Strings.defaultSettings),
           ),
         ],
       ),

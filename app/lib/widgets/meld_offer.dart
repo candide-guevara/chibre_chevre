@@ -1,7 +1,7 @@
 import 'package:chibre_core/chibre_core.dart' hide Card;
 import 'package:flutter/material.dart';
 
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 import '../theme/screen_theme.dart';
 
@@ -33,10 +33,10 @@ class MeldOffer extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Vos annonces', style: text.titleLarge),
+              Text(Strings.yourMelds, style: text.titleLarge),
               const SizedBox(height: 12),
               for (final meld in melds)
-                Text(meldName(meld), style: text.titleMedium),
+                Text(Strings.meldName(meld), style: text.titleMedium),
               const SizedBox(height: 20),
               Wrap(
                 alignment: WrapAlignment.center,
@@ -46,12 +46,12 @@ class MeldOffer extends StatelessWidget {
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(minimumSize: size),
                     onPressed: onKeepSecret,
-                    child: const Text('Garder secret'),
+                    child: const Text(Strings.keepSecret),
                   ),
                   FilledButton(
                     style: FilledButton.styleFrom(minimumSize: size),
                     onPressed: onAnnounce,
-                    child: const Text('Annoncer'),
+                    child: const Text(Strings.announce),
                   ),
                 ],
               ),

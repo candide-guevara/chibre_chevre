@@ -1,7 +1,7 @@
 import 'package:chibre_core/chibre_core.dart' hide Card;
 import 'package:flutter/material.dart';
 
-import '../labels.dart';
+import '../strings.dart';
 import '../theme/chibre_theme.dart';
 
 /// Shown after a trick with announcements: the meld calls with their cards
@@ -37,8 +37,10 @@ class AnnouncementSummary extends StatelessWidget {
         ? winningMeldTeam(melds, player.mode!, tricks.first.leader)
         : null;
 
-    String gain(int team, int points) =>
-        '${team == teamOf(player.seat) ? 'Nous' : 'Ordi'} +${points * multiplier}';
+    String gain(int team, int points) => Strings.gain(
+      ours: team == teamOf(player.seat),
+      points: points * multiplier,
+    );
     final gainStyle = text.titleMedium?.copyWith(color: UiColors.accent);
 
     return GestureDetector(
@@ -50,19 +52,26 @@ class AnnouncementSummary extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(showsMelds ? 'Annonces' : 'Stöck', style: text.titleLarge),
+              Text(
+                showsMelds ? Strings.announcements : Strings.stoeck,
+                style: text.titleLarge,
+              ),
               const SizedBox(height: 12),
               if (showsMelds)
                 for (var seat = 0; seat < seatCount; seat++)
                   if (melds[seat].isNotEmpty)
                     Text(
-                      '${nicknames[seat]} : '
-                      '${melds[seat].map(meldName).join(' · ')}',
+                      Strings.playerLine(
+                        nicknames[seat],
+                        melds[seat]
+                            .map(Strings.meldName)
+                            .join(Strings.callSeparator),
+                      ),
                       style: text.titleMedium,
                     ),
               if (stoeckSeat != null)
                 Text(
-                  '${nicknames[stoeckSeat]} : Stöck',
+                  Strings.playerLine(nicknames[stoeckSeat], Strings.stoeck),
                   style: text.titleMedium,
                 ),
               const SizedBox(height: 12),
@@ -75,7 +84,7 @@ class AnnouncementSummary extends StatelessWidget {
                 Text(gain(teamOf(stoeckSeat), stoeckPoints), style: gainStyle),
               const SizedBox(height: 16),
               Text(
-                'Touchez pour continuer',
+                Strings.tapToContinue,
                 style: text.bodySmall?.copyWith(color: UiColors.textMuted),
               ),
             ],
