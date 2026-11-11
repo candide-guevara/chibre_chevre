@@ -35,8 +35,12 @@ const _nameRowHeight = 48.0;
 /// Around the hand and the Stöck button lined up with its cards.
 const _handPadding = EdgeInsets.fromLTRB(8, 0, 8, 4);
 
+/// How the space below the score bar is shared: 60% for the table, 40%
+/// for the player's area.
+const _tableFlex = 3, _playerFlex = 2;
+
 /// The height of the game actions bar, as a share of the player's area.
-const _actionsBarShare = 0.12;
+const _actionsBarShare = 0.15;
 
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key, required this.controller});
@@ -371,8 +375,8 @@ class _PlayScreenState extends State<PlayScreen> {
                           ? 1
                           : table.options.multiplierFor(table.player!.mode!),
                     ),
-                    Expanded(child: _tableArea(table)),
-                    Expanded(child: _playerArea(table)),
+                    Expanded(flex: _tableFlex, child: _tableArea(table)),
+                    Expanded(flex: _playerFlex, child: _playerArea(table)),
                   ],
                 ),
                 if (table.isPaused)

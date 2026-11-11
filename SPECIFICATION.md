@@ -170,7 +170,7 @@ As soon as a player joins, both phones open the play game screen.
 ## Play game screen
 
 * The player's cards are shown at the bottom, sorted by suit in the fixed order ♥ ♠ ♦ ♣, each suit from 6 to ace; or, when the host turned on "Trier la main selon l'atout", trump first once chosen and each suit by strength in the round's trump mode.
-* Below the score bar, the screen is split 50/50 between the table and the player's area (status and choices, hand, button bar).
+* Below the score bar, the screen is split 60/40 between the table and the player's area (status and choices, hand, button bar).
 * The partner is at the top, bots on the left and right, each with their nickname ("Ordi 1", "Ordi 2" for bots). The current trick is in the center.
 * Always visible: both team scores ("Nous" and "Ordi", for the bots' team), target score, current trump mode, whose turn it is. The trump is shown prominently: an "Atout :" label followed by the suit drawn large on an ivory badge (⬇ / ⬆ for Obenabe / Undenufe), plus the multiplier when it applies. The same "Nous" / "Ordi" labels are used in the round summary and the end game screen.
 * **Trump choice**: when it is the player's turn to choose, a panel shows the allowed trump modes plus "Chibrer" (if allowed).
