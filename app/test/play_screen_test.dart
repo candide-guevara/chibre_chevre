@@ -7,8 +7,10 @@ import 'package:chibre/theme/chibre_theme.dart';
 import 'package:chibre/widgets/played_card.dart';
 import 'package:chibre/widgets/playing_card.dart';
 import 'package:chibre/widgets/score_board.dart';
+import 'package:chibre/widgets/seat_badge.dart';
 import 'package:chibre/widgets/suit_column.dart';
 import 'package:chibre/widgets/trick_view.dart';
+import 'package:chibre/widgets/trump_badge.dart';
 import 'package:chibre_core/chibre_core.dart';
 import 'package:chibre_net/chibre_net.dart';
 import 'package:flutter/material.dart' hide Card;
@@ -166,6 +168,28 @@ void main() {
     expect(find.text(Strings.chooseTrump), findsOneWidget);
     await tester.tap(find.bySemanticsLabel(Strings.modeName(TrumpMode.hearts)));
     expect(controller.actions.single.toString(), 'ChooseTrump(0, hearts)');
+  });
+
+  testWidgets('the trump is shown next to the name of who had to choose it', (
+    tester,
+  ) async {
+    final game = newGame()
+      ..apply(const Chibrer(0))
+      ..apply(const ChooseTrump(2, TrumpMode.spades));
+    await pumpScreen(tester, FakeController(tableOf(game)));
+    final badge = find.descendant(
+      of: find.byType(SeatBadge),
+      matching: find.byType(TrumpBadge),
+    );
+    expect(badge, findsOneWidget);
+    expect(tester.widget<TrumpBadge>(badge).mode, TrumpMode.spades);
+    final chooser = find.ancestor(of: badge, matching: find.byType(SeatBadge));
+    expect(tester.widget<SeatBadge>(chooser).nickname, 'Ana');
+    final heights = {
+      for (final element in find.byType(SeatBadge).evaluate())
+        element.size!.height,
+    };
+    expect(heights, hasLength(1), reason: 'the trump keeps the chip height');
   });
 
   testWidgets('tapping a legal card plays it, illegal cards are ignored', (
