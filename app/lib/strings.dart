@@ -183,9 +183,9 @@ abstract final class Strings {
   static const leave = 'Quitter';
   static const notAMeld = 'Ces cartes ne forment pas une annonce.';
   static const partnerChibred =
-      'Votre partenaire a chibré : choisissez l\'atout';
+      'Partenaire a chibré : choisissez l\'atout';
   static const chooseTrump = 'Choisissez l\'atout';
-  static const chooseMelds = 'Choisissez votre annonce';
+  static const chooseMelds = 'Choisissez l\'annonce';
   static const yourTurn = 'À vous de jouer';
   static String readsAnnouncements(String nickname) =>
       '$nickname lit les annonces…';
@@ -199,7 +199,7 @@ abstract final class Strings {
   static const abandon = 'Abandonner';
   static const playForMe = 'Jouer pour moi';
   static const validateMelds = 'Valider l\'annonce';
-  static const skipMelds = 'Ne pas annoncer, jouer';
+  static const skipMelds = 'Jouer sans annonce';
   static const yourMelds = 'Vos annonces';
   static const keepSecret = 'Garder secret';
   static const announce = 'Annoncer';
@@ -227,8 +227,8 @@ abstract final class Strings {
       'Choisi : ${trumpOptionName(chosen)}. '
       'Mieux : ${trumpOptionName(best)}.';
   static const played = 'Joué : ';
-  static const better = '. Mieux : ';
-  static const sentenceEnd = '.';
+  static const better = ', Mieux : ';
+  static const sentenceEnd = '';
   static const notAnnounced = 'Non annoncé : ';
   static const stoeckNotAnnounced = 'Le Stöck n\'a pas été annoncé avec ';
   static String waitingForAnswer(String nickname) =>
