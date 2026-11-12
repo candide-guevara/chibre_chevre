@@ -35,6 +35,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appName"] = "Chibre Chèvre"
     }
 
     signingConfigs {
@@ -47,6 +48,16 @@ android {
     }
 
     buildTypes {
+        // Installed next to the Google Play app instead of conflicting with it.
+        debug {
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appName"] = "Chibre Chèvre (debug)"
+        }
+        // Added by the Flutter Gradle plugin.
+        getByName("profile") {
+            applicationIdSuffix = ".profile"
+            manifestPlaceholders["appName"] = "Chibre Chèvre (profile)"
+        }
         release {
             // Without the upload key, the debug one, so `flutter run --release`
             // still works; Google Play refuses such a bundle.
