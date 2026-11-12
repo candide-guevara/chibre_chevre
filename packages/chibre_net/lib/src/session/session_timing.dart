@@ -52,7 +52,11 @@ class SessionTiming {
   /// trick left it, before the end screen shows.
   final Duration endPause;
 
+  /// How long after its last card is played a complete trick starts
+  /// sliding to its winner: the card slides in, the trick stays for [hold].
+  Duration untilTrickSlide(Duration hold) => cardSlide + hold;
+
   /// How long a complete trick takes to leave the table: its last card
   /// slides in, the trick stays for [hold], then slides to its winner.
-  Duration trickOnTable(Duration hold) => cardSlide + hold + trickSlide;
+  Duration trickOnTable(Duration hold) => untilTrickSlide(hold) + trickSlide;
 }

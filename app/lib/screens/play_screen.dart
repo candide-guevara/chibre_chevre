@@ -80,12 +80,18 @@ class _PlayScreenState extends State<PlayScreen> {
   var _showsEnd = false;
   Timer? _endTimer;
 
+  /// The scores in the top bar: they take in a trick's points once it starts
+  /// sliding to its winner.
+  List<int>? _shownScores;
+  Timer? _scoresTimer;
+
   GameController get _controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
     _table = _controller.table;
+    _shownScores = _table?.scores;
     _showsEnd = _table?.phase == TablePhase.gameOver;
     _subscription = _controller.tables.listen(_onTable);
     _lifecycle = AppLifecycleListener(
@@ -106,6 +112,7 @@ class _PlayScreenState extends State<PlayScreen> {
     _subscription.cancel();
     _lifecycle.dispose();
     _endTimer?.cancel();
+    _scoresTimer?.cancel();
     super.dispose();
   }
 
@@ -123,10 +130,31 @@ class _PlayScreenState extends State<PlayScreen> {
     _skipMeldsIfNone();
     _prepareSuggestion();
     _scheduleEnd(previous, table);
+    _updateScores(previous, table);
     if (table.leftBy != null && previous?.leftBy == null) {
       _showLeft(table.leftBy!);
     }
   }
+
+  /// Shows the new scores right away, unless a trick was just completed:
+  /// then waits for it to start sliding to its winner.
+  void _updateScores(TableView? previous, TableView table) {
+    if (_completedTricks(table) > _completedTricks(previous)) {
+      _scoresTimer?.cancel();
+      _scoresTimer = Timer(
+        const SessionTiming().untilTrickSlide(table.trickHold),
+        () {
+          _scoresTimer = null;
+          if (mounted) setState(() => _shownScores = _table!.scores);
+        },
+      );
+    } else if (_scoresTimer == null) {
+      setState(() => _shownScores = table.scores);
+    }
+  }
+
+  static int _completedTricks(TableView? table) =>
+      table?.player?.completedTricks.length ?? 0;
 
   /// Once the game is won, lets the last card slide in and the last trick
   /// leave the table, then pauses before showing the end screen.
@@ -396,7 +424,7 @@ class _PlayScreenState extends State<PlayScreen> {
                 Column(
                   children: [
                     ScoreBoard(
-                      scores: table.scores,
+                      scores: _shownScores ?? table.scores,
                       team: teamOf(table.seat),
                       target: table.options.targetScore,
                       mode: table.player!.mode,

@@ -92,6 +92,8 @@ GameState gameWith(CardSet hand) {
 
 const trickHold = Duration(milliseconds: 700);
 
+const _justBefore = Duration(milliseconds: 1);
+
 TableView tableOf(
   GameState game, {
   int seat = 0,
@@ -266,6 +268,47 @@ void main() {
     expect(opacity(), 1);
     await tester.pump(timing.trickSlide);
     expect(opacity(), 0);
+  });
+
+  testWidgets('the scores take in a trick once it starts sliding away', (
+    tester,
+  ) async {
+    final game = newGame()..apply(const ChooseTrump(0, TrumpMode.hearts));
+    void play() {
+      final seat = game.seatToAct;
+      game.apply(PlayCard(seat, game.viewFor(seat).legalCards.cards.first));
+    }
+
+    for (var i = 0; i < 3; i++) {
+      play();
+    }
+    final controller = FakeController(tableOf(game));
+    await pumpScreen(tester, controller);
+    final before = tableOf(game).scores;
+    play();
+    final after = tableOf(game).scores;
+    expect(after, isNot(before));
+    String shown(List<int> scores) =>
+        '${Strings.ourScore(scores[0])} ${Strings.theirScore(scores[1])}';
+    String board() => tester
+        .widgetList<Text>(
+          find.descendant(
+            of: find.byType(ScoreBoard),
+            matching: find.byType(Text),
+          ),
+        )
+        .take(2)
+        .map((text) => text.data)
+        .join(' ');
+
+    controller.show(tableOf(game));
+    await tester.pump();
+    expect(board(), shown(before));
+    const timing = SessionTiming();
+    await tester.pump(timing.untilTrickSlide(trickHold) - _justBefore);
+    expect(board(), shown(before));
+    await tester.pump(_justBefore);
+    expect(board(), shown(after));
   });
 
   testWidgets('the meld recap is shown until the player closes it', (

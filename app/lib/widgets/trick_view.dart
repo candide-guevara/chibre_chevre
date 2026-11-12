@@ -80,7 +80,9 @@ class _TrickViewState extends State<TrickView>
   Future<void> _collectIfWon() async {
     if (widget.winner == null) return;
     final generation = _generation;
-    await Future<void>.delayed(const SessionTiming().cardSlide + widget.hold);
+    await Future<void>.delayed(
+      const SessionTiming().untilTrickSlide(widget.hold),
+    );
     if (mounted && generation == _generation) _controller.forward();
   }
 
