@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "ch.chibrechevre" "\0"
+            VALUE "CompanyName", "candide-guevara" "\0"
             VALUE "FileDescription", "Chibre Chevre" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "chibre" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 ch.chibrechevre. All rights reserved." "\0"
+            VALUE "LegalCopyright", "MIT License, (c) 2026 candide-guevara" "\0"
             VALUE "OriginalFilename", "chibre.exe" "\0"
             VALUE "ProductName", "Chibre Chevre" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -138,3 +138,9 @@ dart compile exe bin/algo_match.dart -o /tmp/algo_match
 
 Compile them (phones run compiled code too): `dart run` is slower and
 less representative.
+
+## License
+
+[MIT](LICENSE). The Classique cards are adapted from
+[SVG-cards 1.3](http://code.google.com/p/vector-playing-cards/), in the public
+domain.

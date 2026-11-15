@@ -11,13 +11,18 @@
 #endif
 #define AppName "Chibre Chèvre"
 #define AppExe "chibre.exe"
+#define Repo "https://github.com/candide-guevara/chibre_chevre"
 #define BuildDir "..\..\build\windows\x64\runner\Release"
 
 [Setup]
 AppId={{6F2C8E1A-4B7D-4E39-9C5A-2D8B7F0E6A41}
 AppName={#AppName}
 AppVersion={#AppVersion}
-AppPublisher=Chibre Chèvre
+AppPublisher=candide-guevara
+AppPublisherURL={#Repo}
+AppSupportURL={#Repo}/issues
+AppUpdatesURL={#Repo}/releases
+AppCopyright=MIT License, (c) 2026 candide-guevara
 DefaultDirName={autopf}\Chibre Chevre
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
