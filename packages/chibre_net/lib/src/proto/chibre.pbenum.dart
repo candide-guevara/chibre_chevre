@@ -19,17 +19,16 @@ class ProtocolVersion extends $pb.ProtobufEnum {
   static const ProtocolVersion PROTOCOL_VERSION_UNSPECIFIED = ProtocolVersion._(
       0, _omitEnumNames ? '' : 'PROTOCOL_VERSION_UNSPECIFIED');
   static const ProtocolVersion PROTOCOL_VERSION_CURRENT =
-      ProtocolVersion._(1, _omitEnumNames ? '' : 'PROTOCOL_VERSION_CURRENT');
+      ProtocolVersion._(2, _omitEnumNames ? '' : 'PROTOCOL_VERSION_CURRENT');
 
   static const $core.List<ProtocolVersion> values = <ProtocolVersion>[
     PROTOCOL_VERSION_UNSPECIFIED,
     PROTOCOL_VERSION_CURRENT,
   ];
 
-  static final $core.List<ProtocolVersion?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 1);
-  static ProtocolVersion? valueOf($core.int value) =>
-      value < 0 || value >= _byValue.length ? null : _byValue[value];
+  static final $core.Map<$core.int, ProtocolVersion> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
+  static ProtocolVersion? valueOf($core.int value) => _byValue[value];
 
   const ProtocolVersion._(super.value, super.name);
 }

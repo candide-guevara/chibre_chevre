@@ -18,4 +18,5 @@ GameListing decodeListing(pb.GameAdvert advert) => GameListing(
       hostNickname: advert.hostNickname,
       reservedFor: advert.reservedFor.isEmpty ? null : advert.reservedFor,
       scores: List.unmodifiable(advert.scores),
+      protocolVersion: advert.protocolVersion,
     );

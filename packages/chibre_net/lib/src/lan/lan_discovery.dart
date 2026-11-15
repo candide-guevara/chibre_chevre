@@ -29,10 +29,6 @@ class LanDiscovery {
       } on Exception {
         return;
       }
-      if (advert.protocolVersion !=
-          pb.ProtocolVersion.PROTOCOL_VERSION_CURRENT.value) {
-        return;
-      }
       final previous = games[advert.gameId];
       games[advert.gameId] = _Heard(
         OpenGame(

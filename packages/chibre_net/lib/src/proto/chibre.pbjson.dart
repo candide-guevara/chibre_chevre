@@ -20,14 +20,14 @@ const ProtocolVersion$json = {
   '1': 'ProtocolVersion',
   '2': [
     {'1': 'PROTOCOL_VERSION_UNSPECIFIED', '2': 0},
-    {'1': 'PROTOCOL_VERSION_CURRENT', '2': 1},
+    {'1': 'PROTOCOL_VERSION_CURRENT', '2': 2},
   ],
 };
 
 /// Descriptor for `ProtocolVersion`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List protocolVersionDescriptor = $convert.base64Decode(
     'Cg9Qcm90b2NvbFZlcnNpb24SIAocUFJPVE9DT0xfVkVSU0lPTl9VTlNQRUNJRklFRBAAEhwKGF'
-    'BST1RPQ09MX1ZFUlNJT05fQ1VSUkVOVBAB');
+    'BST1RPQ09MX1ZFUlNJT05fQ1VSUkVOVBAC');
 
 @$core.Deprecated('Use trumpModeDescriptor instead')
 const TrumpMode$json = {

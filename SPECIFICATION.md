@@ -135,6 +135,7 @@ Displays the list of games found on the local network, refreshed live.
 
 * New games show the game name and the host nickname.
 * Paused games (waiting for a player to reconnect) are visually distinct (e.g. a "En pause" badge and different style) and are only joinable by the player who left them (matched by installation id). They show the current score.
+* Games of a host with another protocol version (`ProtocolVersion` in `proto/chibre.proto`, bumped whenever a change breaks compatibility) are greyed out and cannot be joined; instead of the host nickname they show "Version différente, moi:<this phone's version>, hôte:<the host's version>".
 * Tapping on a game opens the play game screen.
 * Debug builds only: manual "host:port" entry.
 

@@ -5,7 +5,8 @@ import '../strings.dart';
 import '../theme/chibre_theme.dart';
 
 /// The games found on the network. Paused games stand out and can only be
-/// joined by the player who left them.
+/// joined by the player who left them; games of another protocol version are
+/// shown greyed out with both versions.
 class OpenGameList extends StatelessWidget {
   const OpenGameList({
     super.key,
@@ -35,11 +36,18 @@ class OpenGameList extends StatelessWidget {
           tileColor: listing.isPaused ? UiColors.panel : null,
           title: Text(listing.name),
           subtitle: Text(
-            listing.isPaused
+            !listing.isCompatible
+                ? Strings.versionDiffers(
+                    currentProtocolVersion,
+                    listing.protocolVersion!,
+                  )
+                : listing.isPaused
                 ? Strings.pausedScores(listing.scores)
                 : Strings.hostIs(listing.hostNickname),
           ),
-          trailing: listing.isPaused
+          trailing: !listing.isCompatible
+              ? null
+              : listing.isPaused
               ? Chip(
                   label: Text(joinable ? Strings.resumeGame : Strings.paused),
                   backgroundColor: UiColors.accent,

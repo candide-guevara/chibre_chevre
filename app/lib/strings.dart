@@ -163,6 +163,8 @@ abstract final class Strings {
   static String addressIs(String address) => 'Adresse : $address';
   static const versionMismatch =
       'Les deux téléphones n\'ont pas la même version de l\'app.';
+  static String versionDiffers(int mine, int host) =>
+      'Version différente, moi:$mine, hôte:$host';
   static const gameFull = 'La partie est complète.';
   static const cannotJoin = 'Impossible de rejoindre la partie.';
   static const waitingForPlayer = 'En attente d\'un joueur…';

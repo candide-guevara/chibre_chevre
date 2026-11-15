@@ -9,7 +9,7 @@ package chibre;
 // Bump when a change breaks compatibility; mismatching phones refuse to play.
 enum ProtocolVersion {
   PROTOCOL_VERSION_UNSPECIFIED = 0;
-  PROTOCOL_VERSION_CURRENT = 1;
+  PROTOCOL_VERSION_CURRENT = 2;
 }
 
 enum TrumpMode {
