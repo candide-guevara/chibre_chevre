@@ -88,3 +88,7 @@ Finally, all 36 cards should share consistent proportions, typography, border th
 A flat Art Deco take on the same animals: thin gold double frames with fan ornaments in the corners, a large ace framed by stepped bars, and the face cards' busts under a gold arch with a sunburst. Ivoire is cream with black and deep red suits; Minuit is navy with ivory and coral suits.
 
 Both are rendered from the SVG drawings in `app/assets/sources/art_deco_svg/` (not shipped in the app) by `app/tool/render_svg_deck.py`: Ivoire as drawn, Minuit by swapping the palette of everything but the portraits for one based on navy `#0A377C`. To amend the decks, edit the SVGs and run the tool again.
+
+### Classique
+
+The traditional French-suited deck, an exception to the animal faces: white cards with pips on the number cards, a single large suit on the aces, and the usual double-headed kings, queens and jacks. Adapted from [SVG-cards 1.3](http://code.google.com/p/vector-playing-cards/) (public domain): text turned to paths, drawing centred on a 2:3 card with corners rounded like the Art Deco decks, flat aces without the gloss, the centre shrunk by 10 % and the corner indices enlarged by 25 %, the face cards' index pips all at the same place. The SVGs are in `app/assets/sources/classic_svg/` and rendered by `app/tool/render_svg_deck.py` too.

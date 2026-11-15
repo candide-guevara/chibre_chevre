@@ -116,6 +116,7 @@ abstract final class Strings {
   static const vintageCards = 'Vintage';
   static const ivoryCards = 'Ivoire';
   static const midnightCards = 'Minuit';
+  static const classicCards = 'Classique';
 
   // ------------------------------------------------------------- Host screen
 

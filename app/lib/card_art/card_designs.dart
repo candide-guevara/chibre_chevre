@@ -23,6 +23,12 @@ const List<CardDesign> cardDesigns = [
     cornerRadius: 0.056,
     blank: Color(0xFF0A377C),
   ),
+  CardDesign(
+    id: 'classic',
+    name: Strings.classicCards,
+    cornerRadius: 0.056,
+    blank: Color(0xFFFFFFFF),
+  ),
 ];
 
 /// The design with [id], or the default one.

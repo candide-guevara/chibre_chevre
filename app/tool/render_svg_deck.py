@@ -1,12 +1,12 @@
-"""Renders the Art Deco decks from their SVG drawings.
+"""Renders the SVG decks: the Art Deco ones and Classique.
 
 Ivoire is the drawing as is. Minuit swaps the palette of everything but the
 animals' portraits for one based on navy #0A377C: the black suits' ink and the
 fans' outer arcs turn ivory, the frames navy. Each card is rendered at 300x450
 with rsvg-convert and saved as lossless WebP; its transparent rounded corners
-come from the drawing.
+come from the drawing. Classique is its drawings in classic_svg as they are.
 
-    python3 tool/render_svg_deck.py [assets/sources/art_deco_svg [assets/cards]]
+    python3 tool/render_svg_deck.py [assets/sources [assets/cards]]
 """
 import io
 import subprocess
@@ -69,12 +69,16 @@ def render(svg_bytes, out):
 
 
 def main():
-    src = Path(sys.argv[1]) if len(sys.argv) > 1 else APP / 'assets/sources/art_deco_svg'
+    src = Path(sys.argv[1]) if len(sys.argv) > 1 else APP / 'assets/sources'
     dst = Path(sys.argv[2]) if len(sys.argv) > 2 else APP / 'assets/cards'
     ET.register_namespace('', SVG[1:-1])
-    for deck in ('ivory', 'midnight'):
+    ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
+    for deck in ('ivory', 'midnight', 'classic'):
         (dst / deck).mkdir(parents=True, exist_ok=True)
-    for path in sorted(src.glob('*.svg')):
+    for path in sorted((src / 'classic_svg').glob('*.svg')):
+        render(path.read_bytes(), dst / 'classic' / f'{path.stem}.webp')
+        print(path.stem, flush=True)
+    for path in sorted((src / 'art_deco_svg').glob('*.svg')):
         card = path.stem
         render(path.read_bytes(), dst / 'ivory' / f'{card}.webp')
         root = ET.parse(path).getroot()
