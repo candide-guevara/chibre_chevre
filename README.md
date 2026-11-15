@@ -70,6 +70,20 @@ Both phones must be on the same Wi-Fi. Emulators don't receive the other
 instance's broadcasts: in debug builds, type the address shown on the host's
 waiting screen into "Adresse (hôte:port)" on the join screen.
 
+## Windows
+
+The Windows installer is built on GitHub, which has the Windows machine and
+Visual Studio this needs: in the repository's **Actions** tab, pick
+"Windows build" and click **Run workflow** on `main`. About ten minutes later
+the run's page offers a `chibre-windows` download holding `chibre-setup.exe`
+(kept 90 days).
+
+The installer (`app/windows/installer/chibre.iss`, Inno Setup) puts the app in
+Program Files with its own Visual C++ runtime, adds Start menu and desktop
+shortcuts, and lets the app through the Windows firewall so that games on the
+local network work. It is not signed: on first run, Windows SmartScreen asks
+to confirm ("Informations complémentaires" > "Exécuter quand même").
+
 ## Measuring frame times
 
 ```bash

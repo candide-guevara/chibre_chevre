@@ -1,10 +1,10 @@
-"""Renders the Android launcher icons from the goat.
+"""Renders the Android launcher icons and the Windows app icon from the goat.
 
 The adaptive icon's foreground is the badge of the start screen,
 assets/icons/chevre_round.webp, shown whole on its own cream and already faded
 at its border. The classic icon is cut out of the square
 assets/icons/chevre_square.webp, as a rounded square that fades out to
-transparent along its outline.
+transparent along its outline; the Windows icon is the same rounded square.
 
     python3 tool/make_launcher_icons.py
 """
@@ -15,11 +15,13 @@ from PIL import Image, ImageChops, ImageDraw
 
 APP = Path(__file__).resolve().parent.parent
 RES = APP / 'android/app/src/main/res'
+WINDOWS_ICON = APP / 'windows/runner/resources/app_icon.ico'
 ROUND = APP / 'assets/icons/chevre_round.webp'
 SQUARE = APP / 'assets/icons/chevre_square.webp'
 BACKGROUND = (238, 209, 175)  # the cream of the badge
 ROUND_WINDOW = 880  # pixels of the badge across the 108dp adaptive foreground
 FADE = 0.048  # width of the classic icon's fade, as a fraction of the icon
+WINDOWS_SIZES = [16, 24, 32, 48, 64, 128, 256]
 DENSITIES = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 
 
@@ -60,6 +62,8 @@ def main():
         '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n'
         '    <color name="ic_launcher_background">#%02X%02X%02X</color>\n'
         '</resources>\n' % BACKGROUND)
+    classic(square, WINDOWS_SIZES[-1]).save(
+        WINDOWS_ICON, sizes=[(n, n) for n in WINDOWS_SIZES])
 
 
 if __name__ == '__main__':

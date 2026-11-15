@@ -23,7 +23,8 @@ The goal of this project is to create a phone app, named **Chibre Chèvre**, to 
 * the whole system must be runnable locally on my machine for demo purposes and quick feedback (see [Local development](#local-development)).
   * later on we will see how to create the needed google app dev (and aws) accounts.
 * the computer players should be expert level to challenge the humans.
-* Platform: **Android only**. The app must run smoothly on ~5 year old devices (minSdk 26 / Android 8, ~2 GB RAM, mid-range CPU).
+* Platform: **Android**. The app must run smoothly on ~5 year old devices (minSdk 26 / Android 8, ~2 GB RAM, mid-range CPU).
+  * A **Windows** build is also offered, as an installer built by a manually triggered GitHub Actions workflow (see `README.md`). Its window has the phone form factor, shrunk to fit the screen. It plays with Android phones on the same local network.
 * UI language: **French** only.
 
 ## Out of scope

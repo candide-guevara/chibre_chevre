@@ -1,0 +1,46 @@
+# Builds the Windows installer. Run it by hand: Actions tab > "Windows build" >
+# Run workflow. The installer is in the run's "chibre-windows" artifact.
+name: Windows build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.9'
+          channel: stable
+          cache: true
+
+      - name: Build
+        run: flutter build windows --release
+
+      - name: Bundle the Visual C++ runtime
+        shell: pwsh
+        run: |
+          foreach ($dll in 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll') {
+            Copy-Item "$env:WINDIR\System32\$dll" build\windows\x64\runner\Release\
+          }
+
+      - name: Package the installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          $version = (Select-String -Path pubspec.yaml -Pattern '^version: ([\d.]+)').Matches[0].Groups[1].Value
+          & $iscc "/DAppVersion=$version" windows\installer\chibre.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chibre-windows
+          path: app/windows/installer/Output/chibre-setup.exe
+          if-no-files-found: error
