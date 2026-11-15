@@ -75,8 +75,11 @@ waiting screen into "Adresse (hôte:port)" on the join screen.
 The Windows installer is built on GitHub, which has the Windows machine and
 Visual Studio this needs: in the repository's **Actions** tab, pick
 "Windows build" and click **Run workflow** on `main`. About ten minutes later
-the run's page offers a `chibre-windows` download holding `chibre-setup.exe`
-(kept 90 days).
+`chibre-setup.exe` is on the public GitHub Release `v<version>` (the version
+of `app/pubspec.yaml`; running it again for the same version replaces the
+installer). The latest one can always be downloaded, without a GitHub
+account, from
+<https://github.com/candide-guevara/chibre_chevre/releases/latest/download/chibre-setup.exe>.
 
 The installer (`app/windows/installer/chibre.iss`, Inno Setup) puts the app in
 Program Files with its own Visual C++ runtime, adds Start menu and desktop

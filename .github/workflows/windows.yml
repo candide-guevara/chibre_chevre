@@ -1,5 +1,7 @@
 # Builds the Windows installer. Run it by hand: Actions tab > "Windows build" >
-# Run workflow. The installer is in the run's "chibre-windows" artifact.
+# Run workflow. The installer is published on the public GitHub Release
+# v<pubspec version>, created or updated by the run, and is always at
+# https://github.com/candide-guevara/chibre_chevre/releases/latest/download/chibre-setup.exe
 name: Windows build
 
 on:
@@ -8,6 +10,8 @@ on:
 jobs:
   windows:
     runs-on: windows-latest
+    permissions:
+      contents: write  # to create the release and its tag
     defaults:
       run:
         working-directory: app
@@ -31,6 +35,7 @@ jobs:
           }
 
       - name: Package the installer
+        id: package
         shell: pwsh
         run: |
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
@@ -38,9 +43,17 @@ jobs:
           $version = (Select-String -Path pubspec.yaml -Pattern '^version: ([\d.]+)').Matches[0].Groups[1].Value
           & $iscc "/DAppVersion=$version" windows\installer\chibre.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "version=$version" >> $env:GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v4
+      # Running it again for the same version replaces the installer.
+      - uses: softprops/action-gh-release@v2
         with:
-          name: chibre-windows
-          path: app/windows/installer/Output/chibre-setup.exe
-          if-no-files-found: error
+          tag_name: v${{ steps.package.outputs.version }}
+          name: Chibre Chèvre ${{ steps.package.outputs.version }}
+          body: |
+            Installateur Windows : téléchargez `chibre-setup.exe` et lancez-le.
+            Windows peut afficher « Windows a protégé votre ordinateur » :
+            cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
+          files: app/windows/installer/Output/chibre-setup.exe
+          fail_on_unmatched_files: true
+          make_latest: true
