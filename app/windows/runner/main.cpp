@@ -8,7 +8,8 @@
 #include "flutter_window.h"
 #include "utils.h"
 
-// Phone form factor (OnePlus 13R: ~412x906 logical pixels), shrunk to fit the
+// The window opens maximized (Win32Window::Show); once restored it takes the
+// phone form factor (OnePlus 13R: ~412x906 logical pixels), shrunk to fit the
 // screen's work area and centred in it.
 static void PhoneWindowBounds(Win32Window::Point* origin,
                               Win32Window::Size* size) {
