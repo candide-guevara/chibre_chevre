@@ -27,7 +27,7 @@ Derived from billiard table green (`app/lib/theme/chibre_theme.dart`, `ChibreCol
 
 Colours are defined in `app/lib/theme/chibre_theme.dart`: `ChibreColors` is the palette, `UiColors` maps each interface element (top bar, pop-ups, panels, accent...) to it, and `ScreenColors` each screen. Widgets only use the roles, so restyling an element is a one-line change there.
 
-Screen backgrounds (`ScreenColors`) are six colours of the same perceived lightness (OKLab L 0.339). The start screen is navy `#0E356F`, the table green `#164223`. The other screens (the end screen and the insights included) take the colour of the way the player got there from the start screen (`FlowColor`), so the same screen (e.g. the advanced settings) may have different colours: plum `#4F264A` from the profile, olive `#363B13` from joining or hosting a game, rust `#562B00` from a single player game, crimson `#6D0408` from a resumed game. Text fields are not filled, so they show the screen's background.
+Screen backgrounds (`ScreenColors`) are six colours of the same perceived lightness (OKLab L 0.339). The start screen is navy `#0E356F`, the table and the played cards screen green `#164223`. The other screens (the end screen and the insights included) take the colour of the way the player got there from the start screen (`FlowColor`), so the same screen (e.g. the advanced settings) may have different colours: plum `#4F264A` from the profile, olive `#363B13` from joining or hosting a game, rust `#562B00` from a single player game, crimson `#6D0408` from a resumed game. Text fields are not filled, so they show the screen's background.
 
 The Material theme is dark, seeded from `felt`, with ivory as primary and brass as secondary.
 

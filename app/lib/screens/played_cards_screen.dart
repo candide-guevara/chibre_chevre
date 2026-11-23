@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
 import '../strings.dart';
+import '../theme/chibre_theme.dart';
+import '../theme/screen_theme.dart';
 import '../widgets/suit_column.dart';
 
 /// What happened so far in the round, as this player could see it: the
@@ -14,45 +16,49 @@ class PlayedCardsScreen extends StatelessWidget {
   final GameController controller;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text(Strings.playedCards)),
-    body: StreamBuilder<TableView>(
-      stream: controller.tables,
-      initialData: controller.table,
-      builder: (context, snapshot) {
-        final table = snapshot.data;
-        final player = table?.player;
-        if (table == null || player == null) return const SizedBox.shrink();
-        final text = Theme.of(context).textTheme;
-        final announcements = _announcements(table, player);
-        final played = player.playedCards;
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(Strings.announcements, style: text.titleMedium),
-            const SizedBox(height: 8),
-            if (announcements.isEmpty)
-              const Text(Strings.noAnnouncement)
-            else
-              for (final line in announcements) Text(line),
-            const Divider(height: 32),
-            Text(Strings.playedCards, style: text.titleMedium),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final suit in _suitOrder)
-                  Expanded(
-                    child: SuitColumn(
-                      suit: suit,
-                      cards: played.ofSuit(suit).cards,
+  Widget build(BuildContext context) => ScreenTheme(
+    // Seen in the middle of a round, it keeps the table's color.
+    color: ScreenColors.play,
+    child: Scaffold(
+      appBar: AppBar(title: const Text(Strings.playedCards)),
+      body: StreamBuilder<TableView>(
+        stream: controller.tables,
+        initialData: controller.table,
+        builder: (context, snapshot) {
+          final table = snapshot.data;
+          final player = table?.player;
+          if (table == null || player == null) return const SizedBox.shrink();
+          final text = Theme.of(context).textTheme;
+          final announcements = _announcements(table, player);
+          final played = player.playedCards;
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text(Strings.announcements, style: text.titleMedium),
+              const SizedBox(height: 8),
+              if (announcements.isEmpty)
+                const Text(Strings.noAnnouncement)
+              else
+                for (final line in announcements) Text(line),
+              const Divider(height: 32),
+              Text(Strings.playedCards, style: text.titleMedium),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final suit in _suitOrder)
+                    Expanded(
+                      child: SuitColumn(
+                        suit: suit,
+                        cards: played.ofSuit(suit).cards,
+                      ),
                     ),
-                  ),
-              ],
-            ),
-          ],
-        );
-      },
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     ),
   );
 
