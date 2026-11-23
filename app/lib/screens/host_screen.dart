@@ -35,6 +35,7 @@ class _HostScreenState extends State<HostScreen> {
   var _obenUnde = false;
   var _multipliers = false;
   var _finishLastRound = false;
+  var _melds = true;
   var _advanced = const AdvancedSettings();
   var _starting = false;
   var _loaded = false;
@@ -65,6 +66,7 @@ class _HostScreenState extends State<HostScreen> {
     _obenUnde = defaults.options.obenUndeAllowed;
     _multipliers = defaults.options.multipliersEnabled;
     _finishLastRound = defaults.options.finishLastRound;
+    _melds = defaults.options.meldsEnabled;
     _advanced = defaults.advanced;
   }
 
@@ -84,6 +86,7 @@ class _HostScreenState extends State<HostScreen> {
     obenUndeAllowed: _obenUnde,
     multipliersEnabled: _multipliers,
     finishLastRound: _finishLastRound,
+    meldsEnabled: _melds,
   );
 
   Future<void> _saveDefaults() async {
@@ -97,6 +100,7 @@ class _HostScreenState extends State<HostScreen> {
       context,
       (_) => AdvancedSettingsScreen(
         settings: _advanced,
+        meldsEnabled: _melds,
         onChanged: (settings) => setState(() => _advanced = settings),
       ),
     ),
@@ -121,7 +125,7 @@ class _HostScreenState extends State<HostScreen> {
         trickHold: _advanced.trickHold,
         assistance: _advanced.assistance,
         sortByTrump: _advanced.sortByTrump,
-        autoAnnounce: _advanced.autoAnnounce,
+        autoAnnounce: _melds && _advanced.autoAnnounce,
         thinkingTime: _advanced.thinkingTime,
         solo: widget.solo,
       ),
@@ -203,6 +207,13 @@ class _HostScreenState extends State<HostScreen> {
           subtitle: const Text(Strings.finishLastRoundOff),
           value: _finishLastRound,
           onChanged: (value) => setState(() => _finishLastRound = value),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text(Strings.melds),
+          subtitle: const Text(Strings.meldsDetail),
+          value: _melds,
+          onChanged: (value) => setState(() => _melds = value),
         ),
       ],
     ),

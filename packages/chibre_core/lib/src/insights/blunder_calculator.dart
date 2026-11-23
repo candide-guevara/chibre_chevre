@@ -167,9 +167,7 @@ class BlunderCalculator {
   }
 
   Blunder? _judgeStoeck(PlayerView view, PlayCard action, int roundIndex) {
-    final missed = !action.stoeck &&
-        view.stoeckSeat == null &&
-        completesStoeck(action.card, view.playedBy(view.seat), view.mode!);
+    final missed = !action.stoeck && view.canAnnounceStoeck(action.card);
     if (!missed) return null;
     return _blunder(view, BlunderKind.missedStoeck, roundIndex,
         pointsLost: (stoeckPoints * view.multiplier).toDouble(),

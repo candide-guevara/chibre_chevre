@@ -1,3 +1,4 @@
+import 'card.dart';
 import 'card_set.dart';
 import 'deal.dart';
 import 'game_options.dart';
@@ -5,6 +6,7 @@ import 'legal_moves.dart';
 import 'meld.dart';
 import 'round_state.dart';
 import 'seat.dart';
+import 'stoeck.dart';
 import 'trick.dart';
 import 'trump_mode.dart';
 
@@ -84,7 +86,16 @@ class PlayerView {
   bool get isFirstTrick => completedTricks.isEmpty;
 
   bool get mayAnnounceMelds =>
-      mode != null && isFirstTrick && announcedMeldValues[seat].isEmpty;
+      options.meldsEnabled &&
+      mode != null &&
+      isFirstTrick &&
+      announcedMeldValues[seat].isEmpty;
+
+  /// Whether playing [card] announces Stöck if the player wishes.
+  bool canAnnounceStoeck(Card card) =>
+      options.meldsEnabled &&
+      stoeckSeat == null &&
+      completesStoeck(card, playedBy(seat), mode!);
 
   CardSet get legalCards => legalMoves(hand, currentTrick!.cards, mode!);
 

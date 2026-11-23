@@ -142,6 +142,17 @@ void main() {
               melds: [Meld.fromCards(cards('H9 H10 HJ'))!])),
           throwsA(isA<IllegalActionException>()));
     });
+
+    test('are rejected when the host turned them off', () {
+      final round =
+          newRound(deal, options: const GameOptions(meldsEnabled: false))
+            ..apply(const ChooseTrump(0, TrumpMode.clubs));
+      expect(PlayerView.ofRound(round, 0).mayAnnounceMelds, isFalse);
+      expect(
+          () => round.apply(PlayCard(0, c('S6'),
+              melds: [Meld.fromCards(cards('H6 H7 H8'))!])),
+          throwsA(isA<IllegalActionException>()));
+    });
   });
 
   group('stöck', () {
@@ -172,6 +183,14 @@ void main() {
       final round =
           newRound(deal, options: const GameOptions(obenUndeAllowed: true))
             ..apply(const ChooseTrump(0, TrumpMode.obenabe));
+      round.apply(PlayCard(0, c('SK')));
+      expect(round.canAnnounceStoeck(0, c('SQ')), isFalse);
+    });
+
+    test('does not exist when the host turned melds off', () {
+      final round =
+          newRound(deal, options: const GameOptions(meldsEnabled: false))
+            ..apply(const ChooseTrump(0, TrumpMode.spades));
       round.apply(PlayCard(0, c('SK')));
       expect(round.canAnnounceStoeck(0, c('SQ')), isFalse);
     });

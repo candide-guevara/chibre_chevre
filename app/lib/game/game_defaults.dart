@@ -17,6 +17,7 @@ class GameDefaults {
     'obenUndeAllowed': options.obenUndeAllowed,
     'multipliersEnabled': options.multipliersEnabled,
     'finishLastRound': options.finishLastRound,
+    'meldsEnabled': options.meldsEnabled,
     'trickHoldMs': advanced.trickHold.inMilliseconds,
     'assistance': advanced.assistance,
     'sortByTrump': advanced.sortByTrump,
@@ -46,6 +47,7 @@ class GameDefaults {
           'finishLastRound',
           defaults.options.finishLastRound,
         ),
+        meldsEnabled: read('meldsEnabled', defaults.options.meldsEnabled),
       ),
       advanced: AdvancedSettings(
         trickHold: Duration(

@@ -273,12 +273,7 @@ class _PlayScreenState extends State<PlayScreen> {
     _play(
       card,
       stoeck: table.autoAnnounce
-          ? player.stoeckSeat == null &&
-                completesStoeck(
-                  card,
-                  player.playedBy(player.seat),
-                  player.mode!,
-                )
+          ? player.canAnnounceStoeck(card)
           : suggestion is PlayCard &&
                 suggestion.card == card &&
                 suggestion.stoeck,
@@ -383,13 +378,11 @@ class _PlayScreenState extends State<PlayScreen> {
     if (table.autoAnnounce ||
         !table.isMyTurn ||
         table.phase != TablePhase.playing ||
-        _choosingMelds ||
-        player.stoeckSeat != null) {
+        _choosingMelds) {
       return null;
     }
-    final played = player.playedBy(player.seat);
     for (final card in player.legalCards.cards) {
-      if (completesStoeck(card, played, player.mode!)) return card;
+      if (player.canAnnounceStoeck(card)) return card;
     }
     return null;
   }

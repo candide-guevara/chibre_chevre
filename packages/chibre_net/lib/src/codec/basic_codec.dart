@@ -19,6 +19,7 @@ pb.GameOptions encodeOptions(GameOptions options) => pb.GameOptions(
       obenUndeAllowed: options.obenUndeAllowed,
       multipliersEnabled: options.multipliersEnabled,
       finishLastRound: options.finishLastRound,
+      meldsDisabled: !options.meldsEnabled,
     );
 
 GameOptions decodeOptions(pb.GameOptions options) => GameOptions(
@@ -26,6 +27,7 @@ GameOptions decodeOptions(pb.GameOptions options) => GameOptions(
       obenUndeAllowed: options.obenUndeAllowed,
       multipliersEnabled: options.multipliersEnabled,
       finishLastRound: options.finishLastRound,
+      meldsEnabled: !options.meldsDisabled,
     );
 
 Meld decodeMeld(Int64 bits) {

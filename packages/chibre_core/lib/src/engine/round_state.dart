@@ -87,6 +87,7 @@ class RoundState {
       legalMoves(_hands[seatToAct], _currentTrick!.cards, _mode!);
 
   bool canAnnounceStoeck(int seat, Card card) =>
+      options.meldsEnabled &&
       _mode != null &&
       _stoeckSeat == null &&
       completesStoeck(card, playedBy(seat), _mode!);
@@ -130,6 +131,7 @@ class RoundState {
       return '${action.card} cannot be played now';
     }
     if (action.melds.isNotEmpty) {
+      if (!options.meldsEnabled) return 'Melds are disabled';
       if (_tricks.isNotEmpty) {
         return 'Melds are only allowed in the first trick';
       }

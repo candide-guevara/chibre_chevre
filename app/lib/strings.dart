@@ -134,6 +134,8 @@ abstract final class Strings {
   static const finishLastRound = 'Finir la dernière manche';
   static const finishLastRoundOff =
       'L\'équipe qui atteint le score en premier gagne.';
+  static const melds = 'Annonces';
+  static const meldsDetail = 'Jouer avec annonces et Stöck';
   static const loadDefaults = 'Par défaut';
   static const advanced = 'Avancé';
 

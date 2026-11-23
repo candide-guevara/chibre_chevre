@@ -20,14 +20,14 @@ const ProtocolVersion$json = {
   '1': 'ProtocolVersion',
   '2': [
     {'1': 'PROTOCOL_VERSION_UNSPECIFIED', '2': 0},
-    {'1': 'PROTOCOL_VERSION_CURRENT', '2': 2},
+    {'1': 'PROTOCOL_VERSION_CURRENT', '2': 3},
   ],
 };
 
 /// Descriptor for `ProtocolVersion`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List protocolVersionDescriptor = $convert.base64Decode(
     'Cg9Qcm90b2NvbFZlcnNpb24SIAocUFJPVE9DT0xfVkVSU0lPTl9VTlNQRUNJRklFRBAAEhwKGF'
-    'BST1RPQ09MX1ZFUlNJT05fQ1VSUkVOVBAC');
+    'BST1RPQ09MX1ZFUlNJT05fQ1VSUkVOVBAD');
 
 @$core.Deprecated('Use trumpModeDescriptor instead')
 const TrumpMode$json = {
@@ -64,6 +64,7 @@ const GameOptions$json = {
       '10': 'multipliersEnabled'
     },
     {'1': 'finish_last_round', '3': 4, '4': 1, '5': 8, '10': 'finishLastRound'},
+    {'1': 'melds_disabled', '3': 5, '4': 1, '5': 8, '10': 'meldsDisabled'},
   ],
 };
 
@@ -72,7 +73,8 @@ final $typed_data.Uint8List gameOptionsDescriptor = $convert.base64Decode(
     'CgtHYW1lT3B0aW9ucxIhCgx0YXJnZXRfc2NvcmUYASABKA1SC3RhcmdldFNjb3JlEioKEW9iZW'
     '5fdW5kZV9hbGxvd2VkGAIgASgIUg9vYmVuVW5kZUFsbG93ZWQSLwoTbXVsdGlwbGllcnNfZW5h'
     'YmxlZBgDIAEoCFISbXVsdGlwbGllcnNFbmFibGVkEioKEWZpbmlzaF9sYXN0X3JvdW5kGAQgAS'
-    'gIUg9maW5pc2hMYXN0Um91bmQ=');
+    'gIUg9maW5pc2hMYXN0Um91bmQSJQoObWVsZHNfZGlzYWJsZWQYBSABKAhSDW1lbGRzRGlzYWJs'
+    'ZWQ=');
 
 @$core.Deprecated('Use gameAdvertDescriptor instead')
 const GameAdvert$json = {

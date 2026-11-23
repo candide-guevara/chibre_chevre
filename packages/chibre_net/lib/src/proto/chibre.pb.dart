@@ -27,6 +27,7 @@ class GameOptions extends $pb.GeneratedMessage {
     $core.bool? obenUndeAllowed,
     $core.bool? multipliersEnabled,
     $core.bool? finishLastRound,
+    $core.bool? meldsDisabled,
   }) {
     final result = GameOptions._();
     if (targetScore != null) result.targetScore = targetScore;
@@ -34,6 +35,7 @@ class GameOptions extends $pb.GeneratedMessage {
     if (multipliersEnabled != null)
       result.multipliersEnabled = multipliersEnabled;
     if (finishLastRound != null) result.finishLastRound = finishLastRound;
+    if (meldsDisabled != null) result.meldsDisabled = meldsDisabled;
     return result;
   }
 
@@ -55,6 +57,7 @@ class GameOptions extends $pb.GeneratedMessage {
     ..aOB(2, _omitFieldNames ? '' : 'obenUndeAllowed')
     ..aOB(3, _omitFieldNames ? '' : 'multipliersEnabled')
     ..aOB(4, _omitFieldNames ? '' : 'finishLastRound')
+    ..aOB(5, _omitFieldNames ? '' : 'meldsDisabled')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -116,6 +119,16 @@ class GameOptions extends $pb.GeneratedMessage {
   $core.bool hasFinishLastRound() => $_has(3);
   @$pb.TagNumber(4)
   void clearFinishLastRound() => $_clearField(4);
+
+  /// No melds nor Stöck. Negated so that older saved games keep them.
+  @$pb.TagNumber(5)
+  $core.bool get meldsDisabled => $_getBF(4);
+  @$pb.TagNumber(5)
+  set meldsDisabled($core.bool value) => $_setBool(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasMeldsDisabled() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearMeldsDisabled() => $_clearField(5);
 }
 
 /// Broadcast by the host so other phones can list the game.

@@ -19,7 +19,7 @@ class ProtocolVersion extends $pb.ProtobufEnum {
   static const ProtocolVersion PROTOCOL_VERSION_UNSPECIFIED = ProtocolVersion._(
       0, _omitEnumNames ? '' : 'PROTOCOL_VERSION_UNSPECIFIED');
   static const ProtocolVersion PROTOCOL_VERSION_CURRENT =
-      ProtocolVersion._(2, _omitEnumNames ? '' : 'PROTOCOL_VERSION_CURRENT');
+      ProtocolVersion._(3, _omitEnumNames ? '' : 'PROTOCOL_VERSION_CURRENT');
 
   static const $core.List<ProtocolVersion> values = <ProtocolVersion>[
     PROTOCOL_VERSION_UNSPECIFIED,

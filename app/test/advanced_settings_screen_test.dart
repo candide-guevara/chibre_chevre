@@ -13,6 +13,7 @@ void main() {
         theme: chibreTheme(),
         home: AdvancedSettingsScreen(
           settings: const AdvancedSettings(),
+          meldsEnabled: true,
           onChanged: (settings) => reported = settings,
         ),
       ),
@@ -36,6 +37,7 @@ void main() {
         theme: chibreTheme(),
         home: AdvancedSettingsScreen(
           settings: const AdvancedSettings(),
+          meldsEnabled: true,
           onChanged: (settings) => reported = settings,
         ),
       ),
@@ -52,5 +54,26 @@ void main() {
       find.text(Strings.thinkingTime(const Duration(seconds: 2))),
       findsOneWidget,
     );
+  });
+
+  testWidgets('without melds, automatic announcements are greyed out', (
+    tester,
+  ) async {
+    AdvancedSettings? reported;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: chibreTheme(),
+        home: AdvancedSettingsScreen(
+          settings: const AdvancedSettings(),
+          meldsEnabled: false,
+          onChanged: (settings) => reported = settings,
+        ),
+      ),
+    );
+    final toggle = find.widgetWithText(SwitchListTile, Strings.autoAnnounce);
+    expect(tester.widget<SwitchListTile>(toggle).onChanged, isNull);
+    await tester.tap(toggle);
+    await tester.pump();
+    expect(reported, isNull);
   });
 }

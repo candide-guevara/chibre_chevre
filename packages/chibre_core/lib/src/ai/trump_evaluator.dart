@@ -75,9 +75,12 @@ class TrumpEvaluator {
           policy(playout.hands[seat], playout.trick, mode, playout.unplayed));
     }
     var advantage = playout.advantage(team);
-    for (var seat = 0; seat < seatCount; seat++) {
-      if (holdsStoeck(hands[seat], mode)) {
-        advantage += (teamOf(seat) == team ? stoeckPoints : -stoeckPoints) / 2;
+    if (view.options.meldsEnabled) {
+      for (var seat = 0; seat < seatCount; seat++) {
+        if (holdsStoeck(hands[seat], mode)) {
+          advantage +=
+              (teamOf(seat) == team ? stoeckPoints : -stoeckPoints) / 2;
+        }
       }
     }
     return advantage * view.options.multiplierFor(mode);

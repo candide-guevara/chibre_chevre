@@ -148,6 +148,7 @@ Allows to configure different options, starting from the player's game defaults 
 * trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
 * multipliers: off (default) / on
 * "Finir la dernière manche" (play the last round to the end even when the game is decided): off (default) / on
+* "Annonces" (melds and Stöck are announced and score points): on (default) / off. Off, nobody announces anything: there is no meld selection, no "Stöck" button, no recap of the announcements, the computer players announce nothing and the insights never count a missed meld or Stöck.
 
 A bar of three buttons at the bottom of the screen:
 
@@ -163,7 +164,7 @@ Opened from the host game screen; its options are part of the game the host crea
 * "Aide de jeu": a toggle (default off) showing the button bar of the play game screen ("Jouer pour moi" and "Cartes jouées") on both phones.
 * "Trier la main selon l'atout": a toggle (default off). Off, hands are always sorted ♥ ♠ ♦ ♣, from 6 to ace; on, trump comes first once chosen and each suit is sorted by strength in the round's trump mode. Applies to both phones (hand and insights).
 * "Réflexion des ordinateurs": a slider from 0.2 s to 2 s (default 0.6 s, steps of 0.2 s), the computer players' thinking time per decision, also used by "Jouer pour moi". Each phone turns it into a number of search iterations for its own speed (see [Computer players](#computer-players)).
-* "Annonces automatiques": a toggle (default off) streamlining the announcements on both phones: the meld selection is replaced by a pop-up offering the player's melds, and Stöck is announced automatically (see the play game screen).
+* "Annonces automatiques": a toggle (default off) streamlining the announcements on both phones: the meld selection is replaced by a pop-up offering the player's melds, and Stöck is announced automatically (see the play game screen). Greyed out, and off for the game, when "Annonces" is off on the host game screen.
 
 ## Waiting for player screen
 

@@ -8,10 +8,14 @@ class AdvancedSettingsScreen extends StatefulWidget {
   const AdvancedSettingsScreen({
     super.key,
     required this.settings,
+    required this.meldsEnabled,
     required this.onChanged,
   });
 
   final AdvancedSettings settings;
+
+  /// Without melds, there is nothing to announce automatically.
+  final bool meldsEnabled;
   final ValueChanged<AdvancedSettings> onChanged;
 
   @override
@@ -79,8 +83,9 @@ class _AdvancedSettingsScreenState extends State<AdvancedSettingsScreen> {
           title: const Text(Strings.autoAnnounce),
           subtitle: const Text(Strings.autoAnnounceDetail),
           value: _settings.autoAnnounce,
-          onChanged: (value) =>
-              _update(_settings.copyWith(autoAnnounce: value)),
+          onChanged: widget.meldsEnabled
+              ? (value) => _update(_settings.copyWith(autoAnnounce: value))
+              : null,
         ),
       ],
     ),

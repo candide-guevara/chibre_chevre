@@ -12,6 +12,7 @@ void main() {
     final store = await ProfileStore.open();
     final defaults = store.gameDefaults;
     expect(defaults.options.targetScore, 1000);
+    expect(defaults.options.meldsEnabled, isTrue);
     expect(defaults.advanced.trickHold, const AdvancedSettings().trickHold);
   });
 
@@ -24,6 +25,7 @@ void main() {
           obenUndeAllowed: true,
           multipliersEnabled: true,
           finishLastRound: true,
+          meldsEnabled: false,
         ),
         advanced: AdvancedSettings(
           trickHold: Duration(seconds: 3),
@@ -38,6 +40,7 @@ void main() {
     final defaults = (await ProfileStore.open()).gameDefaults;
     expect(defaults.options.targetScore, 1500);
     expect(defaults.options.obenUndeAllowed, isTrue);
+    expect(defaults.options.meldsEnabled, isFalse);
     expect(defaults.options.multipliersEnabled, isTrue);
     expect(defaults.options.finishLastRound, isTrue);
     expect(defaults.advanced.trickHold, const Duration(seconds: 3));

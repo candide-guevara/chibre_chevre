@@ -14,7 +14,11 @@ class MeldChoice {
   /// Among [humans], the seats still choosing in [round]: from the trump
   /// choice until they decide or play their first card.
   List<int> pending(RoundState round, Iterable<int> humans) {
-    if (round.mode == null || round.completedTricks.isNotEmpty) return const [];
+    if (!round.options.meldsEnabled ||
+        round.mode == null ||
+        round.completedTricks.isNotEmpty) {
+      return const [];
+    }
     return [
       for (final seat in humans)
         if (!_done.contains(seat) &&

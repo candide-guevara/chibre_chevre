@@ -9,7 +9,7 @@ package chibre;
 // Bump when a change breaks compatibility; mismatching phones refuse to play.
 enum ProtocolVersion {
   PROTOCOL_VERSION_UNSPECIFIED = 0;
-  PROTOCOL_VERSION_CURRENT = 2;
+  PROTOCOL_VERSION_CURRENT = 3;
 }
 
 enum TrumpMode {
@@ -29,6 +29,8 @@ message GameOptions {
   // The round in which a team reaches the target is played to the end; the
   // first team to reach it still wins.
   bool finish_last_round = 4;
+  // No melds nor Stöck. Negated so that older saved games keep them.
+  bool melds_disabled = 5;
 }
 
 // ---------------------------------------------------------------- Discovery
