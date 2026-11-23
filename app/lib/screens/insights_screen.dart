@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../game/game_controller.dart';
 import '../strings.dart';
-import '../theme/chibre_theme.dart';
-import '../theme/screen_theme.dart';
 import '../widgets/blunder_tile.dart';
 import '../widgets/rematch_buttons.dart';
 
@@ -27,23 +25,20 @@ class InsightsScreen extends StatelessWidget {
           if (context.mounted) Navigator.of(context).pop();
         });
       }
-      return ScreenTheme(
-        color: ScreenColors.insights,
-        child: Scaffold(
-          appBar: AppBar(title: const Text(Strings.gameAnalysis)),
-          body: table.insights == null
-              ? const Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text(Strings.analysing),
-                    ],
-                  ),
-                )
-              : _content(context, table),
-        ),
+      return Scaffold(
+        appBar: AppBar(title: const Text(Strings.gameAnalysis)),
+        body: table.insights == null
+            ? const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(Strings.analysing),
+                  ],
+                ),
+              )
+            : _content(context, table),
       );
     },
   );

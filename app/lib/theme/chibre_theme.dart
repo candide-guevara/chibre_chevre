@@ -72,13 +72,12 @@ abstract final class UiColors {
   static const blackSuit = ChibreColors.ink;
 }
 
-/// The backgrounds of the screens. The start screen, the table and the
-/// insights have their own; the others take the color of the way the player
-/// got there from the start screen (see [FlowColor]).
+/// The backgrounds of the screens. The start screen and the table have their
+/// own; the others take the color of the way the player got there from the
+/// start screen (see [FlowColor]).
 abstract final class ScreenColors {
   static const start = ChibreColors.navy;
   static const play = ChibreColors.pine;
-  static const insights = ChibreColors.navy;
 
   static const profile = ChibreColors.plum;
   static const network = ChibreColors.olive;
