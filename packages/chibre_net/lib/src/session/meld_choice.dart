@@ -4,16 +4,25 @@ import 'package:chibre_core/chibre_core.dart';
 /// round; the computer players wait for them before playing.
 class MeldChoice {
   final _done = <int>{};
+  RoundState? _round;
 
-  /// A new round starts.
-  void reset() => _done.clear();
+  /// [seat] chose its melds in [round], or not to announce any.
+  void choose(RoundState round, int seat) {
+    _follow(round);
+    _done.add(seat);
+  }
 
-  /// [seat] chose its melds, or not to announce any.
-  void choose(int seat) => _done.add(seat);
+  /// Forgets the choices of the previous round once [round] starts.
+  void _follow(RoundState round) {
+    if (identical(round, _round)) return;
+    _round = round;
+    _done.clear();
+  }
 
   /// Among [humans], the seats still choosing in [round]: from the trump
   /// choice until they decide or play their first card.
   List<int> pending(RoundState round, Iterable<int> humans) {
+    _follow(round);
     if (!round.options.meldsEnabled ||
         round.mode == null ||
         round.completedTricks.isNotEmpty) {

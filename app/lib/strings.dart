@@ -129,6 +129,8 @@ abstract final class Strings {
   static const trumps = 'Atouts';
   static const fourSuits = '4 couleurs';
   static const withObenUnde = '+ Obenabe, Undenufe';
+  static const randomTrump = 'Atout au hasard';
+  static const randomTrumpDetail = 'Tiré au sort à chaque manche';
   static const multipliers = 'Multiplicateurs';
   static const multipliersDetail = '♦♥ ×1, ♠♣ ×2, Obenabe et Undenufe ×3';
   static const finishLastRound = 'Finir la dernière manche';

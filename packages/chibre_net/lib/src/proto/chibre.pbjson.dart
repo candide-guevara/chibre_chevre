@@ -65,6 +65,7 @@ const GameOptions$json = {
     },
     {'1': 'finish_last_round', '3': 4, '4': 1, '5': 8, '10': 'finishLastRound'},
     {'1': 'melds_disabled', '3': 5, '4': 1, '5': 8, '10': 'meldsDisabled'},
+    {'1': 'random_trump', '3': 6, '4': 1, '5': 8, '10': 'randomTrump'},
   ],
 };
 
@@ -74,7 +75,7 @@ final $typed_data.Uint8List gameOptionsDescriptor = $convert.base64Decode(
     '5fdW5kZV9hbGxvd2VkGAIgASgIUg9vYmVuVW5kZUFsbG93ZWQSLwoTbXVsdGlwbGllcnNfZW5h'
     'YmxlZBgDIAEoCFISbXVsdGlwbGllcnNFbmFibGVkEioKEWZpbmlzaF9sYXN0X3JvdW5kGAQgAS'
     'gIUg9maW5pc2hMYXN0Um91bmQSJQoObWVsZHNfZGlzYWJsZWQYBSABKAhSDW1lbGRzRGlzYWJs'
-    'ZWQ=');
+    'ZWQSIQoMcmFuZG9tX3RydW1wGAYgASgIUgtyYW5kb21UcnVtcA==');
 
 @$core.Deprecated('Use gameAdvertDescriptor instead')
 const GameAdvert$json = {
@@ -792,13 +793,22 @@ const Round$json = {
       '6': '.chibre.Action',
       '10': 'actions'
     },
+    {
+      '1': 'drawn_trump',
+      '3': 4,
+      '4': 1,
+      '5': 14,
+      '6': '.chibre.TrumpMode',
+      '10': 'drawnTrump'
+    },
   ],
 };
 
 /// Descriptor for `Round`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List roundDescriptor = $convert.base64Decode(
     'CgVSb3VuZBISCgRkZWFsGAEgAygEUgRkZWFsEiMKDXRydW1wX2Nob29zZXIYAiABKA1SDHRydW'
-    '1wQ2hvb3NlchIoCgdhY3Rpb25zGAMgAygLMg4uY2hpYnJlLkFjdGlvblIHYWN0aW9ucw==');
+    '1wQ2hvb3NlchIoCgdhY3Rpb25zGAMgAygLMg4uY2hpYnJlLkFjdGlvblIHYWN0aW9ucxIyCgtk'
+    'cmF3bl90cnVtcBgEIAEoDjIRLmNoaWJyZS5UcnVtcE1vZGVSCmRyYXduVHJ1bXA=');
 
 @$core.Deprecated('Use gameRecordDescriptor instead')
 const GameRecord$json = {

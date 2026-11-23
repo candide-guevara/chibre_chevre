@@ -18,6 +18,7 @@ class GameDefaults {
     'multipliersEnabled': options.multipliersEnabled,
     'finishLastRound': options.finishLastRound,
     'meldsEnabled': options.meldsEnabled,
+    'randomTrump': options.randomTrump,
     'trickHoldMs': advanced.trickHold.inMilliseconds,
     'assistance': advanced.assistance,
     'sortByTrump': advanced.sortByTrump,
@@ -48,6 +49,7 @@ class GameDefaults {
           defaults.options.finishLastRound,
         ),
         meldsEnabled: read('meldsEnabled', defaults.options.meldsEnabled),
+        randomTrump: read('randomTrump', defaults.options.randomTrump),
       ),
       advanced: AdvancedSettings(
         trickHold: Duration(

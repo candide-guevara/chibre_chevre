@@ -15,7 +15,8 @@ GameState playedGame() => MatchRunner(
             targetScore: 500,
             multipliersEnabled: true,
             finishLastRound: true,
-            meldsEnabled: false))
+            meldsEnabled: false,
+            randomTrump: true))
     .playGame(deals: RandomDealSource(Random(1)));
 
 void main() {
@@ -42,6 +43,7 @@ void main() {
     expect(replayed.winningTeam, game.winningTeam);
     expect(replayed.options.finishLastRound, isTrue);
     expect(replayed.options.meldsEnabled, isFalse);
+    expect(replayed.record.drawnTrumps, game.record.drawnTrumps);
   });
 
   test('a table survives encoding', () {

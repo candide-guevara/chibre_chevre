@@ -53,6 +53,7 @@ void main() {
     expect(find.text(Strings.gameName), findsNothing);
 
     await tester.enterText(find.byType(TextField), '1500');
+    await tester.tap(find.text(Strings.randomTrump));
     await tester.tap(find.text(Strings.multipliers));
     await tester.ensureVisible(find.text(Strings.finishLastRound));
     await tester.tap(find.text(Strings.finishLastRound));
@@ -66,6 +67,7 @@ void main() {
     expect(profile.gameDefaults.options.multipliersEnabled, isTrue);
     expect(profile.gameDefaults.options.finishLastRound, isTrue);
     expect(profile.gameDefaults.options.meldsEnabled, isFalse);
+    expect(profile.gameDefaults.options.randomTrump, isTrue);
   });
 
   testWidgets('a single player game needs no name', (tester) async {

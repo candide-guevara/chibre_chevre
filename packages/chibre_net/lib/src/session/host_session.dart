@@ -210,8 +210,17 @@ class HostSession {
   DealSource _newDeals() =>
       newDeals?.call(_random) ?? RandomDealSource(_random);
 
-  void _startGame({DealSource? deals}) {
-    _game = GameState(options: _options, deals: deals ?? _newDeals());
+  /// With [sameCardsAs], the game is dealt like that earlier game, with the
+  /// same trumps drawn.
+  void _startGame({GameRecord? sameCardsAs}) {
+    _game = GameState(
+      options: _options,
+      deals: sameCardsAs == null
+          ? _newDeals()
+          : ReplayDealSource(sameCardsAs.deals, fallback: _newDeals()),
+      random: _random,
+      drawnTrumps: sameCardsAs?.drawnTrumps ?? const [],
+    );
     _insights = null;
     _analysing = false;
     _roundInsights = {};
@@ -378,7 +387,6 @@ class HostSession {
             .onError((_, __) => null);
         _scheduleRoundSummary(game);
       case GamePhase.choosingTrump || GamePhase.playing:
-        if (game.phase == GamePhase.choosingTrump) _meldChoice.reset();
         final seat = game.seatToAct;
         final isBot = _isBot(seat);
         // Thinks while the humans watch the last trick, read the recap or
@@ -447,7 +455,7 @@ class HostSession {
       _solo ? const [hostSeat] : const [hostSeat, joinerSeat];
 
   void _chooseMelds(int seat) {
-    _meldChoice.choose(seat);
+    _meldChoice.choose(_game!.round, seat);
     _changed();
   }
 
@@ -545,10 +553,7 @@ class HostSession {
     if (offer == null || offer.proposedBy == seat) return;
     _rematch = null;
     if (accept) {
-      _startGame(
-          deals: offer.sameCards
-              ? ReplayDealSource(_game!.record.deals, fallback: _newDeals())
-              : null);
+      _startGame(sameCardsAs: offer.sameCards ? _game!.record : null);
     }
     _changed();
   }

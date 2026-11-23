@@ -1,13 +1,16 @@
 import 'card_set.dart';
 import 'game_action.dart';
 import 'game_options.dart';
+import 'trump_mode.dart';
 
 /// Everything needed to replay a round: the deal and the actions in order.
 class RoundRecord {
-  RoundRecord({required this.deal, required this.trumpChooser});
+  RoundRecord(
+      {required this.deal, required this.trumpChooser, this.drawnTrump});
 
   final List<CardSet> deal;
   final int trumpChooser;
+  final TrumpMode? drawnTrump;
   final List<GameAction> actions = [];
 }
 
@@ -20,4 +23,7 @@ class GameRecord {
   final List<RoundRecord> rounds = [];
 
   List<List<CardSet>> get deals => [for (final round in rounds) round.deal];
+
+  List<TrumpMode?> get drawnTrumps =>
+      [for (final round in rounds) round.drawnTrump];
 }

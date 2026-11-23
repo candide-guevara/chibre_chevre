@@ -33,6 +33,7 @@ class _HostScreenState extends State<HostScreen> {
   final _name = TextEditingController();
   final _target = TextEditingController();
   var _obenUnde = false;
+  var _randomTrump = false;
   var _multipliers = false;
   var _finishLastRound = false;
   var _melds = true;
@@ -64,6 +65,7 @@ class _HostScreenState extends State<HostScreen> {
   void _apply(GameDefaults defaults) {
     _target.text = '${defaults.options.targetScore}';
     _obenUnde = defaults.options.obenUndeAllowed;
+    _randomTrump = defaults.options.randomTrump;
     _multipliers = defaults.options.multipliersEnabled;
     _finishLastRound = defaults.options.finishLastRound;
     _melds = defaults.options.meldsEnabled;
@@ -87,6 +89,7 @@ class _HostScreenState extends State<HostScreen> {
     multipliersEnabled: _multipliers,
     finishLastRound: _finishLastRound,
     meldsEnabled: _melds,
+    randomTrump: _randomTrump,
   );
 
   Future<void> _saveDefaults() async {
@@ -192,6 +195,13 @@ class _HostScreenState extends State<HostScreen> {
           selected: {_obenUnde},
           onSelectionChanged: (value) =>
               setState(() => _obenUnde = value.single),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text(Strings.randomTrump),
+          subtitle: const Text(Strings.randomTrumpDetail),
+          value: _randomTrump,
+          onChanged: (value) => setState(() => _randomTrump = value),
         ),
         const SizedBox(height: 16),
         SwitchListTile(

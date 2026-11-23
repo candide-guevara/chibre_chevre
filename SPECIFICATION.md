@@ -146,6 +146,7 @@ Allows to configure different options, starting from the player's game defaults 
 * game name (prefilled with "<nickname>'s game", in French "Partie de <nickname>")
 * number of points (default 1000)
 * trump modes: "4 couleurs" (default) or "4 couleurs + Obenabe + Undenufe"
+* "Atout au hasard": off (default) / on. On, each round's trump is drawn at random among the allowed trump modes: nobody chooses it (no trump choice, no "Chibrer"), the round starts with the first trick, led by the seat whose turn it was to choose, and no player's name shows the trump badge. A rematch with the same cards draws the same trumps.
 * multipliers: off (default) / on
 * "Finir la dernière manche" (play the last round to the end even when the game is decided): off (default) / on
 * "Annonces" (melds and Stöck are announced and score points): on (default) / off. Off, nobody announces anything: there is no meld selection, no "Stöck" button, no recap of the announcements, the computer players announce nothing and the insights never count a missed meld or Stöck.

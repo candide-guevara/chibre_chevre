@@ -459,7 +459,10 @@ class _PlayScreenState extends State<PlayScreen> {
     Widget seat(int seat) => SeatBadge(
       nickname: table.nicknames[seat],
       isTurn: table.seatToAct == seat,
-      trump: seat == player.trumpChooser ? player.mode : null,
+      // A drawn trump was nobody's choice.
+      trump: seat == player.trumpChooser && !player.options.randomTrump
+          ? player.mode
+          : null,
     );
 
     final shownTrick = switch (player.currentTrick) {

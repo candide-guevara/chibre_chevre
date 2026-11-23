@@ -28,6 +28,7 @@ class GameOptions extends $pb.GeneratedMessage {
     $core.bool? multipliersEnabled,
     $core.bool? finishLastRound,
     $core.bool? meldsDisabled,
+    $core.bool? randomTrump,
   }) {
     final result = GameOptions._();
     if (targetScore != null) result.targetScore = targetScore;
@@ -36,6 +37,7 @@ class GameOptions extends $pb.GeneratedMessage {
       result.multipliersEnabled = multipliersEnabled;
     if (finishLastRound != null) result.finishLastRound = finishLastRound;
     if (meldsDisabled != null) result.meldsDisabled = meldsDisabled;
+    if (randomTrump != null) result.randomTrump = randomTrump;
     return result;
   }
 
@@ -58,6 +60,7 @@ class GameOptions extends $pb.GeneratedMessage {
     ..aOB(3, _omitFieldNames ? '' : 'multipliersEnabled')
     ..aOB(4, _omitFieldNames ? '' : 'finishLastRound')
     ..aOB(5, _omitFieldNames ? '' : 'meldsDisabled')
+    ..aOB(6, _omitFieldNames ? '' : 'randomTrump')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -129,6 +132,16 @@ class GameOptions extends $pb.GeneratedMessage {
   $core.bool hasMeldsDisabled() => $_has(4);
   @$pb.TagNumber(5)
   void clearMeldsDisabled() => $_clearField(5);
+
+  /// Each round's trump is drawn among the allowed modes.
+  @$pb.TagNumber(6)
+  $core.bool get randomTrump => $_getBF(5);
+  @$pb.TagNumber(6)
+  set randomTrump($core.bool value) => $_setBool(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasRandomTrump() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearRandomTrump() => $_clearField(6);
 }
 
 /// Broadcast by the host so other phones can list the game.
@@ -2370,11 +2383,13 @@ class Round extends $pb.GeneratedMessage {
     $core.Iterable<$fixnum.Int64>? deal,
     $core.int? trumpChooser,
     $core.Iterable<Action>? actions,
+    TrumpMode? drawnTrump,
   }) {
     final result = Round._();
     if (deal != null) result.deal.addAll(deal);
     if (trumpChooser != null) result.trumpChooser = trumpChooser;
     if (actions != null) result.actions.addAll(actions);
+    if (drawnTrump != null) result.drawnTrump = drawnTrump;
     return result;
   }
 
@@ -2396,6 +2411,8 @@ class Round extends $pb.GeneratedMessage {
         fieldType: $pb.PbFieldType.OU3)
     ..pPM<Action>(3, _omitFieldNames ? '' : 'actions',
         subBuilder: Action.$_createMessage)
+    ..aE<TrumpMode>(4, _omitFieldNames ? '' : 'drawnTrump',
+        enumValues: TrumpMode.values)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2432,6 +2449,16 @@ class Round extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $pb.PbList<Action> get actions => $_getList(2);
+
+  /// With random trumps; NONE otherwise.
+  @$pb.TagNumber(4)
+  TrumpMode get drawnTrump => $_getN(3);
+  @$pb.TagNumber(4)
+  set drawnTrump(TrumpMode value) => $_setField(4, value);
+  @$pb.TagNumber(4)
+  $core.bool hasDrawnTrump() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDrawnTrump() => $_clearField(4);
 }
 
 class GameRecord extends $pb.GeneratedMessage {

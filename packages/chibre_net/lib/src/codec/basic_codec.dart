@@ -20,6 +20,7 @@ pb.GameOptions encodeOptions(GameOptions options) => pb.GameOptions(
       multipliersEnabled: options.multipliersEnabled,
       finishLastRound: options.finishLastRound,
       meldsDisabled: !options.meldsEnabled,
+      randomTrump: options.randomTrump,
     );
 
 GameOptions decodeOptions(pb.GameOptions options) => GameOptions(
@@ -28,6 +29,7 @@ GameOptions decodeOptions(pb.GameOptions options) => GameOptions(
       multipliersEnabled: options.multipliersEnabled,
       finishLastRound: options.finishLastRound,
       meldsEnabled: !options.meldsDisabled,
+      randomTrump: options.randomTrump,
     );
 
 Meld decodeMeld(Int64 bits) {

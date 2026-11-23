@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'card.dart';
+import 'card_set.dart';
 import 'deal.dart';
 import 'deal_source.dart';
 import 'game_action.dart';
@@ -11,31 +14,43 @@ import 'replay_deal_source.dart';
 import 'round_state.dart';
 import 'score_entry.dart';
 import 'seat.dart';
+import 'trump_mode.dart';
 
 enum GamePhase { choosingTrump, playing, roundOver, gameOver }
 
 /// A whole game: rounds are played until a team reaches the target score.
 class GameState {
-  GameState({required this.options, DealSource? deals})
-      : _deals = deals ?? RandomDealSource(),
+  /// With [GameOptions.randomTrump], the trumps are drawn with [random],
+  /// after the [drawnTrumps] of the first rounds.
+  GameState({
+    required this.options,
+    DealSource? deals,
+    Random? random,
+    List<TrumpMode?> drawnTrumps = const [],
+  })  : _deals = deals ?? RandomDealSource(),
+        _random = random ?? Random(),
+        _drawnTrumps = drawnTrumps,
         record = GameRecord(options) {
     final deal = _deals.nextDeal();
-    _startRound(RoundState(
-        options: options,
-        deal: deal,
-        trumpChooser: holderOf(Card(Suit.diamonds, Rank.seven), deal)));
+    _startRound(
+        _newRound(deal, holderOf(Card(Suit.diamonds, Rank.seven), deal)));
   }
 
-  /// A new game dealt exactly like [record], ready to replay its actions.
+  /// A new game dealt exactly like [record], with the same trumps drawn,
+  /// ready to replay its actions.
   factory GameState.replaying(GameRecord record, {DealSource? fallback}) =>
       GameState(
         options: record.options,
         deals: ReplayDealSource(record.deals, fallback: fallback),
+        drawnTrumps: record.drawnTrumps,
       );
 
   final GameOptions options;
   final GameRecord record;
   final DealSource _deals;
+  final Random _random;
+  final List<TrumpMode?> _drawnTrumps;
+  var _roundsDealt = 0;
   final _scores = [0, 0];
   late RoundState _round;
 
@@ -108,10 +123,25 @@ class GameState {
     if (phase != GamePhase.roundOver) {
       throw StateError('The current round is not over');
     }
-    return _nextRound ??= RoundState(
-        options: options,
-        deal: _deals.nextDeal(),
-        trumpChooser: nextTrumpChooser);
+    return _nextRound ??= _newRound(_deals.nextDeal(), nextTrumpChooser);
+  }
+
+  RoundState _newRound(List<CardSet> deal, int trumpChooser) {
+    final index = _roundsDealt++;
+    return RoundState(
+      options: options,
+      deal: deal,
+      trumpChooser: trumpChooser,
+      drawnTrump: options.randomTrump
+          ? (index < _drawnTrumps.length ? _drawnTrumps[index] : null) ??
+              _drawTrump()
+          : null,
+    );
+  }
+
+  TrumpMode _drawTrump() {
+    final modes = options.allowedModes;
+    return modes[_random.nextInt(modes.length)];
   }
 
   void startNextRound() {
@@ -122,6 +152,8 @@ class GameState {
   void _startRound(RoundState round) {
     _round = round;
     record.rounds.add(RoundRecord(
-        deal: round.initialHands, trumpChooser: round.trumpChooser));
+        deal: round.initialHands,
+        trumpChooser: round.trumpChooser,
+        drawnTrump: round.drawnTrump));
   }
 }

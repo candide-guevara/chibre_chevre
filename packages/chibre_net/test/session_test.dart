@@ -107,9 +107,11 @@ StreamSubscription<TableView> autoplay(Stream<TableView> tables,
 }
 
 Future<(HostSession, ClientSession)> startGame(InMemoryNetwork network,
-    {SavedGameStore? store, BotRunner? bots}) async {
+    {SavedGameStore? store,
+    BotRunner? bots,
+    GameOptions options = options}) async {
   final host = newHost(network, store: store, bots: bots);
-  await host.create(const HostConfig(
+  await host.create(HostConfig(
       gameName: 'Partie de Ana',
       nickname: 'Ana',
       options: options,
@@ -591,6 +593,33 @@ void main() {
     final table = await restarted;
     expect(table.player!.hand, firstHand);
     expect(table.scores, [0, 0]);
+    await host.close();
+  });
+
+  test('random trumps: every round starts with the first trick, and a '
+      'rematch with the same cards draws the same trumps', () async {
+    final network = InMemoryNetwork();
+    final (host, client) = await startGame(network,
+        options: const GameOptions(targetScore: 300, randomTrump: true));
+    expect(host.table!.phase, TablePhase.playing);
+    final firstTrump = host.table!.player!.mode;
+    autoplay(host.tables, host.act, host.meldsChosen);
+    final clientPlay = autoplay(client.tables, client.act, client.meldsChosen);
+    expect(host.tables.any((t) => t.phase == TablePhase.choosingTrump),
+        completion(isFalse));
+    if (host.table!.isMyTurn) {
+      host.act(HeuristicPlayer().decide(host.table!.player!));
+    }
+    await host.tables.firstWhere((t) => t.phase == TablePhase.gameOver);
+    await clientPlay.cancel();
+
+    final offered = client.tables.firstWhere((t) => t.rematch != null);
+    host.proposeRematch(sameCards: true);
+    await offered;
+    final restarted =
+        host.tables.firstWhere((t) => t.phase != TablePhase.gameOver);
+    client.answerRematch(accept: true);
+    expect((await restarted).player!.mode, firstTrump);
     await host.close();
   });
 

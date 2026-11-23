@@ -11,6 +11,7 @@ pb.GameRecord encodeRecord(GameRecord record) => pb.GameRecord(
           pb.Round(
             deal: [for (final hand in round.deal) encodeCards(hand)],
             trumpChooser: round.trumpChooser,
+            drawnTrump: encodeMode(round.drawnTrump),
             actions: [for (final action in round.actions) encodeAction(action)],
           ),
       ],
@@ -22,6 +23,7 @@ GameRecord decodeRecord(pb.GameRecord record) {
     result.rounds.add(RoundRecord(
       deal: [for (final bits in round.deal) decodeCards(bits)],
       trumpChooser: round.trumpChooser,
+      drawnTrump: decodeMode(round.drawnTrump),
     )..actions.addAll(round.actions.map(decodeAction)));
   }
   return result;

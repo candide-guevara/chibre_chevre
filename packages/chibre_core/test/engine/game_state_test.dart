@@ -129,6 +129,35 @@ void main() {
     expect(replay.winningTeam, game.winningTeam);
   });
 
+  test('random trumps are drawn among the allowed modes, nobody chooses',
+      () {
+    final game = GameState(
+        options: const GameOptions(randomTrump: true),
+        deals: RandomDealSource(Random(3)),
+        random: Random(3));
+    final drawn = <TrumpMode>{};
+    while (game.phase != GamePhase.gameOver) {
+      if (game.phase == GamePhase.roundOver) {
+        game.startNextRound();
+        continue;
+      }
+      expect(game.phase, GamePhase.playing);
+      drawn.add(game.round.mode!);
+      game.apply(PlayCard(game.seatToAct, game.round.legalCards.cards.first));
+    }
+    expect(drawn, everyElement(isIn(TrumpMode.suits)));
+    expect(drawn.length, greaterThan(1));
+    expect(game.record.rounds.first.actions.whereType<ChooseTrump>(), isEmpty);
+
+    final replay = GameState.replaying(game.record);
+    for (final (index, round) in game.record.rounds.indexed) {
+      if (index > 0) replay.startNextRound();
+      expect(replay.round.mode, round.drawnTrump);
+      round.actions.forEach(replay.apply);
+    }
+    expect(replay.scores, game.scores);
+  });
+
   test('a replay deal source falls back once the deals run out', () {
     final deal = dealOf({});
     final source =

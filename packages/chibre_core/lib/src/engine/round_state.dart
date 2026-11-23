@@ -23,14 +23,21 @@ class RoundState {
     required this.options,
     required List<CardSet> deal,
     required this.trumpChooser,
+    this.drawnTrump,
   })  : initialHands = List.unmodifiable(deal),
-        _hands = List.of(deal);
+        _hands = List.of(deal) {
+    if (drawnTrump != null) _chooseTrump(drawnTrump!);
+  }
 
   final GameOptions options;
   final List<CardSet> initialHands;
 
   /// The seat that must choose trump (or chibrer). It leads the first trick.
   final int trumpChooser;
+
+  /// The trump drawn at random, with [GameOptions.randomTrump]: nobody
+  /// chooses it and the round starts with the first trick.
+  final TrumpMode? drawnTrump;
 
   final List<CardSet> _hands;
   var _chibred = false;

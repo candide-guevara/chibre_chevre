@@ -31,6 +31,8 @@ message GameOptions {
   bool finish_last_round = 4;
   // No melds nor Stöck. Negated so that older saved games keep them.
   bool melds_disabled = 5;
+  // Each round's trump is drawn among the allowed modes.
+  bool random_trump = 6;
 }
 
 // ---------------------------------------------------------------- Discovery
@@ -256,6 +258,8 @@ message Round {
   repeated uint64 deal = 1;
   uint32 trump_chooser = 2;
   repeated Action actions = 3;
+  // With random trumps; NONE otherwise.
+  TrumpMode drawn_trump = 4;
 }
 
 message GameRecord {

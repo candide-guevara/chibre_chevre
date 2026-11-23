@@ -13,6 +13,7 @@ void main() {
     final defaults = store.gameDefaults;
     expect(defaults.options.targetScore, 1000);
     expect(defaults.options.meldsEnabled, isTrue);
+    expect(defaults.options.randomTrump, isFalse);
     expect(defaults.advanced.trickHold, const AdvancedSettings().trickHold);
   });
 
@@ -26,6 +27,7 @@ void main() {
           multipliersEnabled: true,
           finishLastRound: true,
           meldsEnabled: false,
+          randomTrump: true,
         ),
         advanced: AdvancedSettings(
           trickHold: Duration(seconds: 3),
@@ -41,6 +43,7 @@ void main() {
     expect(defaults.options.targetScore, 1500);
     expect(defaults.options.obenUndeAllowed, isTrue);
     expect(defaults.options.meldsEnabled, isFalse);
+    expect(defaults.options.randomTrump, isTrue);
     expect(defaults.options.multipliersEnabled, isTrue);
     expect(defaults.options.finishLastRound, isTrue);
     expect(defaults.advanced.trickHold, const Duration(seconds: 3));

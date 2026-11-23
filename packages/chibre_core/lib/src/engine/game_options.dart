@@ -8,6 +8,7 @@ class GameOptions {
     this.multipliersEnabled = false,
     this.finishLastRound = false,
     this.meldsEnabled = true,
+    this.randomTrump = false,
   });
 
   final int targetScore;
@@ -23,6 +24,10 @@ class GameOptions {
 
   /// Whether melds and Stöck may be announced and score.
   final bool meldsEnabled;
+
+  /// Whether each round's trump is drawn among [allowedModes] rather than
+  /// chosen by a player.
+  final bool randomTrump;
 
   List<TrumpMode> get allowedModes =>
       obenUndeAllowed ? TrumpMode.values : TrumpMode.suits;
