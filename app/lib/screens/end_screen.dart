@@ -21,6 +21,12 @@ class EndScreen extends StatelessWidget {
   final TableView table;
   final VoidCallback onHome;
 
+  static const _happyGoat = 'assets/images/chevre_happy_blue.webp';
+  static const _sadGoat = 'assets/images/chevre_sad_blue.webp';
+
+  /// The goat's share of the screen width, as on the start screen.
+  static const _goatWidthFactor = 1 / 3;
+
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
@@ -33,6 +39,11 @@ class EndScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
+                FractionallySizedBox(
+                  widthFactor: _goatWidthFactor,
+                  child: Image.asset(won ? _happyGoat : _sadGoat),
+                ),
+                const SizedBox(height: 16),
                 Text(
                   won ? Strings.victory : Strings.defeat,
                   style: text.displaySmall,
