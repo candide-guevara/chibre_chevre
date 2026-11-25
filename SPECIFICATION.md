@@ -15,7 +15,7 @@ The goal of this project is to create a phone app, named **Chibre Chèvre**, to 
 * 2 human players, each with their own phone, play as partners against a team of 2 computer players.
   * Seating (counter-clockwise play order): Human A (host), Bot 1, Human B (joiner), Bot 2. Humans sit opposite each other.
 * Single player mode: one human plays with a computer partner ("Partenaire", in the joiner's seat) against the 2 bots, on one phone without the network. The partner uses exactly the same algorithm and compute budget as the opponents.
-* the app shall not collect any personal data, nor have any form of account.
+* the app shall not collect any personal data, nor have any form of account. The privacy policy for the Play Store is [PRIVACY.md](PRIVACY.md), in French and English.
   * A random installation id (generated locally, never tied to a person) may be used to recognise a reconnecting player.
 * All computation happens on the phones. **There is no backend in the first version**: games are played over the local network (same Wi-Fi).
   * The networking code must be abstracted behind an interface (see [Architecture](#architecture)) so that an AWS-backed implementation can be added later without touching the game engine, the AI or the UI.
